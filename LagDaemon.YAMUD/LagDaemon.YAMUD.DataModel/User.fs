@@ -23,12 +23,15 @@ module User =
         | RejectedEmailAddress of EmailAddress * ErrorMessage
         | BlockedEmailAddress of EmailAddress * ErrorMessage * Duration
 
+    type DisplayName = DisplayName of string
+    type Token = Token of string
+    type Metadata = Metadata of string
 
     type User = {
         ID: Guid;
-        DisplayName: string;
+        DisplayName: DisplayName;
         EmailAddress: EmailAddressState;
-        ValidationToken: string option;
-        Metadata: string option;
+        ValidationToken: Token option;
+        Metadata: Metadata option;
     }
 

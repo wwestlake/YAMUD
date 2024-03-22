@@ -1,22 +1,21 @@
 ﻿
 open MongoDB.Driver
+open LagDaemon.YAMUD.API.Services
+open LagDaemon.YAMUD.DataModel.User
+open LagDaemon.YAMUD.API.User
 
 let connectionString = "mongodb://localhost:27017"
 let client = new MongoClient(connectionString)
-let databaseName = "yamud"
-let database = client.GetDatabase(databaseName)
 
-printfn "Connected to MongoDB server: %s %s" connectionString databaseName
+let userService = new UserService(client)
+let newUser = createUser "Bill Westlake" "wwestlake@lagdaemon.com" "Something about myself"
+match newUser with
+| Some user -> 
+        userService.createUserAsync user |> Async.AwaitTask |> ignore
+        printfn "User created: %s %s" (user.ID.ToString()) (user.DisplayName.ToString())
+| None -> printfn "Error creating new user" |> ignore
 
-let databaseNames = client.ListDatabaseNames().ToList()
-
-printfn "Available databases: %A" databaseNames
 
 
-// Iterate through each database and list its collections
-for dbName in databaseNames do
-    let database = client.GetDatabase(dbName)
-    let collectionNames =  database.ListCollectionNames().ToList()
-    printfn "Collections in database '%s':" dbName
-    collectionNames |> Seq.iter (printfn "- %s")
+
 

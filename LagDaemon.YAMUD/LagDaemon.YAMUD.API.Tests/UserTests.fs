@@ -1,8 +1,12 @@
-module Tests
+module UserTests
 
 open Xunit
 open LagDaemon.YAMUD.API.User
 open LagDaemon.YAMUD.DataModel.User
+
+[<Fact>]
+let ``test test`` () =
+    Assert.True(true)
 
 [<Theory>]
 [<InlineData(10.0, "password123")>]

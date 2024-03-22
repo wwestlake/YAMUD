@@ -36,5 +36,20 @@ module User =
                 | false -> RejectedEmailAddress (address |> EmailAddress, "Invalid address format" |> ErrorMessage) |> Some
         | _ -> None
 
+    let createValidationToken () =
+        Guid.NewGuid().ToString() |> Token
+
+    let createUser displayName emailAddress metaData =
+        let checkedEmailAddress = createEmailAddress emailAddress |> validateEmailAddress
+        match checkedEmailAddress with
+        | Some email ->
+                        {
+                            ID = Guid.NewGuid();
+                            DisplayName = displayName |> DisplayName
+                            EmailAddress = email
+                            ValidationToken = createValidationToken () |> Some
+                            Metadata = metaData |> Metadata |> Some
+                        } |> Some
+        | None -> None
 
 
