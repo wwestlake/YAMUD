@@ -1,0 +1,29 @@
+﻿<!-- SquareDrawing.razor -->
+@page "/squaredrawing"
+
+<h1>Draw a Square</h1>
+
+<canvas id="myCanvas" width="200" height="200"></canvas>
+
+@code {
+    [Inject]
+    protected IJSRuntime JSRuntime { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await DrawSquareAsync();
+        }
+    }
+
+    private async Task DrawSquareAsync()
+    {
+        var canvas = await JSRuntime.InvokeAsync<IJSObjectReference>("eval", "document.getElementById('myCanvas')");
+        var ctx = await canvas.InvokeAsync<IJSObjectReference>("getContext", "2d");
+
+        await ctx.InvokeVoidAsync("beginPath");
+        await ctx.InvokeVoidAsync("rect", 50, 50, 100, 100); // x, y, width, height
+        await ctx.InvokeVoidAsync("stroke");
+    }
+}

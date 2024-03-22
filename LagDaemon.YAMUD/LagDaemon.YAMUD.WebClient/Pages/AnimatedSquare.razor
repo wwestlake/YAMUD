@@ -1,0 +1,67 @@
+﻿@page "/animatedsquare"
+
+<h1>Animated Square</h1>
+
+<canvas id="myCanvas" style="width: 100%; height: 100%;"></canvas>
+
+@code {
+    [Inject]
+    protected IJSRuntime JSRuntime { get; set; }
+
+    private double angle = 0;
+    private double radius;
+    private double centerX;
+    private double centerY;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Calculate center of the canvas
+            await GetCanvasDimensions();
+
+            // Calculate radius (twice the diagonal of the square)
+            radius = Math.Sqrt(2) * 100 * 2; // Assuming square side length is 100
+
+            // Start animation
+            var timer = new System.Threading.Timer(Animate, null, 0, 16); // 60 FPS
+        }
+    }
+
+    private async Task GetCanvasDimensions()
+    {
+        var canvas = await JSRuntime.InvokeAsync<IJSObjectReference>("eval", "document.getElementById('myCanvas')");
+        var width = await canvas.InvokeAsync<int>("getWidth");
+        var height = await canvas.InvokeAsync<int>("getHeight");
+
+        centerX = width / 2;
+        centerY = height / 2;
+    }
+
+    private async void Animate(object state)
+    {
+        // Increment angle
+        angle += 0.02;
+
+        // Calculate new position
+        double newX = centerX + radius * Math.Cos(angle);
+        double newY = centerY + radius * Math.Sin(angle);
+
+        // Redraw canvas with the square at the new position
+        await DrawSquareAsync(newX, newY);
+    }
+
+    private async Task DrawSquareAsync(double x, double y)
+    {
+        var canvas = await JSRuntime.InvokeAsync<IJSObjectReference>("eval", "document.getElementById('myCanvas')");
+        var ctx = await canvas.InvokeAsync<IJSObjectReference>("getContext", "2d");
+
+        // Clear canvas
+        await ctx.InvokeVoidAsync("clearRect", 0, 0, centerX * 2, centerY * 2);
+
+        // Draw square at new position
+        await ctx.InvokeVoidAsync("beginPath");
+        await ctx.InvokeVoidAsync("rect", x - 50, y - 50, 100, 100); // x, y, width, height
+        await ctx.InvokeVoidAsync("stroke");
+    }
+}
