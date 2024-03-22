@@ -28,7 +28,7 @@
     int selectedLevel = 1; // Default level selection
 
     [Inject]
-    private IRoomService? RoomService { get; set; } // Inject your MongoDB service
+    private IMongoRoomService? RoomService { get; set; } // Inject your MongoDB service
 
     protected override async Task OnInitializedAsync()
     {
