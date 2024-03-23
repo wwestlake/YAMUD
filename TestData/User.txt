@@ -1,0 +1,6 @@
+{
+  "DisplayName": "bill",
+  "EmailAddress": "bill@email.com",
+  "Status": 0,
+  "Roles": 1
+}

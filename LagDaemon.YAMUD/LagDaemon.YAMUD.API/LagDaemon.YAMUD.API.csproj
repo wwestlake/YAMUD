@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.24.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.24.0" />
     <PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
