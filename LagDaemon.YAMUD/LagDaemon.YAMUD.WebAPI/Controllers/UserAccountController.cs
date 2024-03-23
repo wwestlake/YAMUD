@@ -1,10 +1,7 @@
-﻿using System;
-using FluentResults;
+﻿using FluentResults;
 using LagDaemon.YAMUD.Model.User;
-using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace LagDaemon.YAMUD.Controllers
 {
@@ -20,7 +17,7 @@ namespace LagDaemon.YAMUD.Controllers
         }
 
         // GET: api/UserAccount
-        [HttpGet]
+        [HttpGet("GetAllUsers")]
         public IActionResult GetAllUserAccounts()
         {
             try
@@ -28,9 +25,11 @@ namespace LagDaemon.YAMUD.Controllers
                 var isFailed = false;
                 IEnumerable<UserAccount> userAccounts = new List<UserAccount>().AsEnumerable();
                 IEnumerable<IError> errors = new List<IError>().AsEnumerable();
-                _userAccountService.GetAllUserAccounts().OnSuccess( x => {
-                    userAccounts = x;    
-                }).OnFailure( x => { 
+                _userAccountService.GetAllUserAccounts().OnSuccess(x =>
+                {
+                    userAccounts = x;
+                }).OnFailure(x =>
+                {
                     isFailed = true;
                     errors = x;
                 });
@@ -49,10 +48,10 @@ namespace LagDaemon.YAMUD.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetUserAccount(Guid id)
+        [HttpGet("GetUserById/{id}")]
+        public IActionResult GetUserAccountById(string id)
         {
-            var userAccount = _userAccountService.GetUserAccount(id);
+            var userAccount = _userAccountService.GetUserAccountById(id);
             if (userAccount == null)
             {
                 return NotFound();
@@ -60,26 +59,39 @@ namespace LagDaemon.YAMUD.Controllers
             return Ok(userAccount);
         }
 
-        [HttpPost]
-        public IActionResult CreateUserAccount([FromBody]UserAccount userAccount)
+        [HttpGet("GetUserByEmail/{email}")]
+        public IActionResult GetUserAccountByEmail(string email)
         {
-            IActionResult result = Ok("");
+            var userAccount = _userAccountService.GetUserAccountByEmail(email);
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+            return Ok(userAccount);
+        }
+
+
+        [HttpPost("CreateNewUser")]
+        public IActionResult CreateUserAccount([FromBody] UserAccount userAccount)
+        {
+            IActionResult result = Ok(string.Empty);
             var createdUserAccount = _userAccountService.CreateUserAccount(userAccount);
             createdUserAccount.OnSuccess(x =>
             {
-                result = CreatedAtAction(nameof(GetUserAccount), new { id = createdUserAccount.Value.ID }, createdUserAccount);
+                result = CreatedAtAction(nameof(GetUserAccountById), new { id = createdUserAccount.Value.ID }, createdUserAccount);
 
-            }).OnFailure( x => {
+            }).OnFailure(x =>
+            {
                 result = Ok(x);
             });
 
             return result;
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
+        [HttpPut("UpdateUser/{id}")]
+        public IActionResult UpdateUserAccount(string id, UserAccount updatedUserAccount)
         {
-            var existingUserAccount = _userAccountService.GetUserAccount(id);
+            var existingUserAccount = _userAccountService.GetUserAccountById(id);
             if (existingUserAccount == null)
             {
                 return NotFound();
@@ -88,16 +100,18 @@ namespace LagDaemon.YAMUD.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteUserAccount(Guid id)
+        [HttpDelete("DeleteUser/{id}")]
+        public IActionResult DeleteUserAccount(string id)
         {
-            var existingUserAccount = _userAccountService.GetUserAccount(id);
-            if (existingUserAccount == null)
+            var result = _userAccountService.DeleteUserAccount(id);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            else
             {
                 return NotFound();
             }
-            _userAccountService.DeleteUserAccount(id);
-            return NoContent();
         }
     }
 }

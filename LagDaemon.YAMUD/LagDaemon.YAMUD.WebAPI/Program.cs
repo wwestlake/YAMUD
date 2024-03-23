@@ -1,9 +1,7 @@
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +19,6 @@ var configuration = new ConfigurationBuilder()
 builder.Services.AddSingleton(configuration);
 
 var connectionString = configuration.GetConnectionString("MongoDb");
-builder.Services.AddSingleton<IMongoClient>(new MongoClient(connectionString));
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 
 // JWT authentication setup

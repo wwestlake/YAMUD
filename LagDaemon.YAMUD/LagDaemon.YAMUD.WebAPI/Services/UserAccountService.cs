@@ -4,63 +4,94 @@ using System.Text.RegularExpressions;
 using FluentResults;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Services;
-using MongoDB.Driver;
 
 namespace LagDaemon.YAMUD.Services
 {
     public class UserAccountService : IUserAccountService
     {
-        private readonly IMongoCollection<UserAccount> _userAccountCollection;
 
-        public UserAccountService(IMongoClient mongoClient)
+        /// <summary>
+        /// Create a user account service with a MongoClient
+        /// </summary>
+        /// <param name="mongoClient">Injected by DI</param>
+        public UserAccountService()
         {
-            var database = mongoClient.GetDatabase("yamud");
-            _userAccountCollection = database.GetCollection<UserAccount>("users");
+            throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get a list of all user accounts.  This may take some time
+        /// if the list is long.  
+        /// </summary>
+        /// <returns>IEnumerable<UserAccount></returns>
         public Result<IEnumerable<UserAccount>> GetAllUserAccounts()
         {
-            return _userAccountCollection.Find(_ => true).ToList();
+            throw new NotImplementedException();
         }
 
-        public Result<UserAccount> GetUserAccount(Guid id)
+        /// <summary>
+        /// Gets a user account based on the ID
+        /// </summary>
+        /// <param name="id">The ID of the User (Internal string of Guid)</param>
+        /// <returns>Success -> UserAccount, Fail -> Error Message</returns>
+        public Result<UserAccount> GetUserAccountById(string id)
         {
-            var filter = Builders<UserAccount>.Filter.Eq(u => u.ID, id);
-            return _userAccountCollection.Find(filter).FirstOrDefault();
+            throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get a user account based on Email.  Email addresses must
+        /// be unique in the system
+        /// </summary>
+        /// <param name="email">The email address of the user account</param>
+        /// <returns>Result Success -> UserAccount, Fail -> Errpr Message</returns>
+        public Result<UserAccount> GetUserAccountByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Creates a user account.
+        /// </summary>
+        /// <param name="userAccount">The user acocunt DTO</param>
+        /// <returns>A UserAccount or Errors</returns>
         public Result<UserAccount> CreateUserAccount(UserAccount userAccount)
         {
-            var processed = ProcessUserAccount(userAccount);
-            Result<UserAccount> result = null;
-
-            processed.OnSuccess(x =>
-            {
-                _userAccountCollection.InsertOne(userAccount);
-                result = Result.Ok(userAccount);
-            }).OnFailure(x =>
-            {
-                result = Result.Fail(x);
-            });
-            return result;
+            throw new NotImplementedException();
         }
 
-        public void UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
+        /// <summary>
+        /// Update a user acocunt
+        /// </summary>
+        /// <param name="id">The account to update</param>
+        /// <param name="updatedUserAccount">the updated account</param>
+        /// <returns>OK or Errors</returns>
+        public Result UpdateUserAccount(string id, UserAccount updatedUserAccount)
         {
-            var filter = Builders<UserAccount>.Filter.Eq(u => u.ID, id);
-            _userAccountCollection.ReplaceOne(filter, updatedUserAccount);
+            throw new NotImplementedException();
         }
 
-        public void DeleteUserAccount(Guid id)
+        /// <summary>
+        /// Deletes a User Account
+        /// </summary>
+        /// <param name="id">ID of User Acocunt (Guid as string)</param>
+        /// <returns>Ok or Errors</returns>
+        public Result DeleteUserAccount(string id)
         {
-            var filter = Builders<UserAccount>.Filter.Eq(u => u.ID, id);
-            _userAccountCollection.DeleteOne(filter);
+            throw new NotImplementedException();
         }
 
         private  Result<UserAccount> ProcessUserAccount(UserAccount userAccount)
         {
             var isFailed = false;
             var errors = new List<string>();
+
+            var existing = GetUserAccountByEmail(userAccount.EmailAddress);
+            if (existing.IsSuccess)
+            {
+                errors.Add($"Email Address '{userAccount.EmailAddress}' already exists");
+                isFailed = true;
+            }
 
             if (! ValidateEmail(userAccount.EmailAddress))
             {
@@ -78,10 +109,11 @@ namespace LagDaemon.YAMUD.Services
             {
                 return Result.Fail(errors);
             }
-
-            userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
-
-            return userAccount;
+            else
+            {
+                userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
+                return userAccount;
+            }
         }
 
         private bool ValidateEmail(string email)

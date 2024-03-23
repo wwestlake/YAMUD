@@ -1,5 +1,4 @@
 ﻿
-using MongoDB.Bson;
 
 namespace LagDaemon.YAMUD.Model.User
 {
@@ -23,11 +22,10 @@ namespace LagDaemon.YAMUD.Model.User
     {
         public UserAccount()
         {
-            ID = Guid.NewGuid();
+            ID = Guid.NewGuid().ToString();
         }
 
-        public ObjectId _id { get; set; }
-        public Guid ID { get; set;  }
+        public string ID { get; set;  }
         public string? DisplayName { get; set; }
         public string? HashedPassword { get; set; }
         public string? EmailAddress { get; set; }
