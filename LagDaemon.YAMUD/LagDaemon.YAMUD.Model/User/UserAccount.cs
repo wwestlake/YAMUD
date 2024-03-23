@@ -22,15 +22,16 @@ namespace LagDaemon.YAMUD.Model.User
     {
         public UserAccount()
         {
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid();
         }
 
-        public string ID { get; set;  }
-        public string? DisplayName { get; set; }
-        public string? HashedPassword { get; set; }
-        public string? EmailAddress { get; set; }
+        public Guid ID { get; set;  }
+        public string DisplayName { get; set; }
+        public string HashedPassword { get; set; }
+        public string EmailAddress { get; set; }
         public UserAccountStatus Status { get; set; }
         public UserAccountRoles Roles { get; set; }
+        public Guid VerificationToken { get; set; }
     }
 
 

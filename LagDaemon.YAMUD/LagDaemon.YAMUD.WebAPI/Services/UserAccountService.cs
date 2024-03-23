@@ -1,119 +1,120 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using FluentResults;
+﻿using FluentResults;
+using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Services.LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Services;
+using System.Linq.Expressions;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace LagDaemon.YAMUD.Services
 {
     public class UserAccountService : IUserAccountService
     {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<UserAccount> _userRepository;
+        private IEmailService _emailService;
 
-        /// <summary>
-        /// Create a user account service with a MongoClient
-        /// </summary>
-        /// <param name="mongoClient">Injected by DI</param>
-        public UserAccountService()
+        public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService)
         {
-            throw new NotImplementedException();
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _userRepository = _unitOfWork.GetRepository<UserAccount>();
+            _emailService = emailService;
         }
 
-        /// <summary>
-        /// Get a list of all user accounts.  This may take some time
-        /// if the list is long.  
-        /// </summary>
-        /// <returns>IEnumerable<UserAccount></returns>
         public Result<IEnumerable<UserAccount>> GetAllUserAccounts()
         {
-            throw new NotImplementedException();
+            return Result.Ok(_userRepository.GetAll());
         }
 
-        /// <summary>
-        /// Gets a user account based on the ID
-        /// </summary>
-        /// <param name="id">The ID of the User (Internal string of Guid)</param>
-        /// <returns>Success -> UserAccount, Fail -> Error Message</returns>
-        public Result<UserAccount> GetUserAccountById(string id)
+        public Result<UserAccount> GetUserAccountById(Guid id)
         {
-            throw new NotImplementedException();
+            return Result.Ok(_userRepository.GetById(id));
         }
 
-        /// <summary>
-        /// Get a user account based on Email.  Email addresses must
-        /// be unique in the system
-        /// </summary>
-        /// <param name="email">The email address of the user account</param>
-        /// <returns>Result Success -> UserAccount, Fail -> Errpr Message</returns>
         public Result<UserAccount> GetUserAccountByEmail(string email)
         {
-            throw new NotImplementedException();
+            Expression<Func<UserAccount, bool>> filter = u => u.EmailAddress == email;
+            return Result.Ok(_userRepository.GetSingle(filter));
         }
 
-        /// <summary>
-        /// Creates a user account.
-        /// </summary>
-        /// <param name="userAccount">The user acocunt DTO</param>
-        /// <returns>A UserAccount or Errors</returns>
         public Result<UserAccount> CreateUserAccount(UserAccount userAccount)
         {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Update a user acocunt
-        /// </summary>
-        /// <param name="id">The account to update</param>
-        /// <param name="updatedUserAccount">the updated account</param>
-        /// <returns>OK or Errors</returns>
-        public Result UpdateUserAccount(string id, UserAccount updatedUserAccount)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Deletes a User Account
-        /// </summary>
-        /// <param name="id">ID of User Acocunt (Guid as string)</param>
-        /// <returns>Ok or Errors</returns>
-        public Result DeleteUserAccount(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        private  Result<UserAccount> ProcessUserAccount(UserAccount userAccount)
-        {
-            var isFailed = false;
-            var errors = new List<string>();
-
-            var existing = GetUserAccountByEmail(userAccount.EmailAddress);
-            if (existing.IsSuccess)
+            var validationResult = ValidateUserAccount(userAccount);
+            if (validationResult.IsFailed)
             {
-                errors.Add($"Email Address '{userAccount.EmailAddress}' already exists");
-                isFailed = true;
+                return validationResult;
             }
 
-            if (! ValidateEmail(userAccount.EmailAddress))
+            userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
+            _userRepository.Insert(userAccount);
+            _unitOfWork.SaveChanges();
+            return Result.Ok(userAccount);
+        }
+
+        public Result UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
+        {
+            var existingUser = _userRepository.GetById(id);
+            if (existingUser == null)
             {
-                errors.Add("Email address is not valid");
-                isFailed = true;
+                return Result.Fail($"User with ID '{id}' not found.");
+            }
+
+            updatedUserAccount.ID = id;
+            _userRepository.Update(updatedUserAccount);
+            _unitOfWork.SaveChanges();
+            return Result.Ok();
+        }
+
+        public Result DeleteUserAccount(Guid id)
+        {
+            var existingUser = _userRepository.GetById(id);
+            if (existingUser == null)
+            {
+                return Result.Fail($"User with ID '{id}' not found.");
+            }
+
+            _userRepository.Delete(id);
+            _unitOfWork.SaveChanges();
+            return Result.Ok();
+        }
+
+        private Result SendEmailVerification(UserAccount userAccount)
+        {
+            userAccount.VerificationToken = Guid.NewGuid();
+            UpdateUserAccount(userAccount.ID, userAccount);
+
+            var viewModel = new AccountVerificationViewModel()
+            {
+                DisplayName = userAccount.DisplayName,
+                VerificationUrl = $"https://localhost/"
+            };
+
+            return Result.Ok();
+        }
+
+        private Result ValidateUserAccount(UserAccount userAccount)
+        {
+            var errors = new List<string>();
+
+            if (_userRepository.GetSingle(u => u.EmailAddress == userAccount.EmailAddress) != null)
+            {
+                errors.Add($"Email address '{userAccount.EmailAddress}' is already in use.");
+            }
+
+            if (!ValidateEmail(userAccount.EmailAddress))
+            {
+                errors.Add("Email address is not valid.");
             }
 
             double passwordEntropy = CalculatePasswordEntropy(userAccount.HashedPassword);
-            if (passwordEntropy < 80) 
+            if (passwordEntropy < 80)
             {
-                errors.Add($"Password strength must be > 80, but is {passwordEntropy}");
+                errors.Add($"Password strength must be greater than 80, but is {passwordEntropy}.");
             }
 
-            if (isFailed)
-            {
-                return Result.Fail(errors);
-            }
-            else
-            {
-                userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
-                return userAccount;
-            }
+            return errors.Count > 0 ? Result.Fail(errors) : Result.Ok();
         }
 
         private bool ValidateEmail(string email)

@@ -1,8 +1,15 @@
+using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Services.LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using FluentEmail.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,13 +21,34 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json") // Assuming your app settings are stored in appsettings.json
+    .AddJsonFile("appsettings.json")
+    .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
     .Build();
 builder.Services.AddSingleton(configuration);
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-var connectionString = configuration.GetConnectionString("MongoDb");
+foreach (var config in configuration.AsEnumerable())
+{
+    Console.WriteLine($"{config.Key}: {config.Value}");
+}
+
+var connectionString = configuration.GetConnectionString("postgres");
+builder.Services.AddDbContext<YamudDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IFluentEmailFactory, YamudFluentEmailFactory>();
 
+builder.Services.AddSingleton<IHostEnvironment>(provider =>
+{
+    var env = provider.GetRequiredService<IServiceProvider>().GetRequiredService<IHostEnvironment>();
+    return env;
+});
+
+builder.Services.AddTransient<IEmailService, EmailService>();
 // JWT authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

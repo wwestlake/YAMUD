@@ -3,10 +3,9 @@
 public class Room
 {
     public Guid Id { get; set; }
-    public int X { get; set; }
-    public int Y { get; set; }
-    public int Z { get; set; }
+    public Guid Owner { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    public Dictionary<string, (int x, int y, int z)> Exits { get; set; }
+    public RoomAddress Address { get; set; }
+    public Exits Exits { get; set; }
 }

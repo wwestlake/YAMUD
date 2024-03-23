@@ -6,10 +6,10 @@ namespace LagDaemon.YAMUD.WebAPI.Services
     public interface IUserAccountService
     {
         Result<IEnumerable<UserAccount>> GetAllUserAccounts();
-        Result<UserAccount> GetUserAccountById(string id);
-        Result<UserAccount> GetUserAccountByEmail(string id);
+        Result<UserAccount> GetUserAccountById(Guid id);
+        Result<UserAccount> GetUserAccountByEmail(string email);
         Result<UserAccount> CreateUserAccount(UserAccount userAccount);
-        Result UpdateUserAccount(string id, UserAccount updatedUserAccount);
-        Result DeleteUserAccount(string id);
+        Result UpdateUserAccount(Guid id, UserAccount updatedUserAccount);
+        Result DeleteUserAccount(Guid id);
     }
 }

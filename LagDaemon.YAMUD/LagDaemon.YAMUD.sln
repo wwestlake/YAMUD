@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.WebAPI", "L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.WebClient", "LagDaemon.YAMUD.WebClient\LagDaemon.YAMUD.WebClient.csproj", "{26731526-D7B3-499A-87CC-984522B9C36F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.WebAPI.Tests", "LagDaemon.YAMUD.WebAPI.Tests\LagDaemon.YAMUD.WebAPI.Tests.csproj", "{49D370AE-A688-4C26-8584-9FACAE0C4066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.WebAPI.Tests", "LagDaemon.YAMUD.WebAPI.Tests\LagDaemon.YAMUD.WebAPI.Tests.csproj", "{49D370AE-A688-4C26-8584-9FACAE0C4066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

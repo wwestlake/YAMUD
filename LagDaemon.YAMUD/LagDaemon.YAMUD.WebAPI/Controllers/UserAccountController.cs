@@ -49,7 +49,7 @@ namespace LagDaemon.YAMUD.Controllers
         }
 
         [HttpGet("GetUserById/{id}")]
-        public IActionResult GetUserAccountById(string id)
+        public IActionResult GetUserAccountById(Guid id)
         {
             var userAccount = _userAccountService.GetUserAccountById(id);
             if (userAccount == null)
@@ -89,7 +89,7 @@ namespace LagDaemon.YAMUD.Controllers
         }
 
         [HttpPut("UpdateUser/{id}")]
-        public IActionResult UpdateUserAccount(string id, UserAccount updatedUserAccount)
+        public IActionResult UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
         {
             var existingUserAccount = _userAccountService.GetUserAccountById(id);
             if (existingUserAccount == null)
@@ -101,7 +101,7 @@ namespace LagDaemon.YAMUD.Controllers
         }
 
         [HttpDelete("DeleteUser/{id}")]
-        public IActionResult DeleteUserAccount(string id)
+        public IActionResult DeleteUserAccount(Guid id)
         {
             var result = _userAccountService.DeleteUserAccount(id);
             if (result.IsSuccess)
