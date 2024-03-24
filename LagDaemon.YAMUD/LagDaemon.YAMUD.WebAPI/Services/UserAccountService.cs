@@ -3,7 +3,10 @@ using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Services.LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,82 +34,98 @@ namespace LagDaemon.YAMUD.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Result<IEnumerable<UserAccount>> GetAllUserAccounts()
+        public async Task<Result<IEnumerable<UserAccount>>> GetAllUserAccounts()
         {
-            return Result.Ok(_userRepository.GetAll());
+            return await Task.Run(() => {
+                return Result.Ok(_userRepository.GetAll());
+            });
         }
 
-        public Result<UserAccount> GetUserAccountById(Guid id)
+        public async Task<Result<UserAccount>> GetUserAccountById(Guid id)
         {
             return Result.Ok(_userRepository.GetById(id));
         }
 
-        public Result<UserAccount> GetUserAccountByEmail(string email)
+        public async Task<Result<UserAccount>> GetUserAccountByEmail(string email)
         {
-            Expression<Func<UserAccount, bool>> filter = u => u.EmailAddress == email;
-            return Result.Ok(_userRepository.GetSingle(filter));
-        }
-
-        public Result<UserAccount> CreateUserAccount(UserAccount userAccount)
-        {
-            var validationResult = ValidateUserAccount(userAccount);
-            if (validationResult.IsFailed)
+            return await Task.Run(() =>
             {
-                return validationResult;
-            }
+                Expression<Func<UserAccount, bool>> filter = u => u.EmailAddress == email;
+                return Result.Ok(_userRepository.GetSingle(filter));
+            });        }
 
-            userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
-            _userRepository.Insert(userAccount);
-            _unitOfWork.SaveChanges();
-            return Result.Ok(userAccount);
-        }
-
-        public Result UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
+        public async Task<Result<UserAccount>> CreateUserAccount(UserAccount userAccount)
         {
-            var existingUser = _userRepository.GetById(id);
-            if (existingUser == null)
+            return await Task.Run(async () =>
             {
-                return Result.Fail($"User with ID '{id}' not found.");
-            }
+                var validationResult = await ValidateUserAccount(userAccount);
+                if (validationResult.IsFailed)
+                {
+                    return validationResult;
+                }
 
-            updatedUserAccount.ID = id;
-            _userRepository.Update(updatedUserAccount);
-            _unitOfWork.SaveChanges();
-            return Result.Ok();
+                userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
+                _userRepository.Insert(userAccount);
+                _unitOfWork.SaveChanges();
+                return Result.Ok(userAccount);
+            });
         }
 
-        public Result DeleteUserAccount(Guid id)
+        public async Task<Result> UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
         {
-            var existingUser = _userRepository.GetById(id);
-            if (existingUser == null)
+            return await Task.Run(() =>
             {
-                return Result.Fail($"User with ID '{id}' not found.");
-            }
+                var existingUser = _userRepository.GetById(id);
+                if (existingUser == null)
+                {
+                    return Result.Fail($"User with ID '{id}' not found.");
+                }
 
-            _userRepository.Delete(id);
-            _unitOfWork.SaveChanges();
-            return Result.Ok();
+                updatedUserAccount.ID = id;
+                _userRepository.Update(updatedUserAccount);
+                _unitOfWork.SaveChanges();
+                return Result.Ok();
+            });
         }
 
-        private string GetHostName()
+        public async Task<Result> DeleteUserAccount(Guid id)
         {
-            // Access the current HTTP context and retrieve the host name
-            var host = _httpContextAccessor.HttpContext.Request.Host;
+            return await Task.Run(() =>
+            {
+                var existingUser = _userRepository.GetById(id);
+                if (existingUser == null)
+                {
+                    return Result.Fail($"User with ID '{id}' not found.");
+                }
 
-            // Return the host name as a string
-            return host.ToString();
+                _userRepository.Delete(id);
+                _unitOfWork.SaveChanges();
+                return Result.Ok();
+            });
+        }
+
+        private async Task<string> GetHostName()
+        {
+            return await Task.Run(() =>
+            {
+                // Access the current HTTP context and retrieve the host name
+                var host = $"{_httpContextAccessor.HttpContext.Request.Host}";
+
+                // Return the host name as a string
+                return host.ToString();
+            });
         }
 
         private async Task<Result> SendEmailVerification(UserAccount userAccount)
         {
             userAccount.VerificationToken = Guid.NewGuid();
-            UpdateUserAccount(userAccount.ID, userAccount); // Assuming this method updates the user account in the database
+            await UpdateUserAccount(userAccount.ID, userAccount); // Assuming this method updates the user account in the database
 
             // TODO: get host from environment
             var viewModel = new AccountVerificationViewModel()
             {
                 DisplayName = userAccount.DisplayName,
-                VerificationUrl = $"{GetHostName()}/VerifyEmail/{userAccount.ID}/{userAccount.VerificationToken.ToString()}", // Replace this with your actual verification URL
+                VerificationUrl = $"https://{GetHostName()}/api/UserAccount/VerifyEmail/{userAccount.ID}/{userAccount.VerificationToken.ToString()}", // Replace this with your actual verification URL
                 Token = userAccount.VerificationToken.ToString(),
             };
 
@@ -125,27 +144,30 @@ namespace LagDaemon.YAMUD.Services
         }
     
 
-        private Result ValidateUserAccount(UserAccount userAccount)
+        private async Task<Result> ValidateUserAccount(UserAccount userAccount)
         {
-            var errors = new List<string>();
-
-            if (_userRepository.GetSingle(u => u.EmailAddress == userAccount.EmailAddress) != null)
+            return await Task.Run(() =>
             {
-                errors.Add($"Email address '{userAccount.EmailAddress}' is already in use.");
-            }
+                var errors = new List<string>();
 
-            if (!ValidateEmail(userAccount.EmailAddress))
-            {
-                errors.Add("Email address is not valid.");
-            }
+                if (_userRepository.GetSingle(u => u.EmailAddress == userAccount.EmailAddress) != null)
+                {
+                    errors.Add($"Email address '{userAccount.EmailAddress}' is already in use.");
+                }
 
-            double passwordEntropy = CalculatePasswordEntropy(userAccount.HashedPassword);
-            if (passwordEntropy < 80)
-            {
-                errors.Add($"Password strength must be greater than 80, but is {passwordEntropy}.");
-            }
+                if (!ValidateEmail(userAccount.EmailAddress))
+                {
+                    errors.Add("Email address is not valid.");
+                }
 
-            return errors.Count > 0 ? Result.Fail(errors) : SendEmailVerification(userAccount).Result;
+                double passwordEntropy = CalculatePasswordEntropy(userAccount.HashedPassword);
+                if (passwordEntropy < 80)
+                {
+                    errors.Add($"Password strength must be greater than 80, but is {passwordEntropy}.");
+                }
+
+                return errors.Count > 0 ? Result.Fail(errors) : SendEmailVerification(userAccount).Result;
+            });
         }
 
         private bool ValidateEmail(string email)
@@ -178,24 +200,79 @@ namespace LagDaemon.YAMUD.Services
             }
         }
 
-        public Result VerifyUserEmail(Guid userId, Guid verificationToken)
+        public async Task<Result> VerifyUserEmail(Guid userId, Guid verificationToken)
         {
-            var isFailed = false;
             var result = Result.Ok();
 
-            GetUserAccountById(userId).OnSuccess( acc => { 
+            var userAccount = await GetUserAccountById(userId);
+
+            userAccount.OnSuccess( async acc => { 
                 if (acc.VerificationToken == verificationToken)
                 {
                     acc.VerificationToken = Guid.Empty;
                     acc.Status = UserAccountStatus.Verified;
-                    UpdateUserAccount(userId, acc);
+                    await UpdateUserAccount(userId, acc);
                 }
             } ).OnFailure( msg => {
-                isFailed = true;
                 result = Result.Fail(msg);
             } );
 
             return result;
+        }
+
+        public string GenerateJwtToken(UserAccount userAccount)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("somekindofsecretkey1234567890!@#$%^&*()-_=+"));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, userAccount.EmailAddress),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                // Add more claims as needed
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: "yamud.lagdaemon.com",
+                audience: "localhost",
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(24), // Token expiration time
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<Result<string>> AuthenticateAsync(string email, string password)
+        {
+            Result<string> result = Result.Ok("Verified");
+
+            var userResult = await GetUserAccountByEmail(email);
+            userResult.OnSuccess(user => {
+                if (user == null || !VerifyPassword(password, user.HashedPassword))
+                {
+                     result = Result.Fail<string>("Invalid email or password");
+                } else
+                {
+                    result = Result.Ok(GenerateJwtToken(user));
+                }
+            }).OnFailure(x => { 
+                result = Result.Fail(x);
+            });
+
+            return result;
+        }
+
+        private bool VerifyPassword(string password, string hashedPassword)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedBytes = Convert.FromBase64String(hashedPassword);
+                byte[] inputBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+                // Compare the hashed password stored in the database with the hashed input password
+                return hashedBytes.SequenceEqual(inputBytes);
+            }
         }
     }
 }

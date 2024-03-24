@@ -1,0 +1,41 @@
+In a text-based MUD (Multi-User Dungeon), players typically interact with the game world using commands. Here are some top-level commands that users/players can normally perform in a MUD:
+
+Movement Commands:
+
+North, South, East, West (N, S, E, W): Move the character in the specified direction.
+Northeast, Northwest, Southeast, Southwest (NE, NW, SE, SW): Move diagonally.
+Up, Down (U, D): Move vertically.
+Go <direction>: Generic command to move in a specific direction.
+Interaction Commands:
+
+Look (L): Examine the current room or a specific object.
+Examine <object>: Get detailed information about a specific object.
+Take <item>: Pick up an item from the room.
+Drop <item>: Drop an item from the player's inventory.
+Inventory (I): View the contents of the player's inventory.
+Equip <item>: Equip an item from the inventory.
+Unequip <item>: Remove an equipped item.
+Communication Commands:
+
+Say <message>: Speak to characters in the current room.
+Tell <player> <message>: Send a private message to another player.
+Shout <message>: Broadcast a message to all players in the game.
+Emote <action>: Perform an action in the room (e.g., waves, laughs).
+Interaction with NPCs:
+
+Talk <npc>: Initiate a conversation with a non-player character (NPC).
+Give <item> to <npc>: Offer an item to an NPC.
+Trade <npc>: Access the trading interface with an NPC.
+Combat Commands:
+
+Attack <target>: Initiate combat with another player or NPC.
+Cast <spell>: Use magical abilities in combat.
+Use <item>: Utilize items or potions during combat.
+Miscellaneous Commands:
+
+Help (H): Access help documentation or instructions.
+Quit (Q): Exit the game.
+Save: Save the player's progress.
+Stats (S): View the player's statistics or attributes.
+
+

@@ -11,11 +11,11 @@ namespace LagDaemon.YAMUD.Model.User
 
     public enum UserAccountRoles
     {
-        User = 1,
-        Moderator = 2,
-        Administrator = 4,
-        Owner = 8,
-        Founder = 16
+        Founder = 1,
+        Owner = 2,
+        Admin = 4,
+        Moderator = 8,
+        Player = 16
     }
 
     public class UserAccount

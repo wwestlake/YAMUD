@@ -1,6 +1,8 @@
 ﻿using FluentResults;
 using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LagDaemon.YAMUD.Controllers
@@ -17,15 +19,16 @@ namespace LagDaemon.YAMUD.Controllers
         }
 
         // GET: api/UserAccount
+        [Authorize]
         [HttpGet("GetAllUsers")]
-        public IActionResult GetAllUserAccounts()
+        public async Task<IActionResult> GetAllUserAccounts()
         {
             try
             {
                 var isFailed = false;
                 IEnumerable<UserAccount> userAccounts = new List<UserAccount>().AsEnumerable();
                 IEnumerable<IError> errors = new List<IError>().AsEnumerable();
-                _userAccountService.GetAllUserAccounts().OnSuccess(x =>
+                (await _userAccountService.GetAllUserAccounts()).OnSuccess(x =>
                 {
                     userAccounts = x;
                 }).OnFailure(x =>
@@ -48,6 +51,7 @@ namespace LagDaemon.YAMUD.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetUserById/{id}")]
         public IActionResult GetUserAccountById(Guid id)
         {
@@ -59,6 +63,7 @@ namespace LagDaemon.YAMUD.Controllers
             return Ok(userAccount);
         }
 
+        [Authorize]
         [HttpGet("GetUserByEmail/{email}")]
         public IActionResult GetUserAccountByEmail(string email)
         {
@@ -70,10 +75,11 @@ namespace LagDaemon.YAMUD.Controllers
             return Ok(userAccount);
         }
 
+        
         [HttpGet("VerifyEmail/{id}/{token}")]
-        public IActionResult VerifyUser(Guid id, Guid token)
+        public async Task<IActionResult> VerifyUser(Guid id, Guid token)
         {
-            var result = _userAccountService.VerifyUserEmail(id, token);
+            var result = await _userAccountService.VerifyUserEmail(id, token);
 
             if (result.IsSuccess)
             {
@@ -87,10 +93,10 @@ namespace LagDaemon.YAMUD.Controllers
 
 
         [HttpPost("CreateNewUser")]
-        public IActionResult CreateUserAccount([FromBody] UserAccount userAccount)
+        public async Task<IActionResult> CreateUserAccount([FromBody] UserAccount userAccount)
         {
             IActionResult result = Ok(string.Empty);
-            var createdUserAccount = _userAccountService.CreateUserAccount(userAccount);
+            var createdUserAccount = await _userAccountService.CreateUserAccount(userAccount);
             createdUserAccount.OnSuccess(x =>
             {
                 result = CreatedAtAction(nameof(GetUserAccountById), new { id = createdUserAccount.Value.ID }, createdUserAccount);
@@ -103,6 +109,7 @@ namespace LagDaemon.YAMUD.Controllers
             return result;
         }
 
+        [Authorize]
         [HttpPut("UpdateUser/{id}")]
         public IActionResult UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
         {
@@ -115,10 +122,11 @@ namespace LagDaemon.YAMUD.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("DeleteUser/{id}")]
-        public IActionResult DeleteUserAccount(Guid id)
+        public async Task<IActionResult> DeleteUserAccount(Guid id)
         {
-            var result = _userAccountService.DeleteUserAccount(id);
+            var result = await _userAccountService.DeleteUserAccount(id);
             if (result.IsSuccess)
             {
                 return NoContent();
@@ -128,5 +136,21 @@ namespace LagDaemon.YAMUD.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPost("Authenticate")]
+        public async Task<IActionResult> Authenticate([FromBody] UserLoginModel userLogin)
+        {
+            var result = await _userAccountService.AuthenticateAsync(userLogin.EmailAddress, userLogin.Password);
+
+            if (result.IsSuccess)
+            {
+                return Ok(new { token = result.Value });
+            }
+            else
+            {
+                return Unauthorized(new { message = result.Errors });
+            }
+        }
+
     }
 }
