@@ -70,6 +70,21 @@ namespace LagDaemon.YAMUD.Controllers
             return Ok(userAccount);
         }
 
+        [HttpGet("VerifyEmail/{id}/{token}")]
+        public IActionResult VerifyUser(Guid id, Guid token)
+        {
+            var result = _userAccountService.VerifyUserEmail(id, token);
+
+            if (result.IsSuccess)
+            {
+                return Ok(new { message = "User email verified" });
+            }
+            else
+            {
+                return BadRequest(new { message = "Verification failed" });
+            }
+        }
+
 
         [HttpPost("CreateNewUser")]
         public IActionResult CreateUserAccount([FromBody] UserAccount userAccount)

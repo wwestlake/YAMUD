@@ -1,9 +1,11 @@
-﻿using System;
+﻿using FluentEmail.Core.Models;
+using FluentResults;
+using System;
 
 namespace LagDaemon.YAMUD.WebAPI.Services
 {
     public interface IEmailService
     {
-        Task SendEmailAsync(string toEmail, string subject, string templateName, object model);
+        Task<Result<SendResponse>> SendEmailAsync(string toEmail, string subject, string templateName, object model);
     }
 }

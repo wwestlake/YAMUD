@@ -1,6 +1,7 @@
 {
   "DisplayName": "bill",
-  "EmailAddress": "bill@email.com",
+  "EmailAddress": "wweatlake1234@gmail.com",
+  "HashedPassword": "Xr0tU5b9~!-4=9rgvh7865$#",
   "Status": 0,
   "Roles": 1
 }

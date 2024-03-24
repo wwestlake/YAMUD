@@ -11,5 +11,6 @@ namespace LagDaemon.YAMUD.WebAPI.Services
         Result<UserAccount> CreateUserAccount(UserAccount userAccount);
         Result UpdateUserAccount(Guid id, UserAccount updatedUserAccount);
         Result DeleteUserAccount(Guid id);
+        Result VerifyUserEmail(Guid userId, Guid verificationToken);
     }
 }

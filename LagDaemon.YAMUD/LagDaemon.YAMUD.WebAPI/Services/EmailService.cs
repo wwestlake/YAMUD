@@ -1,5 +1,9 @@
 ﻿using FluentEmail.Core;
+using FluentEmail.Core.Models;
 using FluentEmail.Razor;
+using FluentEmail.Smtp;
+using FluentResults;
+using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -12,35 +16,25 @@ namespace LagDaemon.YAMUD.WebAPI.Services
     public class EmailService : IEmailService
     {
         private readonly IFluentEmailFactory _emailFactory;
-        private readonly IWebHostEnvironment _env;
+        private readonly SmtpSender _sender;
+        private readonly RazorViewToStringRenderer _razorViewToStringRenderer;
 
-        public EmailService(IFluentEmailFactory emailFactory, IWebHostEnvironment env)
+        public EmailService(IFluentEmailFactory emailFactory, SmtpSender sender, RazorViewToStringRenderer razorViewToStringRenderer)
         {
             _emailFactory = emailFactory;
-            _env = env;
+            _sender = sender;
+            _razorViewToStringRenderer = razorViewToStringRenderer;
         }
 
-        public async Task SendEmailAsync(string toEmail, string subject, string templateName, object model)
+        public async Task<Result<SendResponse>> SendEmailAsync(string toEmail, string subject, string templateName, object model)
         {
             var email = _emailFactory.Create();
-
+            email.Sender = _sender;
             email.To(toEmail)
+                 .SetFrom("yamud@lagdaemon.com")
                  .Subject(subject)
-                 .UsingTemplate(await GetEmailTemplate(templateName), model, isHtml: true);
-
-            await email.SendAsync();
-        }
-
-        private async Task<string> GetEmailTemplate(string templateName)
-        {
-            string templatePath = Path.Combine(_env.ContentRootPath, "EmailTemplates", $"{templateName}.cshtml");
-
-            if (!File.Exists(templatePath))
-            {
-                throw new FileNotFoundException($"Email template '{templateName}' not found.");
-            }
-
-            return await File.ReadAllTextAsync(templatePath);
+                 .Body(await _razorViewToStringRenderer.RenderViewToStringAsync(templateName, model), true);
+            return Result.Ok(await email.SendAsync());
         }
     }
 }

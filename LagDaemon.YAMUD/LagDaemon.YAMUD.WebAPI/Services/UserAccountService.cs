@@ -15,12 +15,20 @@ namespace LagDaemon.YAMUD.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<UserAccount> _userRepository;
         private IEmailService _emailService;
+        private RazorViewToStringRenderer _razorViewToStringRenderer;
+        private IWebHostEnvironment _env;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService)
+        public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService, 
+                                RazorViewToStringRenderer razorViewToStringRenderer, 
+                                IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _userRepository = _unitOfWork.GetRepository<UserAccount>();
             _emailService = emailService;
+            _razorViewToStringRenderer = razorViewToStringRenderer;
+            _env = env;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public Result<IEnumerable<UserAccount>> GetAllUserAccounts()
@@ -80,19 +88,42 @@ namespace LagDaemon.YAMUD.Services
             return Result.Ok();
         }
 
-        private Result SendEmailVerification(UserAccount userAccount)
+        private string GetHostName()
+        {
+            // Access the current HTTP context and retrieve the host name
+            var host = _httpContextAccessor.HttpContext.Request.Host;
+
+            // Return the host name as a string
+            return host.ToString();
+        }
+
+        private async Task<Result> SendEmailVerification(UserAccount userAccount)
         {
             userAccount.VerificationToken = Guid.NewGuid();
-            UpdateUserAccount(userAccount.ID, userAccount);
+            UpdateUserAccount(userAccount.ID, userAccount); // Assuming this method updates the user account in the database
 
+            // TODO: get host from environment
             var viewModel = new AccountVerificationViewModel()
             {
                 DisplayName = userAccount.DisplayName,
-                VerificationUrl = $"https://localhost/"
+                VerificationUrl = $"{GetHostName()}/VerifyEmail/{userAccount.ID}/{userAccount.VerificationToken.ToString()}", // Replace this with your actual verification URL
+                Token = userAccount.VerificationToken.ToString(),
             };
 
-            return Result.Ok();
+            // Send the email
+            var emailResult = await _emailService.SendEmailAsync(userAccount.EmailAddress, "Account Verification", "AccountVerification", viewModel);
+
+            if (emailResult.IsSuccess)
+            {
+                return Result.Ok();
+            }
+            else
+            {
+                // Handle the case where sending the email fails
+                return Result.Fail("Failed to send email verification.");
+            }
         }
+    
 
         private Result ValidateUserAccount(UserAccount userAccount)
         {
@@ -114,7 +145,7 @@ namespace LagDaemon.YAMUD.Services
                 errors.Add($"Password strength must be greater than 80, but is {passwordEntropy}.");
             }
 
-            return errors.Count > 0 ? Result.Fail(errors) : Result.Ok();
+            return errors.Count > 0 ? Result.Fail(errors) : SendEmailVerification(userAccount).Result;
         }
 
         private bool ValidateEmail(string email)
@@ -145,6 +176,26 @@ namespace LagDaemon.YAMUD.Services
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(bytes);
             }
+        }
+
+        public Result VerifyUserEmail(Guid userId, Guid verificationToken)
+        {
+            var isFailed = false;
+            var result = Result.Ok();
+
+            GetUserAccountById(userId).OnSuccess( acc => { 
+                if (acc.VerificationToken == verificationToken)
+                {
+                    acc.VerificationToken = Guid.Empty;
+                    acc.Status = UserAccountStatus.Verified;
+                    UpdateUserAccount(userId, acc);
+                }
+            } ).OnFailure( msg => {
+                isFailed = true;
+                result = Result.Fail(msg);
+            } );
+
+            return result;
         }
     }
 }
