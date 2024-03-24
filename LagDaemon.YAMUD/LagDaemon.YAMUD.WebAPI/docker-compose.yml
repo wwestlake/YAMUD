@@ -1,0 +1,21 @@
+﻿version: '3.8'
+
+services:
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    secrets:
+      - postgres_user
+      - postgres_password
+    network_mode: "host"
+
+secrets:
+  db_user:
+    file: ./path/to/db_username_secret_file
+  db_password:
+    file: ./path/to/db_password_secret_file

@@ -1,39 +1,48 @@
+using FluentEmail.Core;
 using LagDaemon.YAMUD.API;
-using LagDaemon.YAMUD.API.Services.LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.API.Services.LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using FluentEmail.Core;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Configuration
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
     .Build();
-builder.Services.AddSingleton(configuration);
-builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-foreach (var config in configuration.AsEnumerable())
-{
-    Console.WriteLine($"{config.Key}: {config.Value}");
-}
+builder.Services.AddSingleton(configuration);
 
 var connectionString = configuration.GetConnectionString("postgres");
+
+// Retrieve Docker secrets as environment variables
+var dbUsername = Environment.GetEnvironmentVariable("postgres_user");
+var dbPassword = Environment.GetEnvironmentVariable("postgres_password");
+
+if (string.IsNullOrEmpty(dbUsername) || string.IsNullOrEmpty(dbPassword))
+{
+    throw new InvalidOperationException("Docker secrets not provided.");
+}
+
+// Modify the connection string to include the retrieved username and password
+connectionString = string.Format(connectionString, dbUsername, dbPassword);
+
 builder.Services.AddDbContext<YamudDbContext>(options =>
     options.UseNpgsql(connectionString));
 
@@ -62,8 +71,8 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
     options.ViewLocationFormats.Add("/Views/Shared/{0}" + RazorViewEngine.ViewExtension);
 });
 
-
 builder.Services.AddTransient<IEmailService, EmailService>();
+
 // JWT authentication setup
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -87,10 +96,6 @@ builder.Services.AddHttpsRedirection(options =>
 
 var app = builder.Build();
 
-var serviceProvider = app.Services;
-
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -99,9 +104,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

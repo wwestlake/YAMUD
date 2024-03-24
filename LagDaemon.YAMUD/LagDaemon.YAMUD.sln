@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.WebClient",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.WebAPI.Tests", "LagDaemon.YAMUD.WebAPI.Tests\LagDaemon.YAMUD.WebAPI.Tests.csproj", "{49D370AE-A688-4C26-8584-9FACAE0C4066}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D21B3622-E2A8-4565-9256-8A1073A8E9AC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{49D370AE-A688-4C26-8584-9FACAE0C4066}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49D370AE-A688-4C26-8584-9FACAE0C4066}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49D370AE-A688-4C26-8584-9FACAE0C4066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D21B3622-E2A8-4565-9256-8A1073A8E9AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D21B3622-E2A8-4565-9256-8A1073A8E9AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D21B3622-E2A8-4565-9256-8A1073A8E9AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D21B3622-E2A8-4565-9256-8A1073A8E9AC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

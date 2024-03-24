@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  lagdaemon.yamud.webapi:
+    image: ${DOCKER_REGISTRY-}lagdaemonyamudwebapi
+    build:
+      context: .
+      dockerfile: LagDaemon.YAMUD.WebAPI/Dockerfile
