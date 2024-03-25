@@ -1,5 +1,7 @@
 ﻿namespace LagDaemon.YAMUD.Parsers
 
+open LagDaemon.YAMUD.Model.User
+
 module UserCommandParser =
     open FParsec
 
@@ -91,6 +93,8 @@ module UserCommandParser =
         str_r "south" South
         str_r "east"  East
         str_r "west"  West 
+        str_r "up"  Up 
+        str_r "down"  Down
      ]
 
     let goCommand : Parser<_> = str_ws "go" >>. direction |>> Movement 
@@ -115,11 +119,10 @@ module UserCommandParser =
             match parse cmd with
             | Some x -> execute x 
             | None -> onfail "Parse error" 
-
-
     
 
     let ParseCommand (cmd : string)  (onSuccess: Command -> string) (onFail: string -> string)  : string = 
-        let drive = new CommandParserDriver(onSuccess, onFail)
-        drive.parse(cmd)
+        let driver = new CommandParserDriver(onSuccess, onFail)
+        driver.parse(cmd)
         
+ 

@@ -8,14 +8,18 @@
 
   <ItemGroup>
     <Compile Include="UserCommandParser.fs" />
+    <Compile Include="MovementHandler.fs" />
   </ItemGroup>
-
-  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="2.0.0-beta2" />
     <PackageReference Include="FParsec-Pipes" Version="1.1.2" />
     <PackageReference Include="FParsec.CSharp" Version="12.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LagDaemon.YAMUD\LagDaemon.YAMUD.API\LagDaemon.YAMUD.API.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>
 
 </Project>

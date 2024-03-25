@@ -65,8 +65,10 @@ namespace LagDaemon.YAMUD.Services
                 }
 
                 userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
+                userAccount.PlayerState.UserId = userAccount.ID;
                 _userRepository.Insert(userAccount);
                 _unitOfWork.SaveChanges();
+
                 return Result.Ok(userAccount);
             });
         }

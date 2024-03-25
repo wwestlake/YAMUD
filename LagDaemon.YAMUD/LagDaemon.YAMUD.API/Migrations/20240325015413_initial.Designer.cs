@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    [Migration("20240323194902_initial-migration")]
-    partial class initialmigration
+    [Migration("20240325015413_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,30 @@ namespace LagDaemon.YAMUD.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("PlayerStateId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerStateId");
+
+                    b.ToTable("ItemBase");
+                });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Map.Exits", b =>
                 {
@@ -94,6 +118,28 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.ToTable("RoomAddress");
                 });
 
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CurrentLocationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsAuthenticated")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CurrentLocationId");
+
+                    b.ToTable("PlayerState");
+                });
+
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserAccount", b =>
                 {
                     b.Property<Guid>("ID")
@@ -112,6 +158,9 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("PlayerStateId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Roles")
                         .HasColumnType("integer");
 
@@ -123,7 +172,16 @@ namespace LagDaemon.YAMUD.API.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("PlayerStateId");
+
                     b.ToTable("UserAccounts");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.User.PlayerState", null)
+                        .WithMany("Items")
+                        .HasForeignKey("PlayerStateId");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Map.Room", b =>
@@ -143,6 +201,33 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Exits");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.Map.RoomAddress", "CurrentLocation")
+                        .WithMany()
+                        .HasForeignKey("CurrentLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CurrentLocation");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserAccount", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.User.PlayerState", "PlayerState")
+                        .WithMany()
+                        .HasForeignKey("PlayerStateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerState");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
