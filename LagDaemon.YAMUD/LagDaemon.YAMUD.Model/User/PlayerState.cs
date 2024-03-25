@@ -23,5 +23,6 @@ namespace LagDaemon.YAMUD.Model.User
 
         public List<ItemBase> Items { get; set; }
 
+        public UserAccount UserAccount { get; set; }
     }
 }

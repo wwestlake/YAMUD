@@ -18,5 +18,15 @@ namespace LagDaemon.YAMUD.API
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserAccount>()
+                .HasOne(u => u.PlayerState)
+                .WithOne(ps => ps.UserAccount)
+                .HasForeignKey<PlayerState>(ps => ps.Id);
+        }
     }
 }
