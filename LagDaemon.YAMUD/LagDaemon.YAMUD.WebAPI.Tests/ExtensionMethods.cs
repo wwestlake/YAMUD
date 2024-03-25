@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
+﻿namespace LagDaemon.YAMUD.Tests.Extensions;
 
-namespace LagDaemon.YAMUD.Tests.Extensions
+public static class MongoExtensions
 {
-    public static class MongoExtensions
-    {
-    }
 }

@@ -1,5 +1,6 @@
 ﻿using FluentResults;
-using System;
+
+namespace LagDaemon.YAMUD.WebAPI.Utilities;
 
 public static class FluentResultExtensions
 {

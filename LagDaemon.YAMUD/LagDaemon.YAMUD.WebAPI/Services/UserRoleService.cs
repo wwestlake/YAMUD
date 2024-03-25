@@ -1,7 +1,6 @@
-﻿namespace LagDaemon.YAMUD.WebAPI.Services
-{
-    public class UserRoleService
-    {
+﻿namespace LagDaemon.YAMUD.WebAPI.Services;
 
-    }
+public class UserRoleService
+{
+
 }

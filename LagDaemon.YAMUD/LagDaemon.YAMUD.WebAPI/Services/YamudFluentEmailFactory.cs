@@ -1,12 +1,11 @@
 ﻿using FluentEmail.Core;
 
-namespace LagDaemon.YAMUD.WebAPI.Services
+namespace LagDaemon.YAMUD.WebAPI.Services;
+
+public class YamudFluentEmailFactory : IFluentEmailFactory
 {
-    public class YamudFluentEmailFactory : IFluentEmailFactory
+    public IFluentEmail Create()
     {
-        public IFluentEmail Create()
-        {
-            return new Email();
-        }
+        return new Email();
     }
 }

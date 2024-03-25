@@ -7,9 +7,8 @@ using LagDaemon.YAMUD.Services;
 using Moq;
 using Xunit;
 
-namespace LagDaemon.YAMUD.Tests.Services
+namespace LagDaemon.YAMUD.Tests.Services;
+
+public class UserAccountServiceTests
 {
-    public class UserAccountServiceTests
-    {
-    }
 }
