@@ -3,6 +3,7 @@ using System;
 using LagDaemon.YAMUD.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    partial class YamudDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240325214740_updated-users")]
+    partial class updatedusers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,7 +121,6 @@ namespace LagDaemon.YAMUD.API.Migrations
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("CurrentLocationId")
@@ -127,20 +129,12 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Property<bool>("IsAuthenticated")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid?>("UserAccountID")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserAccountId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CurrentLocationId");
-
-                    b.HasIndex("UserAccountID")
-                        .IsUnique();
-
-                    b.HasIndex("UserAccountId");
 
                     b.ToTable("PlayerState");
                 });
@@ -211,13 +205,9 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", null)
-                        .WithOne("PlayerState")
-                        .HasForeignKey("LagDaemon.YAMUD.Model.User.PlayerState", "UserAccountID");
-
                     b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", "UserAccount")
-                        .WithMany()
-                        .HasForeignKey("UserAccountId")
+                        .WithOne("PlayerState")
+                        .HasForeignKey("LagDaemon.YAMUD.Model.User.PlayerState", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

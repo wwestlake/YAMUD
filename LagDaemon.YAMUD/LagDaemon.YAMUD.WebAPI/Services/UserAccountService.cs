@@ -2,6 +2,7 @@
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Utilities;
 using Microsoft.IdentityModel.Tokens;
@@ -55,22 +56,30 @@ public class UserAccountService : IUserAccountService
             return Result.Ok(_userRepository.GetSingle(filter));
         });        }
 
-    public async Task<Result<UserAccount>> CreateUserAccount(UserAccount userAccount)
+    public async Task<Result<UserAccount>> CreateUserAccount(CreateUserModel userAccount)
     {
         return await Task.Run(async () =>
         {
-            var validationResult = await ValidateUserAccount(userAccount);
+            var newUserAccount = new UserAccount() 
+            { 
+                DisplayName = userAccount.DisplayName,
+                EmailAddress = userAccount.Email,
+                HashedPassword = userAccount.Password,
+            };
+
+            var validationResult = await ValidateUserAccount(newUserAccount);
             if (validationResult.IsFailed)
             {
                 return validationResult;
             }
 
-            userAccount.HashedPassword = HashPassword(userAccount.HashedPassword);
-            userAccount.PlayerState.UserId = userAccount.ID;
-            _userRepository.Insert(userAccount);
+            newUserAccount.HashedPassword = HashPassword(newUserAccount.HashedPassword);
+            newUserAccount.PlayerState.UserAccountId = newUserAccount.ID;
+            newUserAccount.PlayerState.UserAccount = newUserAccount;
+            _userRepository.Insert(newUserAccount);
             _unitOfWork.SaveChanges();
 
-            return Result.Ok(userAccount);
+            return Result.Ok(newUserAccount);
         });
     }
 

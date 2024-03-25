@@ -22,10 +22,13 @@ public class YamudDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<PlayerState>()
+           .HasKey(ps => ps.Id);
 
-        modelBuilder.Entity<UserAccount>()
-            .HasOne(u => u.PlayerState)
-            .WithOne(ps => ps.UserAccount)
-            .HasForeignKey<PlayerState>(ps => ps.Id);
+        // Configure foreign key relationship
+        modelBuilder.Entity<PlayerState>()
+            .HasOne(ps => ps.UserAccount)        // Navigation property
+            .WithMany()                          // PlayerState can belong to only one UserAccount
+            .HasForeignKey(ps => ps.UserAccountId);  // Foreign key property
     }
 }

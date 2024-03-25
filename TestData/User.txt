@@ -1,7 +1,27 @@
 {
-  "DisplayName": "bill",
-  "EmailAddress": "wweatlake1234@gmail.com",
-  "HashedPassword": "Xr0tU5b9~!-4=9rgvh7865$#",
-  "Status": 0,
-  "Roles": 1
+  "displayName": "bill",
+  "email": "wweatlake1234@gmail.com",
+  "password": "Xr0tU5b9~!-4=9rgvh7865$#"
 }
+
+{
+  "emailAddress": "wweatlake1234@gmail.com",
+  "password": "Xr0tU5b9~!-4=9rgvh7865$#"
+}
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3d2VhdGxha2UxMjM0QGdtYWlsLmNvbSIsImp0aSI6ImQ2Y2JiYmEwLTU5MGQtNDYyOS1hZmQ2LWMwMTEwMjM0N2QwZSIsImV4cCI6MTcxMTQxODM2MCwiaXNzIjoieWFtdWQubGFnZGFlbW9uLmNvbSIsImF1ZCI6ImxvY2FsaG9zdCJ9.OsMw5lcJ5S_b0E2ZbsoJgt2xKPSHZJMmjZaEUdf6qFQ
+
+http://localhost:7214/api/UserAccount/ValidateUserEmail/09003cb6-3145-4fff-b715-5d8dc07059f8/3cd2990a-2e11-489a-9455-a54659f54e0e
+
+curl -X 'GET' 'https://localhost:32770/api/UserAccount/GetAllUsers' -H 'accept: */*'
+
+echo "postgres" | docker secret create postgres_user -
+echo "htrv5gpl" | docker secret create postgres_password -
+
+
+
+
+
+
+
+

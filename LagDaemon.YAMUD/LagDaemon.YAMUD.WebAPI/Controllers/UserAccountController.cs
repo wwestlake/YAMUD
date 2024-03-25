@@ -94,7 +94,7 @@ public class UserAccountController : ControllerBase
 
 
     [HttpPost("CreateNewUser")]
-    public async Task<IActionResult> CreateUserAccount([FromBody] UserAccount userAccount)
+    public async Task<IActionResult> CreateUserAccount([FromBody] CreateUserModel userAccount)
     {
         IActionResult result = Ok(string.Empty);
         var createdUserAccount = await _userAccountService.CreateUserAccount(userAccount);
