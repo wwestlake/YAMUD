@@ -8,6 +8,7 @@ public class PlayerState
 {
     public PlayerState()
     {
+        Id = Guid.NewGuid();
         Items = new List<ItemBase> { };
         CurrentLocation = new RoomAddress();
     }

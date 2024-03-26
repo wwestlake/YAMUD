@@ -51,6 +51,7 @@ builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IFluentEmailFactory, YamudFluentEmailFactory>();
 builder.Services.AddScoped<RazorViewToStringRenderer>();
+builder.Services.AddScoped<IRequestContext, RequestContext>();
 
 builder.Services.AddSingleton<EmailConfigurationService>();
 builder.Services.AddSingleton(provider =>
@@ -123,6 +124,10 @@ builder.Services.AddHttpsRedirection(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<RequestInfoMiddleware>();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

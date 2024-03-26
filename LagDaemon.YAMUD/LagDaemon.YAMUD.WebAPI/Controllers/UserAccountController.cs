@@ -5,6 +5,7 @@ using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace LagDaemon.YAMUD.Controllers;
 
@@ -26,6 +27,8 @@ public class UserAccountController : ControllerBase
     {
         try
         {
+            var userId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var isFailed = false;
             IEnumerable<UserAccount> userAccounts = new List<UserAccount>().AsEnumerable();
             IEnumerable<IError> errors = new List<IError>().AsEnumerable();

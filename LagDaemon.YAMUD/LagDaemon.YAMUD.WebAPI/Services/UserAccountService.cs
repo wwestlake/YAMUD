@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
@@ -23,10 +24,12 @@ public class UserAccountService : IUserAccountService
     private RazorViewToStringRenderer _razorViewToStringRenderer;
     private IWebHostEnvironment _env;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRequestContext _requestContext;
 
     public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService, 
                             RazorViewToStringRenderer razorViewToStringRenderer, 
-                            IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+                            IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor,
+                            IRequestContext requestContext)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _userRepository = _unitOfWork.GetRepository<UserAccount>();
@@ -34,6 +37,7 @@ public class UserAccountService : IUserAccountService
         _razorViewToStringRenderer = razorViewToStringRenderer;
         _env = env;
         _httpContextAccessor = httpContextAccessor;
+        _requestContext = requestContext;
     }
 
     public async Task<Result<IEnumerable<UserAccount>>> GetAllUserAccounts()
