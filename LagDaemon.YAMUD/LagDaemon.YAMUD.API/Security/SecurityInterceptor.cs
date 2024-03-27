@@ -25,7 +25,7 @@ public class SecurityInterceptor : ISecurityInterceptor
             // Perform security check based on the security attribute
 
             // For demonstration purposes, assume access is granted if the user has the "Admin" role
-            if (!CurrentUserHasRole(securityAttribute.Roles))
+            if (!IsCurrentUserAuthorized(securityAttribute.Roles))
             {
                 throw new ApplicationException("Not Authorized");
             }
@@ -36,8 +36,18 @@ public class SecurityInterceptor : ISecurityInterceptor
     }
 
     // Example method to simulate user role check
-    private bool CurrentUserHasRole(UserAccountRoles[] roleNames)
+    private bool IsCurrentUserAuthorized(UserAccountRoles[] roleNames)
     {
-        return _requestContext.Roles.Any( role => roleNames.Contains(role) );
+        // RULE: A Users role must be <= a role specified in the roles from  the method
+        // Found > Owner > Admin > Modeator > PLayer
+
+        // Map the role names to their corresponding integer values (assuming UserAccountRoles is an enum)
+        var roleValues = roleNames.Select(r => (int)r);
+
+        // Get the highest role value specified in the array
+        var highestRoleValue = roleValues.Max();
+
+        // Check if the user's highest role is less than or equal to the highest role specified in the array
+        return _requestContext.Roles.Any(role => (int)role <= highestRoleValue);
     }
 }

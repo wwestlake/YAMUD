@@ -4,6 +4,7 @@ using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Services;
+using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -65,6 +66,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFluentEmailFactory, YamudFluentEmailFactory>();
 builder.Services.AddScoped<RazorViewToStringRenderer>();
 builder.Services.AddScoped<IRequestContext, RequestContext>();
+
+builder.Services.AddScoped<UserAccountMask>();
 
 // In your DI container configuration
 

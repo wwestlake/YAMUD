@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using FluentEmail.Core;
+using FluentResults;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
@@ -14,10 +15,12 @@ namespace LagDaemon.YAMUD.Controllers;
 public class UserAccountController : ControllerBase
 {
     private readonly IUserAccountService _userAccountService;
+    private readonly UserAccountMask _userAccountMask;
 
-    public UserAccountController(IUserAccountService userAccountService)
+    public UserAccountController(IUserAccountService userAccountService, UserAccountMask userAccountMask)
     {
         _userAccountService = userAccountService;
+        _userAccountMask = userAccountMask;
     }
 
     // GET: api/UserAccount
@@ -46,7 +49,7 @@ public class UserAccountController : ControllerBase
             }
             else
             {
-                return Ok(userAccounts);
+                return Ok(userAccounts.Select(x =>  _userAccountMask.Map(x)));
             }
         }
         catch (Exception ex)
@@ -57,29 +60,84 @@ public class UserAccountController : ControllerBase
 
     [Authorize]
     [HttpGet("GetUserById/{id}")]
-    public IActionResult GetUserAccountById(Guid id)
+    public async Task<IActionResult> GetUserAccountById(Guid id)
     {
-        var userAccount = _userAccountService.GetUserAccountById(id);
-        if (userAccount == null)
+        try
         {
-            return NotFound();
+            var userAccount = await _userAccountService.GetUserAccountById(id);
+            UserAccount result = null;
+            bool failed = false;
+            IEnumerable<IError> errors = new List<IError>().AsEnumerable();
+
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+
+            userAccount.OnSuccess(x =>
+            {
+                result = x;
+            }).OnFailure(x =>
+            {
+                errors = x;
+            });
+
+            if (failed)
+            {
+                return Ok(errors);
+            }
+            else
+            {
+                return Ok(_userAccountMask.Map(result));
+            }
+
+        } catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
-        return Ok(userAccount);
     }
 
     [Authorize]
     [HttpGet("GetUserByEmail/{email}")]
-    public IActionResult GetUserAccountByEmail(string email)
+    public async Task<IActionResult> GetUserAccountByEmail(string email)
     {
-        var userAccount = _userAccountService.GetUserAccountByEmail(email);
-        if (userAccount == null)
+        try
         {
-            return NotFound();
+            var userAccount = await _userAccountService.GetUserAccountByEmail(email);
+            UserAccount result = null;
+            bool failed = false;
+            IEnumerable<IError> errors = new List<IError>().AsEnumerable();
+
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+
+            userAccount.OnSuccess(x =>
+            {
+                result = x;
+            }).OnFailure(x =>
+            {
+                errors = x;
+            });
+
+            if (failed)
+            {
+                return Ok(errors);
+            }
+            else
+            {
+                return Ok(_userAccountMask.Map(result));
+            }
+
         }
-        return Ok(userAccount);
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
-    
+
     [HttpGet("VerifyEmail/{id}/{token}")]
     public async Task<IActionResult> VerifyUser(Guid id, Guid token)
     {
@@ -103,7 +161,7 @@ public class UserAccountController : ControllerBase
         var createdUserAccount = await _userAccountService.CreateUserAccount(userAccount);
         createdUserAccount.OnSuccess(x =>
         {
-            result = CreatedAtAction(nameof(GetUserAccountById), new { id = createdUserAccount.Value.ID }, createdUserAccount);
+            result = CreatedAtAction(nameof(GetUserAccountById), new { id = createdUserAccount.Value.ID }, _userAccountMask.Map(x));
 
         }).OnFailure(x =>
         {

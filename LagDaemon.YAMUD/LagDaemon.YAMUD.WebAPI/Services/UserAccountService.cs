@@ -1,7 +1,9 @@
-﻿using FluentResults;
+﻿using FluentEmail.Core;
+using FluentResults;
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.API.Specs;
 using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.WebAPI.Models;
@@ -42,109 +44,128 @@ public class UserAccountService : IUserAccountService
         _requestContext = requestContext;
     }
 
-    [Security(UserAccountRoles.Owner)]
+    [Security(UserAccountRoles.Admin)]
     public async Task<Result<IEnumerable<UserAccount>>> GetAllUserAccounts()
     {
-        return await Task.Run(() => {
-            return Result.Ok(_userRepository.GetAll());
-        });
+        var userList = await _userRepository.GetAsync(new UserAccountGeneralQuerySpec());
+        return Result.Ok(userList);
     }
 
-    public async Task<Result<UserAccount>> GetUserAccountById(Guid id)
+    public async Task<Result<UserAccount?>> GetUserAccountById(Guid id)
     {
-        return Result.Ok(_userRepository.GetById(id));
-    }
-
-    public async Task<Result<UserAccount>> GetUserAccountByEmail(string email)
-    {
-        return await Task.Run(() =>
+        var existingUser = (await _userRepository.GetAsync(new UserAccountGetByIdSpec(id))).FirstOrDefault();
+        if (await CompareRoles(_requestContext.UserEmail, existingUser))
         {
-            Expression<Func<UserAccount, bool>> filter = u => u.EmailAddress == email;
-            return Result.Ok(_userRepository.GetSingle(filter));
-        });        
+            return Result.Ok(existingUser);
+        }
+        return Result.Ok(existingUser);
     }
 
-    public async Task<Result<UserAccount>> CreateUserAccount(CreateUserModel userAccount)
+    public async Task<Result<UserAccount?>> GetUserAccountByEmail(string email)
     {
-        return await Task.Run(async () =>
+        var existingUser = (await _userRepository.GetAsync(new UserAccountGetByEmailSpec(email))).FirstOrDefault();
+        if (await CompareRoles(_requestContext.UserEmail, existingUser))
         {
-            var newUserAccount = new UserAccount() 
-            { 
-                DisplayName = userAccount.DisplayName,
-                EmailAddress = userAccount.Email,
-                HashedPassword = userAccount.Password,
-                UserRoles = new List<UserRole>() {}
-            };
-
-            if (_userRepository.GetAll().Count() == 0)
-            {
-                newUserAccount.UserRoles.Add(
-                    new UserRole()
-                    {
-                        Role = UserAccountRoles.Owner,
-                        User = newUserAccount,
-                        UserId = newUserAccount.ID
-                    });
-            } else
-            {
-                newUserAccount.UserRoles.Add(
-                    new UserRole()
-                    {
-                        Role = UserAccountRoles.Player,
-                        User = newUserAccount,
-                        UserId = newUserAccount.ID
-                    });
-            }
-
-
-            var validationResult = await ValidateUserAccount(newUserAccount);
-            if (validationResult.IsFailed)
-            {
-                return validationResult;
-            }
-
-            newUserAccount.HashedPassword = HashPassword(newUserAccount.HashedPassword);
-            newUserAccount.PlayerState.UserAccountId = newUserAccount.ID;
-            newUserAccount.PlayerState.UserAccount = newUserAccount;
-            _userRepository.Insert(newUserAccount);
-            _unitOfWork.SaveChanges();
-
-            return Result.Ok(newUserAccount);
-        });
+            return Result.Ok(existingUser);
+        }
+        return Result.Fail("Not Authorized");
     }
+
+    public async Task<Result<UserAccount?>> CreateUserAccount(CreateUserModel userAccount)
+    {
+        UserAccount? newUserAccount = new() 
+        { 
+            DisplayName = userAccount.DisplayName,
+            EmailAddress = userAccount.Email,
+            HashedPassword = userAccount.Password,
+            UserRoles = new List<UserRole>() {}
+        };
+
+        if (await _userRepository.CountAsync() == 0)
+        {
+            newUserAccount.UserRoles.Add(
+                new UserRole()
+                {
+                    Role = UserAccountRoles.Owner,
+                    User = newUserAccount,
+                    UserId = newUserAccount.ID
+                });
+        } else
+        {
+            newUserAccount.UserRoles.Add(
+                new UserRole()
+                {
+                    Role = UserAccountRoles.Player,
+                    User = newUserAccount,
+                    UserId = newUserAccount.ID
+                });
+        }
+
+
+        var validationResult = await ValidateUserAccount(newUserAccount);
+        if (validationResult.IsFailed)
+        {
+            return validationResult;
+        }
+
+        newUserAccount.HashedPassword = HashPassword(newUserAccount.HashedPassword);
+        newUserAccount.PlayerState.UserAccountId = newUserAccount.ID;
+        newUserAccount.PlayerState.UserAccount = newUserAccount;
+        _userRepository.Insert(newUserAccount);
+        _unitOfWork.SaveChanges();
+
+        return Result.Ok(newUserAccount);
+    }
+
 
     public async Task<Result> UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
     {
-        return await Task.Run(() =>
+        var existingUser = _userRepository.GetById(id);
+        if (existingUser == null)
         {
-            var existingUser = _userRepository.GetById(id);
-            if (existingUser == null)
-            {
-                return Result.Fail($"User with ID '{id}' not found.");
-            }
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
 
+        if (await CompareRoles(_requestContext.UserEmail, existingUser))
+        {
             updatedUserAccount.ID = id;
             _userRepository.Update(updatedUserAccount);
             _unitOfWork.SaveChanges();
-            return Result.Ok();
-        });
+        }
+        return Result.Ok();
     }
 
     public async Task<Result> DeleteUserAccount(Guid id)
     {
-        return await Task.Run(() =>
+        var existingUser = _userRepository.GetById(id);
+        if (existingUser == null)
         {
-            var existingUser = _userRepository.GetById(id);
-            if (existingUser == null)
-            {
-                return Result.Fail($"User with ID '{id}' not found.");
-            }
-
+            return Result.Fail($"User with ID '{id}' not found.");
+        }
+        if (await CompareRoles(_requestContext.UserEmail, existingUser))
+        {
             _userRepository.Delete(id);
             _unitOfWork.SaveChanges();
-            return Result.Ok();
-        });
+        }
+        return Result.Ok();
     }
+
+    private async Task<bool> CompareRoles(string actorEmail, UserAccount target)
+    {
+        var actor = (await _userRepository.GetAsync(new UserAccountGetByEmailSpec(actorEmail))).FirstOrDefault();
+        if (actor.ID == target.ID)
+        {
+            return true;
+        }
+        var roleValues = actor.UserRoles.Select(r => (int)r.Role);
+        var actorRole = roleValues.Max();
+
+        var userRoles = target.UserRoles.Select(r => (int)r.Role);
+        var maxUserRole = userRoles.Max();
+
+        return actorRole > maxUserRole;
+    }
+
 
     private async Task<string> GetHostName()
     {
@@ -163,7 +184,6 @@ public class UserAccountService : IUserAccountService
         userAccount.VerificationToken = Guid.NewGuid();
         await UpdateUserAccount(userAccount.ID, userAccount); // Assuming this method updates the user account in the database
 
-        // TODO: get host from environment
         var viewModel = new AccountVerificationViewModel()
         {
             DisplayName = userAccount.DisplayName,
@@ -262,6 +282,7 @@ public class UserAccountService : IUserAccountService
         return result;
     }
 
+    // TODO: Fix key security HERE Get key from environment
     public string GenerateJwtToken(UserAccount userAccount)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("somekindofsecretkey1234567890!@#$%^&*()-_=+"));
@@ -287,22 +308,14 @@ public class UserAccountService : IUserAccountService
 
     public async Task<Result<string>> AuthenticateAsync(string email, string password)
     {
-        Result<string> result = Result.Ok("Verified");
-
-        var userResult = await GetUserAccountByEmail(email);
-        userResult.OnSuccess(user => {
-            if (user == null || !VerifyPassword(password, user.HashedPassword))
-            {
-                 result = Result.Fail<string>("Invalid email or password");
-            } else
-            {
-                result = Result.Ok(GenerateJwtToken(user));
-            }
-        }).OnFailure(x => { 
-            result = Result.Fail(x);
-        });
-
-        return result;
+        var userResult = (await _userRepository.GetAsync(new UserAccountGetByEmailSpec(email))).FirstOrDefault();
+        if (userResult == null || !VerifyPassword(password, userResult.HashedPassword))
+        {
+                return Result.Fail<string>("Invalid email or password");
+        } else
+        {
+            return Result.Ok(GenerateJwtToken(userResult));
+        }
     }
 
     private bool VerifyPassword(string password, string hashedPassword)

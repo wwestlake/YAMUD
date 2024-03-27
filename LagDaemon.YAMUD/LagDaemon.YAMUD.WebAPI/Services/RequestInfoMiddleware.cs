@@ -1,10 +1,12 @@
 ﻿using FluentEmail.Core;
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.API.Specs;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Security.Claims;
 
 namespace LagDaemon.YAMUD.WebAPI.Services
@@ -31,7 +33,7 @@ namespace LagDaemon.YAMUD.WebAPI.Services
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
                 var repo = unitOfWork.GetRepository<UserAccount>();
 
-                var user = repo.Get().AsQueryable().Include(u => u.UserRoles).FirstOrDefault(user => user.EmailAddress == userId);
+                var user = (await repo.GetAsync(new UserAccountGeneralQuerySpec())).FirstOrDefault();
 
                 if (user == null)
                 {

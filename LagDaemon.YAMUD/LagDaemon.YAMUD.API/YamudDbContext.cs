@@ -30,5 +30,6 @@ public class YamudDbContext : DbContext
             .HasOne(ps => ps.UserAccount)        // Navigation property
             .WithMany()                          // PlayerState can belong to only one UserAccount
             .HasForeignKey(ps => ps.UserAccountId);  // Foreign key property
+
     }
 }

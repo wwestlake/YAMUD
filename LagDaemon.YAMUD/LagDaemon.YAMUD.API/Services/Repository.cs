@@ -1,4 +1,5 @@
 ﻿using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -47,6 +48,33 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
+    public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
+    {
+        IQueryable<T> query = _dbSet;
+
+        if (filter != null)
+        {
+            query = query.Where(filter);
+        }
+
+        foreach (var includeProperty in includeProperties.Split
+                                        (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+        {
+            query = query.Include(includeProperty);
+        }
+
+        if (orderBy != null)
+        {
+            return orderBy(query).ToList();
+        }
+        else
+        {
+            return await query.ToListAsync();
+        }
+    }
+
+
+
     public T GetSingle(Expression<Func<T, bool>> filter)
     {
         return _dbSet.SingleOrDefault(filter);
@@ -82,4 +110,28 @@ public class Repository<T> : IRepository<T> where T : class
         }
         _dbSet.Remove(entity);
     }
+
+    public IEnumerable<T> Get(IQuerySpec<T> querySpec)
+    {
+        return Get(querySpec.Filter, querySpec.OrderBy, querySpec.IncludeProperties);
+    }
+
+
+    public async Task<IEnumerable<T>> GetAsync(IQuerySpec<T> querySpec)
+    {
+        return await GetAsync(querySpec.Filter, querySpec.OrderBy, querySpec.IncludeProperties);
+    }
+
+    public long Count()
+    {
+        return _dbSet.Count();
+    }
+
+    public async Task<long> CountAsync()
+    {
+        return await _dbSet.CountAsync();
+    }
+
+
+
 }
