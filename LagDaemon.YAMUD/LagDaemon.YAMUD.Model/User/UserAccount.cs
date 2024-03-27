@@ -8,6 +8,7 @@ public class UserAccount
     {
         ID = Guid.NewGuid();
         PlayerState = new PlayerState();
+        UserRoles = new List<UserRole>();
     }
 
     public Guid ID { get; set;  }
@@ -15,7 +16,7 @@ public class UserAccount
     public string HashedPassword { get; set; }
     public string EmailAddress { get; set; }
     public UserAccountStatus Status { get; set; }
-    public UserAccountRoles Roles { get; set; }
+    public ICollection<UserRole> UserRoles { get; set; }
     public Guid VerificationToken { get; set; }
     public PlayerState PlayerState { get; set; }
 }

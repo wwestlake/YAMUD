@@ -1,5 +1,6 @@
 using FluentEmail.Core;
 using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Services;
@@ -42,16 +43,31 @@ if (string.IsNullOrEmpty(dbUsername) || string.IsNullOrEmpty(dbPassword))
 connectionString = string.Format(connectionString, dbUsername, dbPassword);
 
 builder.Services.AddDbContext<YamudDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
 
+builder.Services.AddScoped<ISecurityInterceptor, SecurityInterceptor>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISecurityProxyFactory, SecurityProxyFactory>();
+builder.Services.AddScoped<UserAccountService>();
+builder.Services.AddScoped<IServiceProxyFactory, ServiceProxyFactory>();
 
-builder.Services.AddTransient<IUserAccountService, UserAccountService>();
-builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-builder.Services.AddTransient<IFluentEmailFactory, YamudFluentEmailFactory>();
+builder.Services.AddScoped<IUserAccountService>(serviceProvider => 
+    {
+        var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+        var service = serviceProvider.GetRequiredService<UserAccountService>();
+        return factory.CreateProxy<IUserAccountService>(service);
+    });
+
+
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IFluentEmailFactory, YamudFluentEmailFactory>();
 builder.Services.AddScoped<RazorViewToStringRenderer>();
 builder.Services.AddScoped<IRequestContext, RequestContext>();
+
+// In your DI container configuration
+
 
 builder.Services.AddSingleton<EmailConfigurationService>();
 builder.Services.AddSingleton(provider =>

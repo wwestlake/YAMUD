@@ -28,9 +28,33 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("CanConsume")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanDestroy")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanDrop")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanPlace")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanSpoil")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanTake")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CanUse")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("MaxStackSize")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -38,6 +62,12 @@ namespace LagDaemon.YAMUD.API.Migrations
 
                     b.Property<Guid?>("PlayerStateId")
                         .HasColumnType("uuid");
+
+                    b.Property<float>("Value")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Weight")
+                        .HasColumnType("real");
 
                     b.HasKey("Id");
 
@@ -163,9 +193,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Roles")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -175,6 +202,25 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("UserAccounts");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
@@ -226,6 +272,17 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
                 {
                     b.Navigation("Items");
@@ -235,6 +292,8 @@ namespace LagDaemon.YAMUD.API.Migrations
                 {
                     b.Navigation("PlayerState")
                         .IsRequired();
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

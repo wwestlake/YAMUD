@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
@@ -29,7 +30,8 @@ public class UserAccountService : IUserAccountService
     public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService, 
                             RazorViewToStringRenderer razorViewToStringRenderer, 
                             IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor,
-                            IRequestContext requestContext)
+                            IRequestContext requestContext
+                            )
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _userRepository = _unitOfWork.GetRepository<UserAccount>();
@@ -40,6 +42,7 @@ public class UserAccountService : IUserAccountService
         _requestContext = requestContext;
     }
 
+    [Security(UserAccountRoles.Owner)]
     public async Task<Result<IEnumerable<UserAccount>>> GetAllUserAccounts()
     {
         return await Task.Run(() => {
@@ -58,7 +61,8 @@ public class UserAccountService : IUserAccountService
         {
             Expression<Func<UserAccount, bool>> filter = u => u.EmailAddress == email;
             return Result.Ok(_userRepository.GetSingle(filter));
-        });        }
+        });        
+    }
 
     public async Task<Result<UserAccount>> CreateUserAccount(CreateUserModel userAccount)
     {
@@ -69,7 +73,29 @@ public class UserAccountService : IUserAccountService
                 DisplayName = userAccount.DisplayName,
                 EmailAddress = userAccount.Email,
                 HashedPassword = userAccount.Password,
+                UserRoles = new List<UserRole>() {}
             };
+
+            if (_userRepository.GetAll().Count() == 0)
+            {
+                newUserAccount.UserRoles.Add(
+                    new UserRole()
+                    {
+                        Role = UserAccountRoles.Owner,
+                        User = newUserAccount,
+                        UserId = newUserAccount.ID
+                    });
+            } else
+            {
+                newUserAccount.UserRoles.Add(
+                    new UserRole()
+                    {
+                        Role = UserAccountRoles.Player,
+                        User = newUserAccount,
+                        UserId = newUserAccount.ID
+                    });
+            }
+
 
             var validationResult = await ValidateUserAccount(newUserAccount);
             if (validationResult.IsFailed)

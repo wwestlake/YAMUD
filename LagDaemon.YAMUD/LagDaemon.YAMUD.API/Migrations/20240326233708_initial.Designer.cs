@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    [Migration("20240325222356_updated-foreign-key-for-player-state")]
-    partial class updatedforeignkeyforplayerstate
+    [Migration("20240326233708_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -166,9 +166,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Roles")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -178,6 +175,25 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("UserAccounts");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
@@ -229,6 +245,17 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>
                 {
                     b.Navigation("Items");
@@ -238,6 +265,8 @@ namespace LagDaemon.YAMUD.API.Migrations
                 {
                     b.Navigation("PlayerState")
                         .IsRequired();
+
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

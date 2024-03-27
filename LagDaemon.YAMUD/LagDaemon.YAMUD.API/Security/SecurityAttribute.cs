@@ -2,6 +2,9 @@
 using System;
 using System.Data;
 
+namespace LagDaemon.YAMUD.API.Security;
+
+
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public class SecurityAttribute : Attribute
 {

@@ -39,23 +39,19 @@ namespace LagDaemon.YAMUD.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PlayerState",
+                name: "UserAccounts",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    IsAuthenticated = table.Column<bool>(type: "boolean", nullable: false),
-                    CurrentLocationId = table.Column<Guid>(type: "uuid", nullable: false)
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    DisplayName = table.Column<string>(type: "text", nullable: false),
+                    HashedPassword = table.Column<string>(type: "text", nullable: false),
+                    EmailAddress = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    VerificationToken = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PlayerState", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PlayerState_RoomAddress_CurrentLocationId",
-                        column: x => x.CurrentLocationId,
-                        principalTable: "RoomAddress",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_UserAccounts", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,6 +83,57 @@ namespace LagDaemon.YAMUD.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PlayerState",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsAuthenticated = table.Column<bool>(type: "boolean", nullable: false),
+                    CurrentLocationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserAccountId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserAccountID = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PlayerState", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PlayerState_RoomAddress_CurrentLocationId",
+                        column: x => x.CurrentLocationId,
+                        principalTable: "RoomAddress",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PlayerState_UserAccounts_UserAccountID",
+                        column: x => x.UserAccountID,
+                        principalTable: "UserAccounts",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_PlayerState_UserAccounts_UserAccountId",
+                        column: x => x.UserAccountId,
+                        principalTable: "UserAccounts",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRole",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRole", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRole_UserAccounts_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UserAccounts",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ItemBase",
                 columns: table => new
                 {
@@ -105,30 +152,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "UserAccounts",
-                columns: table => new
-                {
-                    ID = table.Column<Guid>(type: "uuid", nullable: false),
-                    DisplayName = table.Column<string>(type: "text", nullable: false),
-                    HashedPassword = table.Column<string>(type: "text", nullable: false),
-                    EmailAddress = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    Roles = table.Column<int>(type: "integer", nullable: false),
-                    VerificationToken = table.Column<Guid>(type: "uuid", nullable: false),
-                    PlayerStateId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAccounts", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_UserAccounts_PlayerState_PlayerStateId",
-                        column: x => x.PlayerStateId,
-                        principalTable: "PlayerState",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_ItemBase_PlayerStateId",
                 table: "ItemBase",
@@ -138,6 +161,17 @@ namespace LagDaemon.YAMUD.API.Migrations
                 name: "IX_PlayerState_CurrentLocationId",
                 table: "PlayerState",
                 column: "CurrentLocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerState_UserAccountID",
+                table: "PlayerState",
+                column: "UserAccountID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PlayerState_UserAccountId",
+                table: "PlayerState",
+                column: "UserAccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rooms_AddressId",
@@ -150,9 +184,9 @@ namespace LagDaemon.YAMUD.API.Migrations
                 column: "ExitsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserAccounts_PlayerStateId",
-                table: "UserAccounts",
-                column: "PlayerStateId");
+                name: "IX_UserRole_UserId",
+                table: "UserRole",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -165,16 +199,19 @@ namespace LagDaemon.YAMUD.API.Migrations
                 name: "Rooms");
 
             migrationBuilder.DropTable(
-                name: "UserAccounts");
-
-            migrationBuilder.DropTable(
-                name: "Exits");
+                name: "UserRole");
 
             migrationBuilder.DropTable(
                 name: "PlayerState");
 
             migrationBuilder.DropTable(
+                name: "Exits");
+
+            migrationBuilder.DropTable(
                 name: "RoomAddress");
+
+            migrationBuilder.DropTable(
+                name: "UserAccounts");
         }
     }
 }
