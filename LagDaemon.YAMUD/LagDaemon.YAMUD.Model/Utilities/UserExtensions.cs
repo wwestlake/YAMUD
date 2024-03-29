@@ -9,6 +9,11 @@ namespace LagDaemon.YAMUD.Model.Utilities
 {
     public static class UserExtensions
     {
+        public static UserAccountRoles MaxUserAccountRole(this IEnumerable<UserRole> roles)
+        {
+            return (UserAccountRoles) roles.MaxRole();
+        }
+
         public static int MaxRole(this IEnumerable<UserRole> roles)
         {
             return roles.Select(r => (int)r.Role).Max();

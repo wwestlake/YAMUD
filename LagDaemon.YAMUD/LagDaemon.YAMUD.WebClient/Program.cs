@@ -9,6 +9,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<IIndexedDbService, IndexedDbService>();
-builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();    
+builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
 
 await builder.Build().RunAsync();

@@ -91,6 +91,15 @@ builder.Services.Configure<RazorViewEngineOptions>(options =>
 
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowOrigin", builder =>
+    {
+        builder.WithOrigins("https://localhost:7202")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -155,6 +164,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowOrigin");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

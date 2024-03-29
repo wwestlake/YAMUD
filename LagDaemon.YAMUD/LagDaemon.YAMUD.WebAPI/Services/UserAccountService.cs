@@ -5,6 +5,7 @@ using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.API.Specs;
 using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.Model.Utilities;
 using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Utilities;
@@ -49,6 +50,7 @@ public class UserAccountService : IUserAccountService
         return Result.Ok(userList);
     }
 
+    [Security(UserAccountRoles.Admin)]
     public async Task<Result<UserAccount?>> GetUserAccountById(Guid id)
     {
         var existingUser = (await _userRepository.GetAsync(new UserAccountGetByIdSpec(id))).FirstOrDefault();
@@ -59,6 +61,7 @@ public class UserAccountService : IUserAccountService
         return Result.Ok(existingUser);
     }
 
+    [Security(UserAccountRoles.Admin)]
     public async Task<Result<UserAccount?>> GetUserAccountByEmail(string email)
     {
         var existingUser = (await _userRepository.GetAsync(new UserAccountGetByEmailSpec(email))).FirstOrDefault();
@@ -116,6 +119,7 @@ public class UserAccountService : IUserAccountService
     }
 
 
+    [Security(UserAccountRoles.Admin)]
     public async Task<Result> UpdateUserAccount(Guid id, UserAccount updatedUserAccount)
     {
         var existingUser = _userRepository.GetById(id);
@@ -133,6 +137,7 @@ public class UserAccountService : IUserAccountService
         return Result.Ok();
     }
 
+    [Security(UserAccountRoles.Admin)]
     public async Task<Result> DeleteUserAccount(Guid id)
     {
         var existingUser = _userRepository.GetById(id);
@@ -185,7 +190,7 @@ public class UserAccountService : IUserAccountService
         var viewModel = new AccountVerificationViewModel()
         {
             DisplayName = userAccount.DisplayName,
-            VerificationUrl = $"https://{GetHostName()}/api/UserAccount/VerifyEmail/{userAccount.ID}/{userAccount.VerificationToken.ToString()}", // Replace this with your actual verification URL
+            VerificationUrl = $"https://{await GetHostName()}/api/UserAccount/VerifyEmail/{userAccount.ID}/{userAccount.VerificationToken.ToString()}", // Replace this with your actual verification URL
             Token = userAccount.VerificationToken.ToString(),
         };
 
@@ -264,18 +269,15 @@ public class UserAccountService : IUserAccountService
     {
         var result = Result.Ok();
 
-        var userAccount = await GetUserAccountById(userId);
+        var userAccount = (await _userRepository.GetAsync(new UserAccountGetByIdSpec(userId) )).FirstOrDefault();
 
-        userAccount.OnSuccess( async acc => { 
-            if (acc.VerificationToken == verificationToken)
-            {
-                acc.VerificationToken = Guid.Empty;
-                acc.Status = UserAccountStatus.Verified;
-                await UpdateUserAccount(userId, acc);
-            }
-        } ).OnFailure( msg => {
-            result = Result.Fail(msg);
-        } );
+        if (userAccount.VerificationToken == verificationToken)
+        {
+            userAccount.VerificationToken = Guid.Empty;
+            userAccount.Status = UserAccountStatus.Verified;
+            _userRepository.Update(userAccount);
+            _unitOfWork.SaveChanges();
+        }
 
         return result;
     }
@@ -289,8 +291,10 @@ public class UserAccountService : IUserAccountService
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userAccount.EmailAddress),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             // Add more claims as needed
+            new Claim(ClaimTypes.Role, userAccount.UserRoles.MaxUserAccountRole().ToString()),
+            new Claim(ClaimTypes.Name, userAccount.DisplayName)
         };
 
         var token = new JwtSecurityToken(
