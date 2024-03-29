@@ -1,5 +1,4 @@
-﻿using FluentEmail.Core;
-using FluentResults;
+﻿using FluentResults;
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
@@ -11,7 +10,6 @@ using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Utilities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
