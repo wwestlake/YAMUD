@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NRules" Version="0.9.4" />
+    <PackageReference Include="NRules.Fluent" Version="0.9.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LagDaemon.YAMUD\LagDaemon.YAMUD.API\LagDaemon.YAMUD.API.csproj" />
     <ProjectReference Include="..\LagDaemon.YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>

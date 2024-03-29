@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace LagDaemon.YAMUD.GameRulesEngine.Crafting
 {
+    // TODO: This needs to use the rules, and also needs to return bwtter Result objects with details of failure
+
     public class CraftingManager
     {
         public bool CraftItem(CraftingRecipe recipe, Dictionary<Item, int> inventory)
