@@ -7,10 +7,10 @@ namespace LagDaemon.YAMUD.Model.Utilities
     {
         public Inventory()
         {
-            Items = new Dictionary<string, ItemBase>();
+            Items = new Dictionary<string, Item>();
         }
 
         [Column(TypeName = "jsonb")]
-        public IDictionary<string, ItemBase> Items { get; set; }
+        public IDictionary<string, Item> Items { get; set; }
     }
 }

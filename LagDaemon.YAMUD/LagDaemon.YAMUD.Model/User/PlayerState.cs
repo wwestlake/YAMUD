@@ -9,7 +9,7 @@ public class PlayerState
     public PlayerState()
     {
         Id = Guid.NewGuid();
-        Items = new List<ItemBase> { };
+        Items = new List<Item> { };
         CurrentLocation = new RoomAddress();
     }
     public Guid Id { get; set; }
@@ -17,7 +17,7 @@ public class PlayerState
     public bool IsAuthenticated { get; set; }
     public RoomAddress CurrentLocation { get; set; }
 
-    public List<ItemBase> Items { get; set; }
+    public List<Item> Items { get; set; }
 
     // Foreign key property
     public Guid UserAccountId { get; set; }
