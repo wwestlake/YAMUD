@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NRules" Version="0.9.4" />
+    <PackageReference Include="NRules.Fluent" Version="0.9.4" />
+  </ItemGroup>
+
 </Project>

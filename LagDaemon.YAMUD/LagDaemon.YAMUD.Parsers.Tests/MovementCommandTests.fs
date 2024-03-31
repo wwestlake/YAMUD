@@ -47,3 +47,14 @@ module MovementCommandTests =
         Assert.AreEqual(y, address.Y)
         Assert.AreEqual(z, address.Level)
 
+    [<Test>]
+    let ``ExecuteCommand should not modify address by non-movement commands`` () =
+        let address = new RoomAddress();
+
+        // Call the function under test
+        let actualResult = ExecuteCommand address "pig head"
+
+        // Assert the result
+        Assert.AreEqual(0, address.X)
+        Assert.AreEqual(0, address.Y)
+        Assert.AreEqual(0, address.Level)

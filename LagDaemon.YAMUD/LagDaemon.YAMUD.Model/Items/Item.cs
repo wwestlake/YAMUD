@@ -22,3 +22,9 @@ public abstract class Item
     public DateTime LastModifiedAt { get; set; }
 }
 
+public class Money  : Item
+{
+    public int Amount { get; set; }
+}
+
+
