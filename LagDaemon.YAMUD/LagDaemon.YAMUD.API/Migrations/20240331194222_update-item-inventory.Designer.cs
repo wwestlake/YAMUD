@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    [Migration("20240326233708_initial")]
-    partial class initial
+    [Migration("20240331194222_update-item-inventory")]
+    partial class updateiteminventory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,28 +25,87 @@ namespace LagDaemon.YAMUD.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Inventory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("ParentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Inventory");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("LastModifiedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid?>("PlayerStateId")
                         .HasColumnType("uuid");
+
+                    b.Property<long>("WearAndTear")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Weight")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PlayerStateId");
 
-                    b.ToTable("ItemBase");
+                    b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemInstance", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("InventoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventoryId");
+
+                    b.ToTable("ItemInstance");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Map.Exits", b =>
@@ -166,6 +225,9 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("InventoryId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -173,6 +235,8 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("InventoryId");
 
                     b.ToTable("UserAccounts");
                 });
@@ -196,11 +260,18 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.ToTable("UserRole");
                 });
 
-            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemBase", b =>
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
                     b.HasOne("LagDaemon.YAMUD.Model.User.PlayerState", null)
                         .WithMany("Items")
                         .HasForeignKey("PlayerStateId");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.ItemInstance", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.Items.Inventory", null)
+                        .WithMany("Items")
+                        .HasForeignKey("InventoryId");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Map.Room", b =>
@@ -245,6 +316,15 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserAccount", b =>
+                {
+                    b.HasOne("LagDaemon.YAMUD.Model.Items.Inventory", "Inventory")
+                        .WithMany()
+                        .HasForeignKey("InventoryId");
+
+                    b.Navigation("Inventory");
+                });
+
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
                 {
                     b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", "User")
@@ -254,6 +334,11 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Inventory", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>

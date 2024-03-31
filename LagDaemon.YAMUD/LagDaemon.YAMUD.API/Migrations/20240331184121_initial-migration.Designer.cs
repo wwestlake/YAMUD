@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    [Migration("20240331180545_inventory-update2")]
-    partial class inventoryupdate2
+    [Migration("20240331184121_initial-migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,11 +53,9 @@ namespace LagDaemon.YAMUD.API.Migrations
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -93,7 +91,7 @@ namespace LagDaemon.YAMUD.API.Migrations
 
                     b.HasIndex("PlayerStateId");
 
-                    b.ToTable("Item");
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Map.Exits", b =>

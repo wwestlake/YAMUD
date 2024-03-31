@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Model.Map;
+using LagDaemon.YAMUD.Model.Items;
 
 namespace LagDaemon.YAMUD.API;
 
@@ -14,6 +15,8 @@ public class YamudDbContext : DbContext
 
     public DbSet<UserAccount> UserAccounts { get; set; }
     public DbSet<Room> Rooms { get; set; }
+
+    public DbSet<Item> Items { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

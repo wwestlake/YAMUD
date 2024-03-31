@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace LagDaemon.YAMUD.API.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +23,21 @@ namespace LagDaemon.YAMUD.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    ParentId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventory", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,11 +63,17 @@ namespace LagDaemon.YAMUD.API.Migrations
                     HashedPassword = table.Column<string>(type: "text", nullable: false),
                     EmailAddress = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    VerificationToken = table.Column<Guid>(type: "uuid", nullable: false)
+                    VerificationToken = table.Column<Guid>(type: "uuid", nullable: false),
+                    InventoryId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserAccounts", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_UserAccounts_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -134,27 +156,42 @@ namespace LagDaemon.YAMUD.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ItemBase",
+                name: "Items",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    WearAndTear = table.Column<long>(type: "bigint", nullable: false),
+                    Weight = table.Column<long>(type: "bigint", nullable: false),
+                    InventoryId = table.Column<int>(type: "integer", nullable: true),
                     PlayerStateId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItemBase", x => x.Id);
+                    table.PrimaryKey("PK_Items", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ItemBase_PlayerState_PlayerStateId",
+                        name: "FK_Items_Inventory_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventory",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Items_PlayerState_PlayerStateId",
                         column: x => x.PlayerStateId,
                         principalTable: "PlayerState",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItemBase_PlayerStateId",
-                table: "ItemBase",
+                name: "IX_Items_InventoryId",
+                table: "Items",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_PlayerStateId",
+                table: "Items",
                 column: "PlayerStateId");
 
             migrationBuilder.CreateIndex(
@@ -184,6 +221,11 @@ namespace LagDaemon.YAMUD.API.Migrations
                 column: "ExitsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserAccounts_InventoryId",
+                table: "UserAccounts",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserRole_UserId",
                 table: "UserRole",
                 column: "UserId");
@@ -193,7 +235,7 @@ namespace LagDaemon.YAMUD.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ItemBase");
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "Rooms");
@@ -212,6 +254,9 @@ namespace LagDaemon.YAMUD.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserAccounts");
+
+            migrationBuilder.DropTable(
+                name: "Inventory");
         }
     }
 }

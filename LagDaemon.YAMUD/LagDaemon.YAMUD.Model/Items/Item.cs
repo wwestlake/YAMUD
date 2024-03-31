@@ -6,7 +6,7 @@ namespace LagDaemon.YAMUD.Model.Items;
 public class Item
 {
     [Key]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Required]
     [MaxLength(100)]
@@ -27,6 +27,12 @@ public class Item
 
 }
 
+public class ItemInstance
+{
+    public Guid Id { get; set; }
+    public Guid ItemId { get; set; }
+} 
+
 public class Inventory
 {
     [Key]
@@ -41,5 +47,5 @@ public class Inventory
 
     public Guid ParentId { get; set; }
 
-    public ICollection<Item> Items { get; set; }
+    public ICollection<ItemInstance> Items { get; set; }
 }
