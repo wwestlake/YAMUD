@@ -3,6 +3,7 @@ using System;
 using LagDaemon.YAMUD.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    partial class YamudDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240331162607_items-update")]
+    partial class itemsupdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,32 +24,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Inventory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("ParentId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Inventory");
-                });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
@@ -64,9 +41,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<int?>("InventoryId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("LastModifiedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -78,15 +52,7 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Property<Guid?>("PlayerStateId")
                         .HasColumnType("uuid");
 
-                    b.Property<long>("WearAndTear")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Weight")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("InventoryId");
 
                     b.HasIndex("PlayerStateId");
 
@@ -210,9 +176,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("InventoryId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -220,8 +183,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("InventoryId");
 
                     b.ToTable("UserAccounts");
                 });
@@ -247,10 +208,6 @@ namespace LagDaemon.YAMUD.API.Migrations
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
-                    b.HasOne("LagDaemon.YAMUD.Model.Items.Inventory", null)
-                        .WithMany("Items")
-                        .HasForeignKey("InventoryId");
-
                     b.HasOne("LagDaemon.YAMUD.Model.User.PlayerState", null)
                         .WithMany("Items")
                         .HasForeignKey("PlayerStateId");
@@ -298,15 +255,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                     b.Navigation("UserAccount");
                 });
 
-            modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserAccount", b =>
-                {
-                    b.HasOne("LagDaemon.YAMUD.Model.Items.Inventory", "Inventory")
-                        .WithMany()
-                        .HasForeignKey("InventoryId");
-
-                    b.Navigation("Inventory");
-                });
-
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.UserRole", b =>
                 {
                     b.HasOne("LagDaemon.YAMUD.Model.User.UserAccount", "User")
@@ -316,11 +264,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Inventory", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.User.PlayerState", b =>

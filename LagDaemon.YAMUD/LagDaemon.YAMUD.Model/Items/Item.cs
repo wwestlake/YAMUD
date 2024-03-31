@@ -20,11 +20,26 @@ public class Item
 
     [Required]
     public DateTime LastModifiedAt { get; set; }
+
+    [Required]
+    public long WearAndTear { get; set; }
+    public long Weight { get; set; }
+
 }
 
-public class Money  : Item
+public class Inventory
 {
-    public int Amount { get; set; }
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; }
+
+    [MaxLength(500)]
+    public string Description { get; set; }
+
+    public Guid ParentId { get; set; }
+
+    public ICollection<Item> Items { get; set; }
 }
-
-
