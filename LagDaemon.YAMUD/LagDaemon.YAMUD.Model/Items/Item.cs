@@ -3,7 +3,7 @@
 namespace LagDaemon.YAMUD.Model.Items;
 
 
-public abstract class Item
+public class Item
 {
     [Key]
     public int Id { get; set; }
