@@ -87,7 +87,7 @@ public class UserAccountService : IUserAccountService
             newUserAccount.UserRoles.Add(
                 new UserRole()
                 {
-                    Role = UserAccountRoles.Owner,
+                    Role = UserAccountRoles.Founder,
                     User = newUserAccount,
                     UserId = newUserAccount.ID
                 });

@@ -16,8 +16,4 @@
     <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AST\" />
-  </ItemGroup>
-
 </Project>

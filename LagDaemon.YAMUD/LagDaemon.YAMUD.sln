@@ -27,6 +27,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "LagDaemon.YAMUD.Parsers.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Tools", "LagDaemon.YAMUD.Tools\LagDaemon.YAMUD.Tools.csproj", "{DF138AC6-6744-421B-BE4D-D14ACD1D53DD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.GameRulesEngine.Tests", "LagDaemon.YAMUD.GameRulesEngine.Tests\LagDaemon.YAMUD.GameRulesEngine.Tests.csproj", "{20C1D742-5D35-4DBC-B881-BAB46CB335B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{DF138AC6-6744-421B-BE4D-D14ACD1D53DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF138AC6-6744-421B-BE4D-D14ACD1D53DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF138AC6-6744-421B-BE4D-D14ACD1D53DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

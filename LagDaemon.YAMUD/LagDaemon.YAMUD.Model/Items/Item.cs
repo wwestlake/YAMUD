@@ -40,10 +40,10 @@ public class Inventory
 
     [Required]
     [MaxLength(100)]
-    public string Name { get; set; }
+    public string Name { get; set; } = "Inventory";
 
     [MaxLength(500)]
-    public string Description { get; set; }
+    public string Description { get; set; } = "Inventory";
 
     public Guid ParentId { get; set; }
 

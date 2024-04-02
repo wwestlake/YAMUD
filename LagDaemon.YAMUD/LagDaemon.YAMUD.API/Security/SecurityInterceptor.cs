@@ -44,8 +44,8 @@ public class SecurityInterceptor : ISecurityInterceptor
         // Map the role names to their corresponding integer values (assuming UserAccountRoles is an enum)
         var roleValues = roleNames.Select(r => (int)r);
 
-        // Get the highest role value specified in the array
-        var highestRoleValue = roleValues.Max();
+        // Get the lowest role value specified in the array (This is the highest ranking role)
+        var highestRoleValue = roleValues.Min();
 
         // Check if the user's highest role is less than or equal to the highest role specified in the array
         return _requestContext.Roles.Any(role => (int)role <= highestRoleValue);

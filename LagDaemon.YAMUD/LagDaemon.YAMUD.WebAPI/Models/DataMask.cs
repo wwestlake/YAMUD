@@ -21,12 +21,13 @@ namespace LagDaemon.YAMUD.WebAPI.Models
         }
 
         public override UserAccountDto Map(UserAccount dao)
-        {
+        {  //roleNames.Select(r => (int)r);
             return new UserAccountDto()
             {
                 Id = dao.ID,
                 DisplayName = dao.DisplayName,
-                Email = dao.EmailAddress
+                Email = dao.EmailAddress,
+                Role = (dao.UserRoles.Select(r => r.Role).Min()).ToString()
             };
         }
 
