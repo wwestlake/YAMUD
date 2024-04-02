@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LagDaemon.YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>
 
 </Project>
