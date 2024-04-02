@@ -5,19 +5,18 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace LagDaemon.YAMUD.Model.User
-{
-    public class UserRole
-    {
-        public UserRole()
-        {
-            Id = Guid.NewGuid();
-        }
+namespace LagDaemon.YAMUD.Model.User;
 
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public UserAccountRoles Role { get; set; }
-        [JsonIgnore]
-        public UserAccount User { get; set; }
+public class UserRole
+{
+    public UserRole()
+    {
+        Id = Guid.NewGuid();
     }
+
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public UserAccountRoles Role { get; set; }
+    [JsonIgnore]
+    public UserAccount User { get; set; }
 }

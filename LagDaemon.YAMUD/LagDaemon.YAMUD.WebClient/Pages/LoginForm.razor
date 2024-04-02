@@ -1,4 +1,5 @@
 ﻿<!-- LoginForm.razor -->
+@page "/login"
 @using LagDaemon.YAMUD.WebClient.Services
 @using LagDaemon.YAMUD.WebClient.Model
 @using System.Text.Json
@@ -12,106 +13,58 @@
 @inject HttpClient HttpClient
 @inject ILogger<LoginForm> logger
 
-@if (!loggedIn)
-{
-    <div class="modal" style="display: @(showLoginForm ? "block" : "none")" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Login</h5>
-                    <button type="button" class="close" @onclick="CloseLoginForm">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<div class="modal"  role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+            </div>
+            <div class="modal-body">
+                <!-- Login form content -->
+                <div class="form-group">
+                    <label for="userIdOrEmail">UserID/Email:</label>
+                    <input type="text" class="form-control" id="userIdOrEmail" @bind="UserIdOrEmail" />
                 </div>
-                <div class="modal-body">
-                    <!-- Login form content -->
-                    <div class="form-group">
-                        <label for="userIdOrEmail">UserID/Email:</label>
-                        <input type="text" class="form-control" id="userIdOrEmail" @bind="UserIdOrEmail" />
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" @bind="Password" />
-                    </div>
-                    <div class="form-group">
-                        <label for="apiUrl">Games WebAPI URL:</label>
-                        <input type="text" class="form-control" id="apiUrl" @bind="ApiUrl" />
-                    </div>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
-                        <label class="form-check-label" for="rememberMe">Remember Me</label>
-                    </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" class="form-control" id="password" @bind="Password" />
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
-                    <button type="button" class="btn btn-primary" @onclick="CreateAccount">Create Account</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseLoginForm">Close</button>
+                <div class="form-group">
+                    <label for="apiUrl">Games WebAPI URL:</label>
+                    <input type="text" class="form-control" id="apiUrl" @bind="ApiUrl" />
                 </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
+                    <label class="form-check-label" for="rememberMe">Remember Me</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
+                <button type="button" class="btn btn-primary" @onclick="CreateAccount">Create Account</button>
             </div>
         </div>
     </div>
-} else
-{
-    <div clsass="">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Yet Another MUD</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Game</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Player</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Room</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Help</a>
-                    </li>
-                </ul>
-                <div class="my-2 my-lg-0">
-                    <!-- Link to UserAccount page with display name as link text -->
-                    <a class="nav-link" href="/useraccount">@getDisplayName()</a>
-                    <!-- If you want to display an image, you can still include it here -->
-@*                     <img src="profile_icon.png" alt="Profile" style="width: 30px; height: 30px; border-radius: 50%;">
- *@                </div>
-            </div>
-        </nav>
-
-    </div>
-}
+</div>
 
 @code {
-    private bool showLoginForm;
+    [Parameter]
+    public bool UserIsLoggedIn { get; set; } = false;
+
+    [Parameter]
+    public string DisplayName { get; set; } = String.Empty;
+
     private AuthToken? authToken;
     private string? UserIdOrEmail;
     private string? Password;
     private string? ApiUrl;
     private bool RememberMe;
-    private bool loggedIn = false;
     private UserAccountRoles userRole;
-    private string displayName;
 
     protected override async Task OnInitializedAsync()
     {
-        var token = await LocalStorageService.GetItemAsync("authToken");
-
-        showLoginForm = !(await AuthenticationService.IsUserAuthenticatedAsync());
-        loggedIn = token != null;
-        if (loggedIn)
-        {
-            await GetClaims(token);
-        }
+        UserIsLoggedIn = false;
     }
+
 
     private async Task GetClaims(string tokenStr)
     {
@@ -121,7 +74,7 @@
         if (displayNameClaim != null)
         {
             // User's role found, update userRole variable
-            displayName = displayNameClaim.Value;
+            DisplayName = displayNameClaim.Value;
         }
 
         // Access the claims from the token
@@ -131,12 +84,6 @@
             // User's role found, update userRole variable
             userRole = Enum.Parse<UserAccountRoles>(roleClaim.Value);
         }
-    }
-
-
-    private string getDisplayName()
-    {
-        return $"{displayName} ({userRole})";
     }
 
     private async Task Login()
@@ -167,13 +114,11 @@
             }
 
             // Save token to local storage
-            await LocalStorageService.SetItemAsync("authToken", authToken.token);
+            await LocalStorageService.SetObjectAsync("authToken", authToken.token);
 
             AuthenticationService.AuthToken = authToken;
 
-            showLoginForm = false;
-
-            loggedIn = true;
+            UserIsLoggedIn = true;
         }
         else
         {
@@ -184,10 +129,5 @@
     private void CreateAccount()
     {
         // Implement login logic here
-    }
-
-    private void CloseLoginForm()
-    {
-        showLoginForm = false;
     }
 }

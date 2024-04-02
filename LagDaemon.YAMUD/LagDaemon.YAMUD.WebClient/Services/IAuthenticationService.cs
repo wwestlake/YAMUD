@@ -1,4 +1,5 @@
-﻿using LagDaemon.YAMUD.WebClient.Model;
+﻿using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.WebClient.Model;
 
 namespace LagDaemon.YAMUD.WebClient.Services
 {
@@ -7,5 +8,10 @@ namespace LagDaemon.YAMUD.WebClient.Services
     {
         AuthToken AuthToken { get; set; }
         Task<bool> IsUserAuthenticatedAsync();
+
+        Task<bool> LoginAsync(string username, string password);
+        Task LogoutAsync();
+        Task<UserAccount> GetUserAsync();
+
     }
 }

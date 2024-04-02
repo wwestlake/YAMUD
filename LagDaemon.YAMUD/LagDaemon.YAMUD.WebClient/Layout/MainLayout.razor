@@ -1,22 +1,86 @@
 ﻿@inherits LayoutComponentBase
+@using LagDaemon.YAMUD.Model
 @using LagDaemon.YAMUD.WebClient.Pages
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@inject ILocalStorageService LocalStorageService
+@inject IAuthenticationService AuthenticationService
+@inject HttpClient HttpClient
+@inject ILogger<LoginForm> logger
+
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
-        <div>
-            <!-- Display the login form -->
+        @if (UserIsLoggedIn)
+        {
+            <NavMenu DisplayName="@DisplayName" />
+        }
+        else
+        {
             <LoginForm />
-        </div>
+        }
+
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
 
+@code {
+    public bool UserIsLoggedIn = false;
+    private UserAccountRoles userRole;
+    public string DisplayName { get; set; } = String.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await LocalStorageService.GetObjectAsync<string>("authToken");
+
+            UserIsLoggedIn = token.ExpirationTime < DateTime.Now;
+
+            if (UserIsLoggedIn)
+            {
+                await GetClaims(token.Item);
+            }
+            StateHasChanged();
+        } catch (Exception ex)
+        {
+            UserIsLoggedIn = false;
+            logger.LogError(ex, "Error initializing MainLayout");
+            StateHasChanged();
+        }
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // Call StateHasChanged after rendering is complete
+        await base.OnAfterRenderAsync(firstRender);
+
+        StateHasChanged();
+    }
+
+    private async Task GetClaims(string tokenStr)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(tokenStr);
+        var displayNameClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+        if (displayNameClaim != null)
+        {
+            // User's role found, update userRole variable
+            DisplayName = displayNameClaim.Value;
+        }
+
+        // Access the claims from the token
+        var roleClaim = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+        if (roleClaim != null)
+        {
+            // User's role found, update userRole variable
+            userRole = Enum.Parse<UserAccountRoles>(roleClaim.Value);
+        }
+    }
+
+}

@@ -1,7 +1,6 @@
 ﻿using FluentEmail.Core;
 using FluentResults;
 using LagDaemon.YAMUD.Model.User;
-using LagDaemon.YAMUD.WebAPI.Models;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;

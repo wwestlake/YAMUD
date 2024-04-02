@@ -13,4 +13,12 @@ builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+var localStorageService = host.Services.GetRequiredService<ILocalStorageService>();
+
+// Start the token expiration check
+var cancellationTokenSource = new CancellationTokenSource();
+var tokenExpirationTask = localStorageService.CheckTokenExpirationAsync(cancellationTokenSource.Token);
+
+// Run the Blazor application
+await host.RunAsync();

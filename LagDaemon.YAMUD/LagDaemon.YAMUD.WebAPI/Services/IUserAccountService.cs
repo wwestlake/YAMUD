@@ -1,6 +1,5 @@
 ﻿using FluentResults;
 using LagDaemon.YAMUD.Model.User;
-using LagDaemon.YAMUD.WebAPI.Models;
 
 namespace LagDaemon.YAMUD.WebAPI.Services;
 
