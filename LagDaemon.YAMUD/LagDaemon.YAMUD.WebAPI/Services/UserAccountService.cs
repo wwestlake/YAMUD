@@ -135,6 +135,12 @@ public class UserAccountService : IUserAccountService
         return Result.Ok();
     }
 
+    [Security(UserAccountRoles.Player)]
+    public async Task<Result<UserAccount>> GetCurrentUser()
+    {
+        return await _userRepository.GetSingleAsync(u => u.EmailAddress == _requestContext.UserEmail);
+    }
+
     [Security(UserAccountRoles.Admin)]
     public async Task<Result> DeleteUserAccount(Guid id)
     {

@@ -18,6 +18,7 @@ public interface IRepository<T> where T : class
     IEnumerable<T> Get(IQuerySpec<T> querySpec);
     Task<IEnumerable<T>> GetAsync(IQuerySpec<T> querySpec);
     T GetSingle(Expression<Func<T, bool>> filter);
+    Task<T> GetSingleAsync(Expression<Func<T, bool>> filter);
     T GetById(Guid id);
     void Insert(T entity);
     void Update(T entity);

@@ -1,5 +1,5 @@
 ﻿<!-- LoginForm.razor -->
-@page "/login"
+@page "/register"
 @using LagDaemon.YAMUD.WebClient.Services
 @using LagDaemon.YAMUD.WebClient.Model
 @using System.Text.Json
@@ -29,61 +29,50 @@
                     <label for="password">Password:</label>
                     <input type="password" class="form-control" id="password" @bind="Password" />
                 </div>
+                <div class="form-group">
+                    <label for="userIdOrEmail">Display Name:</label>
+                    <input type="text" class="form-control" id="displayName" @bind="DisplayName" />
+                </div>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
                     <label class="form-check-label" for="rememberMe">Remember Me</label>
                 </div>
-                @if (IsLoginError)
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @ErrorMessage
-                    </div>
-                }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
                 <button type="button" class="btn btn-primary" @onclick="CreateAccount">Create Account</button>
+                <button type="button" class="btn btn-primary" @onclick="ReturnToLoginPage">Return to Login Page</button>
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public bool UserIsLoggedIn { get; set; } = false;
+
+    [Parameter]
+    public string DisplayName { get; set; } = String.Empty;
+
+    private AuthToken? authToken;
     private string? UserIdOrEmail;
     private string? Password;
-    private bool? RememberMe;
-    private bool IsLoginError;
-    private string ErrorMessage;
-
+    private string? ApiUrl;
+    private bool RememberMe;
+    private UserAccountRoles userRole;
 
     protected override async Task OnInitializedAsync()
     {
-        UserIdOrEmail = string.Empty;
-        Password = string.Empty;
-        RememberMe = false;
     }
 
-    private async Task LoginAsync()
+    private async void ReturnToLoginPage()
     {
-        if (await AuthenticationService.LoginAsync(UserIdOrEmail, Password))
-        {
-            Navigation.NavigateTo("/");
-        } else {
-            // Set error message on login failure
-            IsLoginError = true;
-            ErrorMessage = "Invalid username or password. Please try again.";
-        }
+        Navigation.NavigateTo("/login");
+    }
+
+
+    private async void CreateAccount()
+    {
+        await AuthenticationService.RegisterAsync(DisplayName, UserIdOrEmail, Password);
         StateHasChanged();
     }
-
-    private void Login()
-    {
-        _ = LoginAsync();
-    }
-
-    private void CreateAccount()
-    {
-        Navigation.NavigateTo("/register");
-    }
-
 }

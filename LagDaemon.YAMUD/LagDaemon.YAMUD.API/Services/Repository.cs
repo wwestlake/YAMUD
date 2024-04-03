@@ -80,6 +80,12 @@ public class Repository<T> : IRepository<T> where T : class
         return _dbSet.SingleOrDefault(filter);
     }
 
+    public async Task<T> GetSingleAsync(Expression<Func<T, bool>> filter)
+    {
+        return await _dbSet.SingleOrDefaultAsync(filter);
+    }
+
+
     public T GetById(Guid id)
     {
         return _dbSet.Find(id);

@@ -97,6 +97,49 @@ public class UserAccountController : ControllerBase
     }
 
     [Authorize]
+    [HttpGet("GetCurrentUser")]
+    public async Task<IActionResult> GetCurrentUserAccount()
+    {
+        try
+        {
+            var userAccount = await _userAccountService.GetCurrentUser();
+            UserAccount result = null;
+            bool failed = false;
+            IEnumerable<IError> errors = new List<IError>().AsEnumerable();
+
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+
+            userAccount.OnSuccess(x =>
+            {
+                result = x;
+            }).OnFailure(x =>
+            {
+                errors = x;
+            });
+
+            if (failed)
+            {
+                return Ok(errors);
+            }
+            else
+            {
+                result.HashedPassword = string.Empty;
+                return Ok(result);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+
+
+    [Authorize]
     [HttpGet("GetUserByEmail/{email}")]
     public async Task<IActionResult> GetUserAccountByEmail(string email)
     {

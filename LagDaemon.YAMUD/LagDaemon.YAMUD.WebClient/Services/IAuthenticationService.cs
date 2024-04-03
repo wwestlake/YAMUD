@@ -6,12 +6,13 @@ namespace LagDaemon.YAMUD.WebClient.Services
     // IAuthenticationService.cs
     public interface IAuthenticationService
     {
-        AuthToken AuthToken { get; set; }
+        event EventHandler AuthenticationStateChanged;
+        Authority Authority { get; }
         Task<bool> IsUserAuthenticatedAsync();
-
         Task<bool> LoginAsync(string username, string password);
+        bool Authorize(string token);
         Task LogoutAsync();
         Task<UserAccount> GetUserAsync();
-
+        Task<bool> RegisterAsync(string email, string password, string displayName);
     }
 }

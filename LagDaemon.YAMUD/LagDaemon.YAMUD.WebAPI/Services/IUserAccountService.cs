@@ -13,4 +13,5 @@ public interface IUserAccountService
     Task<Result> DeleteUserAccount(Guid id);
     Task<Result> VerifyUserEmail(Guid userId, Guid verificationToken);
     Task<Result<string>> AuthenticateAsync(string email, string password);
+    Task<Result<UserAccount>> GetCurrentUser();
 }
