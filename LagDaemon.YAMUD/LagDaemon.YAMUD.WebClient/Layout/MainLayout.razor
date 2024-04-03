@@ -14,8 +14,12 @@
         <main>
             <AuthorizeView>
                 <Authorized>
-                    <NavMenu />
-                    @Body
+                    <div class="container-fluid">
+                        <NavMenu />
+                    </div>
+                    <div class="container-lg">
+                        @Body
+                    </div>
                 </Authorized>
                 <NotAuthorized>
                     <h1>Please log in to access this page.</h1>

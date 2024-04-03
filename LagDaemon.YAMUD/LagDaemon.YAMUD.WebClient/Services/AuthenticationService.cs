@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace LagDaemon.YAMUD.WebClient.Services
 {
@@ -50,20 +51,42 @@ namespace LagDaemon.YAMUD.WebClient.Services
 
         }
 
-        public async Task<UserAccount> GetUserAsync()
-        {
-            //GetCurrentUser
 
+        public async Task<UserAccount?> GetUserAsync(bool useCache = true)
+        {
+            if (useCache)
+            {
+                if (Authority.Cache != null)
+                {
+                    return Authority.Cache;
+                }
+                else
+                {
+                    Authority.Cache = await GetUserFromServer();
+                }
+                return Authority.Cache;
+            } else {
+                return await GetUserAsync();
+            } 
+        }
+
+        private async Task<UserAccount> GetUserFromServer()
+        {
             var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7214/api/UserAccount/GetCurrentUser");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Authority.AuthToken.token);
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize<UserAccount>(await response.Content.ReadAsStringAsync());
-                    
-            } else {
-                return null;
+                try
+                {
+                    var result = await response.Content.ReadFromJsonAsync<UserAccount>();
+                    return result;
+                } catch (Exception ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
+                }
             }
+            return null;
         }
 
         // Implement authentication logic here
@@ -134,7 +157,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
                 password = password
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/UserAccount/CreateAccount");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/UserAccount/CreateNewUser");
             request.Content = new StringContent(JsonSerializer.Serialize(registrationRequest), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.SendAsync(request);
@@ -168,5 +191,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
                 Authority.Role = roleClaim.Value;
             }
         }
+
+ 
     }
 }

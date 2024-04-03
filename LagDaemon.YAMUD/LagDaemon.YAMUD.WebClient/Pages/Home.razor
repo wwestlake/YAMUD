@@ -1,7 +1,28 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+@using LagDaemon.YAMUD.Model
+@using LagDaemon.YAMUD.WebClient.Pages
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ILocalStorageService LocalStorageService
+@inject IAuthenticationService AuthenticationService
+@inject HttpClient HttpClient
 
-<h1>Yet Anoither Multi-User Dungeon</h1>
+<PageTitle>YAMUD</PageTitle>
 
-Have Phun.
+<div class="description">
+    <h1>Welcome to Yet Another Multi-User Dungeon (YAMUD)!</h1>
+    <p>Embark on an immersive journey into a richly detailed world where adventure awaits at every turn.</p>
+    <p>YAMUD is a classic text-based multiplayer game inspired by the original MUDs of the past, but with a modern twist. Dive into a vast virtual landscape teeming with mysterious dungeons, treacherous monsters, and hidden treasures. Whether you're a seasoned adventurer or a newcomer to the realm of MUDs, YAMUD offers an unforgettable experience for all.</p>
+    <p>Create your own unique character from a variety of races and classes, each with their own strengths, weaknesses, and special abilities. Explore sprawling dungeons, battle fearsome creatures, and unravel ancient mysteries as you strive to become a legendary hero.</p>
+    <p>But beware, danger lurks around every corner, and only the bravest and most cunning adventurers will emerge victorious. Will you rise to the challenge and carve your name into the annals of YAMUD history?</p>
+    <p>Join us now and embark on an epic quest unlike any other. The world of YAMUD awaits your discovery!</p>
+</div>
+
+@code {
+
+
+
+}

@@ -1,18 +1,16 @@
-﻿using LagDaemon.YAMUD.ClientConsole;
-using NRules;
-using NRules.Fluent;
+﻿using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 
-var repository = new RuleRepository();
-repository.Load(x => x.From(typeof(DiscountRule)));
-var factory = repository.Compile();
-var session = factory.CreateSession();
 
-// Insert facts into the session (e.g., order)
-var order = new Order { Total = 120, CustomerType = CustomerType.Premium };
-session.Insert(order);
+var engine = Python.CreateEngine();
 
-// Fire the rules
-session.Fire();
+// Execute Python code
+var scope = engine.CreateScope();
+engine.Execute("x = 5", scope);
+engine.Execute("result = x**2", scope);
 
-// Output the result
-Console.WriteLine($"Order Total: {order.Total}, Discount Applied: {order.Discount}");
+// Retrieve the result from Python
+dynamic result = scope.GetVariable("result");
+
+// Print the result
+Console.WriteLine($"The square of 5 is {result}");

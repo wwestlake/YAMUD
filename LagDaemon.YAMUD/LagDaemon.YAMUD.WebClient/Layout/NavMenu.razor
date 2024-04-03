@@ -1,40 +1,85 @@
-﻿<div clsass="">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Yet Another MUD</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+﻿
+@using LagDaemon.YAMUD.Model
+@using LagDaemon.YAMUD.Model.User
+@using LagDaemon.YAMUD.WebClient.Pages
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Game</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Player</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Room</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Help</a>
-                </li>
-            </ul>
-            <div class="my-2 my-lg-0">
-                <!-- Link to UserAccount page with display name as link text -->
+@inject ILocalStorageService LocalStorageService
+@inject IAuthenticationService AuthenticationService
+@inject HttpClient HttpClient
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Yet Another MUD</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/game">Game</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/player">Player</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" @onclick="ToggleRoomManagementDropdown" aria-expanded="@isRoomManagementDropdownOpen">
+                    Room Management
+                </a>
+                <div class="@dropdownClass">
+                    <a class="dropdown-item" href="/">Room Builder</a>
+                    <a class="dropdown-item" href="/">Room Organizer</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/">Connections and Pathways</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/settings">Settings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/help">Help</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/useraccount">@DisplayName</a>
-                <!-- If you want to display an image, you can still include it here -->
-                @*                     <img src="profile_icon.png" alt="Profile" style="width: 30px; height: 30px; border-radius: 50%;">
-                *@
-            </div>
+            </li>
+            <AuthorizeView Roles="Admin, Owner, Founder">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Administration</a>
+                </li>
+            </AuthorizeView>
+
+
+        </ul>
+        <div class="container-fluid">
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
         </div>
-    </nav>
-</div>
+    </div>
+</nav>
 
 @code {
-    public string DisplayName = String.Empty;
+    private string DisplayName = string.Empty;
+    private UserAccount User = null;
+    bool isRoomManagementDropdownOpen = false;
+
+    string dropdownClass => isRoomManagementDropdownOpen ? "dropdown-menu show" : "dropdown-menu";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await AuthenticationService.GetUserAsync();
+        var role = User.UserRoles.Select(x => x.Role).Min().ToString();
+
+        DisplayName = $"{User.DisplayName} - {role}";
+    }
+
+    void ToggleRoomManagementDropdown()
+    {
+        isRoomManagementDropdownOpen = !isRoomManagementDropdownOpen;
+    }
 }

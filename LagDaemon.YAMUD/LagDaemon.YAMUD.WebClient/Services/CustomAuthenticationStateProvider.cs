@@ -21,7 +21,7 @@ public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 
         if (isAuthenticated)
         {
-            var roles = (await _authenticationService.GetUserAsync()).UserRoles;
+            var roles = (await _authenticationService.GetUserAsync()).UserRoles.Select(r => r.Role);
             var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role.ToString()));
             identity = new ClaimsIdentity(new[] 
             { 

@@ -13,48 +13,113 @@
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
 
-<div>
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Login</h5>
-            </div>
-            <div class="modal-body">
-                <!-- Login form content -->
-                <div class="form-group">
-                    <label for="userIdOrEmail">UserID/Email:</label>
-                    <input type="text" class="form-control" id="userIdOrEmail" @bind="UserIdOrEmail" />
+@if (IsLoading)
+{
+    <!-- Display spinner while loading -->
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+}
+
+@if (_mode == Mode.Login && !IsLoading)
+{
+    <div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" class="form-control" id="password" @bind="Password" />
-                </div>
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
-                    <label class="form-check-label" for="rememberMe">Remember Me</label>
-                </div>
-                @if (IsLoginError)
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @ErrorMessage
+                <div class="modal-body">
+                    <!-- Login form content -->
+                    <div class="form-group">
+                        <label for="userIdOrEmail">UserID/Email:</label>
+                        <input type="text" class="form-control" id="userIdOrEmail" @bind="UserIdOrEmail" />
                     </div>
-                }
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
-                <button type="button" class="btn btn-primary" @onclick="CreateAccount">Create Account</button>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" @bind="Password" />
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div>
+                    @if (IsLoginError)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ErrorMessage
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="Login">Login</button>
+                    <button type="button" class="btn btn-primary" @onclick="SwitchMode">Create Account</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+} else
+{
+    <div>
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- Login form content -->
+                    <div class="form-group">
+                        <label for="userIdOrEmail">UserID/Email:</label>
+                        <input type="text" class="form-control" id="userIdOrEmail" @bind="UserIdOrEmail" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control" id="password" @bind="Password" />
+                    </div>
+                    <div class="form-group">
+                        <label for="userIdOrEmail">Display Name:</label>
+                        <input type="text" class="form-control" id="displayName" @bind="DisplayName" />
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe" @bind="RememberMe" />
+                        <label class="form-check-label" for="rememberMe">Remember Me</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="CreateAccount">Create Account</button>
+                    <button type="button" class="btn btn-primary" @onclick="SwitchMode">Return to Login Page</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
 
 @code {
+
+    private enum Mode
+    {
+        Login,
+        Create
+    }
+
     private string? UserIdOrEmail;
     private string? Password;
     private bool? RememberMe;
     private bool IsLoginError;
     private string ErrorMessage;
+    private Mode _mode = Mode.Login;
 
+    [Parameter]
+    public bool UserIsLoggedIn { get; set; } = false;
+
+    [Parameter]
+    public string DisplayName { get; set; } = String.Empty;
+
+    private AuthToken? authToken;
+    private string? ApiUrl;
+    private UserAccountRoles userRole;
+    private bool IsLoading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,6 +130,7 @@
 
     private async Task LoginAsync()
     {
+        IsLoading = true;
         if (await AuthenticationService.LoginAsync(UserIdOrEmail, Password))
         {
             Navigation.NavigateTo("/");
@@ -73,6 +139,7 @@
             IsLoginError = true;
             ErrorMessage = "Invalid username or password. Please try again.";
         }
+        IsLoading = false;
         StateHasChanged();
     }
 
@@ -81,9 +148,27 @@
         _ = LoginAsync();
     }
 
-    private void CreateAccount()
+
+    private async void ReturnToLoginPage()
     {
-        Navigation.NavigateTo("/register");
+        Navigation.NavigateTo("/login");
+    }
+
+    private async Task SwitchMode()
+    {
+        switch (_mode)
+        {
+            case Mode.Login: _mode = Mode.Create; break;
+            case Mode.Create: _mode = Mode.Login; break;
+        }
+        StateHasChanged();
+    }
+
+
+    private async Task CreateAccount()
+    {
+        await AuthenticationService.RegisterAsync(DisplayName, UserIdOrEmail, Password);
+        StateHasChanged();
     }
 
 }
