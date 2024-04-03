@@ -1,4 +1,5 @@
-﻿using LagDaemon.YAMUD.WebClient.Model;
+﻿using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.WebClient.Model;
 
 namespace LagDaemon.YAMUD.WebClient.Services
 {
@@ -7,5 +8,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
         public AuthToken? AuthToken { get; set; }
         public string? DisplayName { get; set; }
         public string? Role { get; set; }
+
+        public UserAccount? Cache { get; set; }
     }
 }

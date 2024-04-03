@@ -6,6 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 
 namespace LagDaemon.YAMUD.WebClient.Services
 {
@@ -50,21 +51,20 @@ namespace LagDaemon.YAMUD.WebClient.Services
 
         }
 
-        private UserAccount _userAccountCache;
 
         public async Task<UserAccount?> GetUserAsync(bool useCache = true)
         {
             if (useCache)
             {
-                if (_userAccountCache != null)
+                if (Authority.Cache != null)
                 {
-                    return _userAccountCache;
+                    return Authority.Cache;
                 }
                 else
                 {
-                    _userAccountCache = await GetUserFromServer();
+                    Authority.Cache = await GetUserFromServer();
                 }
-                return _userAccountCache;
+                return Authority.Cache;
             } else {
                 return await GetUserAsync();
             } 
@@ -77,10 +77,9 @@ namespace LagDaemon.YAMUD.WebClient.Services
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                var strUser = await response.Content.ReadAsStringAsync();
                 try
                 {
-                    var result = JsonSerializer.Deserialize<UserAccount>(strUser, JsonSerializerOptions.Default);
+                    var result = await response.Content.ReadFromJsonAsync<UserAccount>();
                     return result;
                 } catch (Exception ex)
                 {
