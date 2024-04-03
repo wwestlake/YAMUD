@@ -157,7 +157,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
                 password = password
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/UserAccount/CreateAccount");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/UserAccount/CreateNewUser");
             request.Content = new StringContent(JsonSerializer.Serialize(registrationRequest), Encoding.UTF8, "application/json");
 
             var response = await _httpClient.SendAsync(request);

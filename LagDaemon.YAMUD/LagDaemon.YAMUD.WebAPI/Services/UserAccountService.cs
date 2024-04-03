@@ -136,9 +136,9 @@ public class UserAccountService : IUserAccountService
     }
 
     [Security(UserAccountRoles.Player)]
-    public async Task<Result<UserAccount>> GetCurrentUser()
+    public async Task<Result<UserAccount?>> GetCurrentUser()
     {
-        return await _userRepository.GetSingleAsync(u => u.EmailAddress == _requestContext.UserEmail);
+        return (await _userRepository.GetAsync(u => u.EmailAddress == _requestContext.UserEmail, null, "UserRoles")).FirstOrDefault();
     }
 
     [Security(UserAccountRoles.Admin)]
