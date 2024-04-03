@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -9,8 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="IronPython" Version="3.4.1" />
-    <PackageReference Include="NRules" Version="0.9.4" />
-    <PackageReference Include="NRules.Fluent" Version="0.9.4" />
+    <PackageReference Include="IronRuby" Version="1.1.3" />
   </ItemGroup>
 
 </Project>
