@@ -1,7 +1,23 @@
 ﻿@page "/"
 
+@using LagDaemon.YAMUD.Model
+@using LagDaemon.YAMUD.WebClient.Pages
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject ILocalStorageService LocalStorageService
+@inject IAuthenticationService AuthenticationService
+@inject HttpClient HttpClient
+
 <PageTitle>Home</PageTitle>
 
 <h1>Yet Anoither Multi-User Dungeon</h1>
 
 Have Phun.
+
+@code {
+
+
+
+}

@@ -50,20 +50,44 @@ namespace LagDaemon.YAMUD.WebClient.Services
 
         }
 
-        public async Task<UserAccount> GetUserAsync()
-        {
-            //GetCurrentUser
+        private UserAccount _userAccountCache;
 
+        public async Task<UserAccount?> GetUserAsync(bool useCache = true)
+        {
+            if (useCache)
+            {
+                if (_userAccountCache != null)
+                {
+                    return _userAccountCache;
+                }
+                else
+                {
+                    _userAccountCache = await GetUserFromServer();
+                }
+                return _userAccountCache;
+            } else {
+                return await GetUserAsync();
+            } 
+        }
+
+        private async Task<UserAccount> GetUserFromServer()
+        {
             var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7214/api/UserAccount/GetCurrentUser");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", Authority.AuthToken.token);
             var response = await _httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
-                return JsonSerializer.Deserialize<UserAccount>(await response.Content.ReadAsStringAsync());
-                    
-            } else {
-                return null;
+                var strUser = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var result = JsonSerializer.Deserialize<UserAccount>(strUser, JsonSerializerOptions.Default);
+                    return result;
+                } catch (Exception ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
+                }
             }
+            return null;
         }
 
         // Implement authentication logic here
@@ -168,5 +192,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
                 Authority.Role = roleClaim.Value;
             }
         }
+
+ 
     }
 }

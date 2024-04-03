@@ -1,4 +1,17 @@
-﻿<div clsass="">
+﻿
+@using LagDaemon.YAMUD.Model
+@using LagDaemon.YAMUD.Model.User
+@using LagDaemon.YAMUD.WebClient.Pages
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+
+@inject ILocalStorageService LocalStorageService
+@inject IAuthenticationService AuthenticationService
+@inject HttpClient HttpClient
+
+<div clsass="">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Yet Another MUD</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -36,5 +49,14 @@
 </div>
 
 @code {
-    public string DisplayName = String.Empty;
+    private string DisplayName = string.Empty;
+    private UserAccount User = null;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await AuthenticationService.GetUserAsync();
+
+        DisplayName = User.DisplayName;
+    }
 }
