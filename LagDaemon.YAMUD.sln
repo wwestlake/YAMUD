@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Tools", "La
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.GameRulesEngine.Tests", "LagDaemon.YAMUD.GameRulesEngine.Tests\LagDaemon.YAMUD.GameRulesEngine.Tests.csproj", "{20C1D742-5D35-4DBC-B881-BAB46CB335B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.Scripting", "..\LagDaemon.YAMUD.Scripting\LagDaemon.YAMUD.Scripting.csproj", "{4C0F1592-A762-47B3-B6E8-B1DA8DD095E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Scripting", "LagDaemon.YAMUD.Scripting\LagDaemon.YAMUD.Scripting.csproj", "{52986B96-7F4A-46F4-B6A2-19B43690340C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.Scripting.Tests", "..\LagDaemon.YAMUD.Scripting.Tests\LagDaemon.YAMUD.Scripting.Tests.csproj", "{F9FF3ADD-1082-45C4-AD8B-8BF7967E032C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Scripting.Tests", "LagDaemon.YAMUD.Scripting.Tests\LagDaemon.YAMUD.Scripting.Tests.csproj", "{FB2DA157-8BFF-495B-8C09-F5C714059F98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,14 +91,14 @@ Global
 		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20C1D742-5D35-4DBC-B881-BAB46CB335B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C0F1592-A762-47B3-B6E8-B1DA8DD095E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C0F1592-A762-47B3-B6E8-B1DA8DD095E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C0F1592-A762-47B3-B6E8-B1DA8DD095E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C0F1592-A762-47B3-B6E8-B1DA8DD095E2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9FF3ADD-1082-45C4-AD8B-8BF7967E032C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9FF3ADD-1082-45C4-AD8B-8BF7967E032C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9FF3ADD-1082-45C4-AD8B-8BF7967E032C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9FF3ADD-1082-45C4-AD8B-8BF7967E032C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52986B96-7F4A-46F4-B6A2-19B43690340C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52986B96-7F4A-46F4-B6A2-19B43690340C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52986B96-7F4A-46F4-B6A2-19B43690340C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52986B96-7F4A-46F4-B6A2-19B43690340C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
