@@ -1,4 +1,4 @@
-﻿@page "/admin"
+﻿@page "/scripting"
 @using LagDaemon.YAMUD.Model.Scripting
 @using BlazorMonaco
 @using BlazorMonaco.Editor
@@ -17,7 +17,7 @@
             <ul class="list-group">
                 @foreach (var script in scripts)
                 {
-                    <li class="list-group-item" @onclick="() => LoadScript(script)">
+                    <li class="list-group-item @(IsScriptSelected(script) ? "selected" : "")" @onclick="() => LoadScript(script)">
                         @script.Name
                     </li>
                 }
@@ -88,6 +88,11 @@
                 GlyphMargin = true,
                 Value = ""
             };
+    }
+
+    private bool IsScriptSelected(Module script)
+    {
+        return module != null && module.Id == script.Id;
     }
 
     protected override async Task OnInitializedAsync()

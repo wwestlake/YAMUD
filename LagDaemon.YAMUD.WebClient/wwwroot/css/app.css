@@ -138,3 +138,7 @@ code {
 .editor-class {
     height: 500px;
 }
+
+.selected {
+    background-color: lightblue;
+}

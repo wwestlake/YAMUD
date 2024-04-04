@@ -25,17 +25,6 @@
             <li class="nav-item">
                 <a class="nav-link" href="/player">Player</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" @onclick="ToggleRoomManagementDropdown" aria-expanded="@isRoomManagementDropdownOpen">
-                    Room Management
-                </a>
-                <div class="@dropdownClass">
-                    <a class="dropdown-item" href="/">Room Builder</a>
-                    <a class="dropdown-item" href="/">Room Organizer</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/">Connections and Pathways</a>
-                </div>
-            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/settings">Settings</a>
             </li>
@@ -46,8 +35,20 @@
                 <a class="nav-link" href="/useraccount">@DisplayName</a>
             </li>
             <AuthorizeView Roles="Admin, Owner, Founder">
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin">Administration</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" @onclick="ToggleRoomManagementDropdown" aria-expanded="@isRoomManagementDropdownOpen">
+                        Admin
+                    </a>
+                    <div class="@dropdownClass">
+                        <a class="dropdown-item" href="/scripting" @onclick="CloseDropdown">Scripting</a>
+                        <a class="dropdown-item" href="/dungeon" @onclick="CloseDropdown">Dungeon Creation</a>
+                        <a class="dropdown-item" href="/items" @onclick="CloseDropdown">Item Management</a>
+                        <a class="dropdown-item" href="/rules" @onclick="CloseDropdown">Rules Engine</a>
+                        <a class="dropdown-item" href="/users" @onclick="CloseDropdown">User Management</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/">Testing</a>
+                    </div>
                 </li>
             </AuthorizeView>
         </ul>
@@ -86,5 +87,10 @@
     void ToggleRoomManagementDropdown()
     {
         isRoomManagementDropdownOpen = !isRoomManagementDropdownOpen;
+    }
+
+    private void CloseDropdown()
+    {
+        isRoomManagementDropdownOpen = false;
     }
 }
