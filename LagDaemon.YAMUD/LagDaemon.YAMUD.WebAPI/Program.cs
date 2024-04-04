@@ -6,6 +6,7 @@ using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
+using LagDaemon.YAMUD.WebAPI.Services.Scripting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISecurityProxyFactory, SecurityProxyFactory>();
 builder.Services.AddScoped<UserAccountService>();
 builder.Services.AddScoped<IServiceProxyFactory, ServiceProxyFactory>();
+builder.Services.AddScoped<ScriptingModuleService>();
 
 builder.Services.AddScoped<IUserAccountService>(serviceProvider => 
     {
@@ -59,6 +61,12 @@ builder.Services.AddScoped<IUserAccountService>(serviceProvider =>
         return factory.CreateProxy<IUserAccountService>(service);
     });
 
+builder.Services.AddScoped<IScriptingModuleService>(serviceProvider =>
+    {
+        var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+        var service = serviceProvider.GetRequiredService<ScriptingModuleService>();
+        return factory.CreateProxy<IScriptingModuleService>(service);
+    });
 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

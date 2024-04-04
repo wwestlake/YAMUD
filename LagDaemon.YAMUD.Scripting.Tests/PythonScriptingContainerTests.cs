@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace LagDaemon.YAMUD.Scripting.Tests
 {
     public class PythonScriptingContainerTests
@@ -32,6 +34,25 @@ result = interop_instance.Add(3, 4)
             container.Execute(python);
             var result = container.GetVariable("result");
             Assert.AreEqual(7, result);
+        }
+
+        [Test]
+        public void ScriptingContainer_Executes_Method_In_CSharp_Class_through_Scope()
+        {
+            var python = @"
+import clr
+import sys
+clr.AddReference('LagDaemon.YAMUD.Scripting.Tests')  
+from LagDaemon.YAMUD.Scripting.Tests import InteropTest
+result = interop_instance.Add(3, 4)
+";
+            var interop_instance = new InteropTest();
+            var container = ScriptingContainer.CreatePythonContainer();
+            container.SetVariable("interop_instance", interop_instance);
+            container.Execute(python);
+            var result = container.GetVariable("result");
+            Assert.AreEqual(7, result);
+
         }
 
     }

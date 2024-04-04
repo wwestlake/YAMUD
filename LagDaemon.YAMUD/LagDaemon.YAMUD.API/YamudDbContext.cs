@@ -2,6 +2,7 @@
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Model.Map;
 using LagDaemon.YAMUD.Model.Items;
+using LagDaemon.YAMUD.Model.Scripting;
 
 namespace LagDaemon.YAMUD.API;
 
@@ -17,6 +18,8 @@ public class YamudDbContext : DbContext
     public DbSet<Room> Rooms { get; set; }
 
     public DbSet<Item> Items { get; set; }
+
+    public DbSet<Module> CodeModules { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -34,5 +37,9 @@ public class YamudDbContext : DbContext
             .WithMany()                          // PlayerState can belong to only one UserAccount
             .HasForeignKey(ps => ps.UserAccountId);  // Foreign key property
 
+        modelBuilder.Entity<Module>()
+            .HasOne(m => m.Author)
+            .WithMany()
+            .HasForeignKey(m => m.UserAccountId);
     }
 }
