@@ -1,15 +1,10 @@
 ﻿using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LagDaemon.YAMUD.WebAPI.Tests.Services
 {
-    public class CharacterGenertorTests
+    public class CharacterGeneratorTests
     {
         const string STR_CharacterName = "CharacterName";
         [Fact]
