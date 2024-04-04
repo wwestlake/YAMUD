@@ -3,24 +3,21 @@ using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Model.Map;
 using LagDaemon.YAMUD.Model.Items;
 using LagDaemon.YAMUD.Model.Scripting;
+using LagDaemon.YAMUD.Model.Characters;
+using LagDaemon.YAMUD.Model.Utilities;
 
 namespace LagDaemon.YAMUD.API;
 
 public class YamudDbContext : DbContext
 {
-
     public YamudDbContext(DbContextOptions<YamudDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) {}
 
     public DbSet<UserAccount> UserAccounts { get; set; }
     public DbSet<Room> Rooms { get; set; }
-
     public DbSet<Item> Items { get; set; }
-
     public DbSet<Module> CodeModules { get; set; }
-
+    public DbSet<Character> Characters { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
     }
@@ -36,6 +33,16 @@ public class YamudDbContext : DbContext
             .HasOne(ps => ps.UserAccount)        // Navigation property
             .WithMany()                          // PlayerState can belong to only one UserAccount
             .HasForeignKey(ps => ps.UserAccountId);  // Foreign key property
+
+        modelBuilder.Entity<Annotation>()
+            .HasOne(a => a.User) // Configure one-to-one relationship with ApplicationUser
+            .WithMany() // Annotation can have one user, user can have many annotations
+            .HasForeignKey(a => a.UserId);
+
+        modelBuilder.Entity<Character>()
+            .HasMany(c => c.Annotations) // Character can have many annotations
+            .WithOne() // Annotation can belong to one character
+            .HasForeignKey(a => a.AnnotatedEntityId); // Foreign key for Character
 
     }
 }
