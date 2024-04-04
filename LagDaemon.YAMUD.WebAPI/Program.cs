@@ -6,6 +6,7 @@ using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
+using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
 using LagDaemon.YAMUD.WebAPI.Services.Scripting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -53,6 +54,8 @@ builder.Services.AddScoped<ISecurityProxyFactory, SecurityProxyFactory>();
 builder.Services.AddScoped<UserAccountService>();
 builder.Services.AddScoped<IServiceProxyFactory, ServiceProxyFactory>();
 builder.Services.AddScoped<ScriptingModuleService>();
+builder.Services.AddSingleton<IRandomNumberService, RandomNumberService>();
+builder.Services.AddSingleton<INameGenerator, NameGenerator>();
 
 builder.Services.AddScoped<IUserAccountService>(serviceProvider => 
     {
