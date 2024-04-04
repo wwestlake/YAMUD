@@ -10,5 +10,6 @@ namespace LagDaemon.YAMUD.GameRulesEngine.Rules
     public interface IRule
     {
         bool IsSatisfied(IGameContext context);
+        IRule AddRule(IRule rule);
     }
 }

@@ -1,25 +1,13 @@
 ﻿using LagDaemon.YAMUD.Model.Utilities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace LagDaemon.YAMUD.GameRulesEngine.Rules
 {
-    public class OrRule : IRule
+    public class OrRule : RuleBase
     {
-        private List<IRule> _rules = new List<IRule>();
-
-        public OrRule()
-        {
-        }
-
-        public void AddRule(IRule rule)
-        {
-            _rules.Add(rule);
-        }
-
-        public bool IsSatisfied(IGameContext context)
+        public override bool IsSatisfied(IGameContext context)
         {
             return _rules.Any(x => x.IsSatisfied(context));
         }
-
-
     }
 }
