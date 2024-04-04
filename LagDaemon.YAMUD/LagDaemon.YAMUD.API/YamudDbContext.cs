@@ -37,9 +37,5 @@ public class YamudDbContext : DbContext
             .WithMany()                          // PlayerState can belong to only one UserAccount
             .HasForeignKey(ps => ps.UserAccountId);  // Foreign key property
 
-        modelBuilder.Entity<Module>()
-            .HasOne(m => m.Author)
-            .WithMany()
-            .HasForeignKey(m => m.UserAccountId);
     }
 }

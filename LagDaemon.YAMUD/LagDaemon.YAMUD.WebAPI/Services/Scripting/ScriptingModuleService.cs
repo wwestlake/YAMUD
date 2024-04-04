@@ -2,6 +2,8 @@
 using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Model.Scripting;
+using LagDaemon.YAMUD.WebAPI.Utilities;
+using Microsoft.AspNetCore.Authentication;
 
 namespace LagDaemon.YAMUD.WebAPI.Services.Scripting
 {
@@ -9,11 +11,13 @@ namespace LagDaemon.YAMUD.WebAPI.Services.Scripting
     {
         private IUnitOfWork _unitOfWork;
         private IRepository<Module> _repository;
+        private IUserAccountService _userAccountService;
 
-        public ScriptingModuleService(IUnitOfWork unitOfWork)
+        public ScriptingModuleService(IUnitOfWork unitOfWork, IUserAccountService userAccountService)
         {
             _unitOfWork = unitOfWork;
             _repository = _unitOfWork.GetRepository<Module>();
+            _userAccountService = userAccountService;
         }
 
         [Security(Model.UserAccountRoles.Admin)]
@@ -31,7 +35,12 @@ namespace LagDaemon.YAMUD.WebAPI.Services.Scripting
         [Security(Model.UserAccountRoles.Admin)]
         public async Task<int> Create(Module module)
         {
-            _repository.Insert(module);
+            var userId = (await _userAccountService.GetCurrentUser())
+                .OnSuccess(x => {
+                    module.UserAccountId = x.ID;
+                    _repository.Insert(module);
+                }).OnFailure(x => throw new UnauthorizedAccessException());
+
             return await _unitOfWork.SaveChangesAsync();
         }
 

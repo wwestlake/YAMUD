@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LagDaemon.YAMUD.WebAPI.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class ScriptingModuleController : Controller
     {
         private IScriptingModuleService _scriptingModuleService;
@@ -53,5 +55,15 @@ namespace LagDaemon.YAMUD.WebAPI.Controllers
                 return BadRequest("Module was not created");
             }
         }
+
+        [Authorize]
+        [HttpPost("UpdateModule")]
+        public async Task<IActionResult> UpdateModule([FromBody] Module module)
+        {
+            await _scriptingModuleService.Update(module);
+            return Ok();
+        }
+
+
     }
 }
