@@ -25,11 +25,12 @@ public class UserAccountService : IUserAccountService
     private IWebHostEnvironment _env;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IRequestContext _requestContext;
+    private readonly ILogger _logger;
 
     public UserAccountService(IUnitOfWork unitOfWork, IEmailService emailService, 
                             RazorViewToStringRenderer razorViewToStringRenderer, 
                             IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor,
-                            IRequestContext requestContext
+                            IRequestContext requestContext, ILogger<UserAccountService> logger
                             )
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
@@ -39,6 +40,7 @@ public class UserAccountService : IUserAccountService
         _env = env;
         _httpContextAccessor = httpContextAccessor;
         _requestContext = requestContext;
+        _logger = logger;
     }
 
     [Security(UserAccountRoles.Admin)]
@@ -320,6 +322,7 @@ public class UserAccountService : IUserAccountService
                 return Result.Fail<string>("Invalid email or password");
         } else
         {
+            _logger.LogInformation($"User {userResult.EmailAddress} has logged in.");
             return Result.Ok(GenerateJwtToken(userResult));
         }
     }

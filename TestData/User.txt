@@ -1,5 +1,5 @@
 {
-  "displayName": "bill",
+  "displayName": "LagDaemon",
   "email": "wweatlake1234@gmail.com",
   "password": "Xr0tU5b9~!-4=9rgvh7865$#"
 }
@@ -9,18 +9,57 @@
   "password": "Xr0tU5b9~!-4=9rgvh7865$#"
 }
 
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3d2VhdGxha2UxMjM0QGdtYWlsLmNvbSIsImp0aSI6ImQ2Y2JiYmEwLTU5MGQtNDYyOS1hZmQ2LWMwMTEwMjM0N2QwZSIsImV4cCI6MTcxMTQxODM2MCwiaXNzIjoieWFtdWQubGFnZGFlbW9uLmNvbSIsImF1ZCI6ImxvY2FsaG9zdCJ9.OsMw5lcJ5S_b0E2ZbsoJgt2xKPSHZJMmjZaEUdf6qFQ
 
-http://localhost:7214/api/UserAccount/ValidateUserEmail/09003cb6-3145-4fff-b715-5d8dc07059f8/3cd2990a-2e11-489a-9455-a54659f54e0e
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ3d2VhdGxha2UxMjM0QGdtYWlsLmNvbSIsImp0aSI6ImM1MTMxZDYxLTAwYjYtNGMyZC05ZTM0LWJhMDY2ZDhiNzVkYyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkZvdW5kZXIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTGFnRGFlbW9uIiwiZXhwIjoxNzEyMzYzMDIxLCJpc3MiOiJ5YW11ZC5sYWdkYWVtb24uY29tIiwiYXVkIjoibG9jYWxob3N0In0.okIYpnj7ktfpBIhR1cx-WDPoYfJxGNDjQAIwW2idcq8
 
 curl -X 'GET' 'https://localhost:32770/api/UserAccount/GetAllUsers' -H 'accept: */*'
 
 echo "postgres" | docker secret create postgres_user -
 echo "htrv5gpl" | docker secret create postgres_password -
 
+{
+  "id": "4aeba826-ead1-44d9-bb7f-efbd4d1b994f",
+  "name": "zeboyonez",
+  "description": "",
+  "level": 1,
+  "experiencePoints": 0,
+  "healthPoints": 100,
+  "maxHealthPoints": 100,
+  "manaPoints": 100,
+  "maxManaPoints": 100,
+  "strength": 3,
+  "dexterity": 9,
+  "intelligence": 7,
+  "luck": 6,
+  "createdAt": "2024-04-05T07:13:53.5528145Z",
+  "ownerId": "ec1b7fb7-bd24-4f46-bc93-c1b3b3668d3a",
+    "location": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "x": 0,
+    "y": 0,
+    "level": 0
+  },
+  "annotations": []
+}
 
-
-
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "PostgreSQL",
+        "Args": {
+          "connectionString": "Server=localhost;Port=5432;Database=yamud-logs;UserId=postgres;Password=htrv5gpl;",
+          "tableName": "Logs", // Table name in the database
+          "autoCreateSqlTable": true,
+          "restrictedToMinimumLevel": "Information" // Minimum log level
+        }
+      }
+    ],
+    "Enrich": [ "FromLogContext", "WithExceptionDetails" ],
+    "Properties": {
+      "Application": "YAMUD"
+    }
+  }
 
 
 

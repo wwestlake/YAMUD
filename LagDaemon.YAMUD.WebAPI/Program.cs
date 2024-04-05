@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Reflection;
 using System.Text;
 
@@ -28,6 +29,13 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
     .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration) // Read Serilog configuration from appsettings.json
+    .CreateLogger();
+
+builder.Services.AddLogging(loggingBuilder =>
+    loggingBuilder.AddSerilog(dispose: true)); // dispose: true to ensure Serilog Logger is disposed properly
 
 builder.Services.AddSingleton(configuration);
 
@@ -56,15 +64,23 @@ builder.Services.AddScoped<IServiceProxyFactory, ServiceProxyFactory>();
 builder.Services.AddScoped<ScriptingModuleService>();
 builder.Services.AddSingleton<IRandomNumberService, RandomNumberService>();
 builder.Services.AddSingleton<INameGenerator, NameGenerator>();
+builder.Services.AddScoped<ICharacterGenerationService, CharacterGenerationService>();
+builder.Services.AddScoped<CharacterService>();
 
-builder.Services.AddScoped<IUserAccountService>(serviceProvider => 
+builder.Services.AddScoped(serviceProvider => {
+    var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+    var service = serviceProvider.GetRequiredService<CharacterService>();
+    return factory.CreateProxy<ICharacterService>(service);
+});
+
+builder.Services.AddScoped(serviceProvider => 
     {
         var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
         var service = serviceProvider.GetRequiredService<UserAccountService>();
         return factory.CreateProxy<IUserAccountService>(service);
     });
 
-builder.Services.AddScoped<IScriptingModuleService>(serviceProvider =>
+builder.Services.AddScoped(serviceProvider =>
     {
         var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
         var service = serviceProvider.GetRequiredService<ScriptingModuleService>();
@@ -179,4 +195,5 @@ app.UseCors("AllowOrigin");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.Logger.LogInformation("Starting Application");
 app.Run();

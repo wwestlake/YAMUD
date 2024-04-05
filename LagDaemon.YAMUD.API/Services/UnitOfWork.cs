@@ -1,4 +1,5 @@
 ﻿using LagDaemon.YAMUD.Data.Repositories;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace LagDaemon.YAMUD.API.Services;
 
@@ -11,6 +12,12 @@ public class UnitOfWork : IUnitOfWork
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
         _repositories = new Dictionary<Type, object>();
+        
+    }
+
+    public EntityEntry Entry<T>(T entity) where T : class
+    {
+        return _context.Entry(entity);
     }
 
     public IRepository<T> GetRepository<T>() where T : class
