@@ -44,7 +44,7 @@ namespace LagDaemon.YAMUD.WebAPI.Controllers
 
         [Authorize]
         [HttpPost("CreateNewModule")]
-        public async Task<IActionResult> CreateNewModule([FromBody] Module module)
+        public async Task<IActionResult> CreateNewModule([FromBody] CodeModule module)
         {
             if (await _scriptingModuleService.Create(module) == 1)
             {
@@ -58,7 +58,7 @@ namespace LagDaemon.YAMUD.WebAPI.Controllers
 
         [Authorize]
         [HttpPost("UpdateModule")]
-        public async Task<IActionResult> UpdateModule([FromBody] Module module)
+        public async Task<IActionResult> UpdateModule([FromBody] CodeModule module)
         {
             await _scriptingModuleService.Update(module);
             return Ok();

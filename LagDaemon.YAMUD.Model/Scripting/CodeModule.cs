@@ -9,7 +9,7 @@ namespace LagDaemon.YAMUD.Model.Scripting
         Ruby
     }
 
-    public class Module
+    public class CodeModule
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; } = "New Module";

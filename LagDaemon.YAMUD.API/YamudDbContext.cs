@@ -16,7 +16,7 @@ public class YamudDbContext : DbContext
     public DbSet<UserAccount> UserAccounts { get; set; }
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Item> Items { get; set; }
-    public DbSet<Module> CodeModules { get; set; }
+    public DbSet<CodeModule> CodeModules { get; set; }
     public DbSet<Character> Characters { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

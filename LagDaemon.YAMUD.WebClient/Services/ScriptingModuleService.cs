@@ -19,7 +19,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
         }
 
 
-        public async Task<IEnumerable<Module>> GetAllModules()
+        public async Task<IEnumerable<CodeModule>> GetAllModules()
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7214/api/ScriptingModule/GetAllModules");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authenticationService.Authority.AuthToken.token);
@@ -28,7 +28,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
             {
                 try
                 {
-                    return await response.Content.ReadFromJsonAsync<IEnumerable<Module>>();
+                    return await response.Content.ReadFromJsonAsync<IEnumerable<CodeModule>>();
                 }
                 catch (Exception ex)
                 {
@@ -38,12 +38,12 @@ namespace LagDaemon.YAMUD.WebClient.Services
             return null;
         }
 
-        public async Task<Module> GetModuleById(Guid id)
+        public async Task<CodeModule> GetModuleById(Guid id)
         {
-            return await _httpClient.GetFromJsonAsync<Module>($"api/ScriptingModule/GetModuleById/{id}");
+            return await _httpClient.GetFromJsonAsync<CodeModule>($"api/ScriptingModule/GetModuleById/{id}");
         }
 
-        public async Task CreateNewModule(Module module)
+        public async Task CreateNewModule(CodeModule module)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/ScriptingModule/CreateNewModule");
             request.Content = new StringContent(JsonSerializer.Serialize(module), Encoding.UTF8, "application/json");
@@ -51,7 +51,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
             var response = await _httpClient.SendAsync(request);
         }
 
-        public async Task UpdateModule(Module module)
+        public async Task UpdateModule(CodeModule module)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7214/api/ScriptingModule/UpdateModule");
             request.Content = new StringContent(JsonSerializer.Serialize(module), Encoding.UTF8, "application/json");

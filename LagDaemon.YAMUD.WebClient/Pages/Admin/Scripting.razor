@@ -73,8 +73,8 @@
 </div>
 
 @code {
-    private List<Module> scripts = new List<Module>();
-    private Module module = new Module();
+    private List<CodeModule> scripts = new List<CodeModule>();
+    private CodeModule module = new CodeModule();
     private StandaloneCodeEditor _editor = null!;
     private string _valueToSet = "";
     private bool isNewModule = true;
@@ -90,7 +90,7 @@
             };
     }
 
-    private bool IsScriptSelected(Module script)
+    private bool IsScriptSelected(CodeModule script)
     {
         return module != null && module.Id == script.Id;
     }
@@ -127,7 +127,7 @@
     }
 
     // Load the script into the form
-    private async Task LoadScript(Module script)
+    private async Task LoadScript(CodeModule script)
     {
         if (unsavedChanges)
         {
@@ -182,7 +182,7 @@
                 return; // Don't load script if user cancels
             }
         }
-        module = new Module();
+        module = new CodeModule();
         await _editor.SetValue(string.Empty);
         isNewModule = true;
         StateHasChanged();

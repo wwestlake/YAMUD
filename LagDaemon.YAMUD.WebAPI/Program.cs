@@ -15,6 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using ThothLog.Services;
+using ThothLog.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,18 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true, reloadOnChange: true)
     .Build();
+
+builder.Services.AddMongoDB(builder.Configuration);
+
+// Add MongoDB logging service
+builder.Services.AddLoggingService(builder.Configuration);
+
+// Register logging provider
+builder.Services.AddSingleton<ILoggerProvider, LoggingServiceLoggerProvider>();
+
+// Add services to the container.
+
+builder.Services.AddScoped<ILoggingService, LoggingService>();
 
 
 builder.Services.AddSingleton(configuration);

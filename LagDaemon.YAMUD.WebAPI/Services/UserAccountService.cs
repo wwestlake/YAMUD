@@ -69,6 +69,9 @@ public class UserAccountService : IUserAccountService
         {
             return Result.Ok(existingUser);
         }
+
+        string message = $"Unauthorized access attempt to user record {existingUser.ID} by {_requestContext.UserEmail}";
+        _logger.LogWarning(message);
         return Result.Fail("Not Authorized");
     }
 
@@ -115,6 +118,8 @@ public class UserAccountService : IUserAccountService
         _userRepository.Insert(newUserAccount);
         _unitOfWork.SaveChanges();
 
+        string message = $"New user account created: {newUserAccount.EmailAddress}";
+        _logger.LogInformation(message);
         return Result.Ok(newUserAccount);
     }
 

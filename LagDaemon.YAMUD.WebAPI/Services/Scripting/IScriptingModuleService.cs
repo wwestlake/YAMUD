@@ -4,10 +4,10 @@ namespace LagDaemon.YAMUD.WebAPI.Services.Scripting
 {
     public interface IScriptingModuleService
     {
-        Task<int> Create(Module module);
+        Task<int> Create(CodeModule module);
         Task Delete(Guid id);
-        Task<Module?> Get(Guid id);
-        Task<IEnumerable<Module>> GetAll();
-        Task Update(Module module);
+        Task<CodeModule?> Get(Guid id);
+        Task<IEnumerable<CodeModule>> GetAll();
+        Task Update(CodeModule module);
     }
 }
