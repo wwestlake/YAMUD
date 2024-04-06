@@ -1,4 +1,5 @@
-﻿using LagDaemon.YAMUD.WebAPI.Services;
+﻿using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
 using Moq;
 
@@ -8,17 +9,19 @@ namespace LagDaemon.YAMUD.WebAPI.Tests.Services
     {
         const string STR_CharacterName = "CharacterName";
         [Fact]
-        public void CharacterGenerator_GenerateCharacter_ReturnsCharacter()
+        public async Task CharacterGenerator_GenerateCharacter_ReturnsCharacter()
         {
             // Arrange
             var randomNumberService = new Mock<IRandomNumberService>();
             var nameGenerator = new Mock<INameGenerator>();
-            var characterGenerator = new CharacterGenerationService(randomNumberService.Object, nameGenerator.Object);
+            var userAccountServiceMock = new Mock<IUserAccountService>();
+            userAccountServiceMock.Setup(x => x.GetCurrentUser()).ReturnsAsync(new UserAccount());
+            var characterGenerator = new CharacterGenerationService(randomNumberService.Object, nameGenerator.Object, userAccountServiceMock.Object);
 
             randomNumberService.Setup(x => x.GetRandomInt(It.IsAny<int>(), It.IsAny<int>())).Returns(5);
             nameGenerator.Setup(x => x.GenerateName(It.IsAny<int>(), It.IsAny<int>())).Returns(STR_CharacterName);
             // Act
-            var character = characterGenerator.GenerateCharacter();
+            var character = await characterGenerator.GenerateCharacter();
 
             // Assert
             Assert.NotNull(character);

@@ -29,24 +29,19 @@ var configuration = new ConfigurationBuilder()
     .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true, reloadOnChange: true)
     .Build();
 
+var nlog = configuration.GetSection("NLog");
+
+
+
 builder.Services.AddSingleton(configuration);
 
 var connectionString = configuration.GetConnectionString("postgres");
 
-// Retrieve Docker secrets as environment variables
-var dbUsername = Environment.GetEnvironmentVariable("postgres_user");
-var dbPassword = Environment.GetEnvironmentVariable("postgres_password");
-
-if (string.IsNullOrEmpty(dbUsername) || string.IsNullOrEmpty(dbPassword))
-{
-    //throw new InvalidOperationException("Docker secrets not provided.");
-}
-
-// Modify the connection string to include the retrieved username and password
-connectionString = string.Format(connectionString, dbUsername, dbPassword);
-
-builder.Services.AddDbContext<YamudDbContext>(options =>
-    options.UseNpgsql(connectionString), ServiceLifetime.Scoped);
+builder.Services.AddDbContext<YamudDbContext>(options => 
+    {
+        options.UseNpgsql(connectionString);
+        //options.LogTo(Console.WriteLine);
+    }, ServiceLifetime.Scoped);
 
 builder.Services.AddScoped<ISecurityInterceptor, SecurityInterceptor>();
 builder.Services.AddHttpContextAccessor();
@@ -174,8 +169,6 @@ var app = builder.Build();
 
 app.UseMiddleware<RequestInfoMiddleware>();
 
-
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -186,5 +179,6 @@ app.UseCors("AllowOrigin");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-app.Logger.LogInformation("Starting Application");
+app.Logger.LogInformation("Starting Application YAMUD Web API");
+app.Logger.LogWarning("Debug logging message");
 app.Run();
