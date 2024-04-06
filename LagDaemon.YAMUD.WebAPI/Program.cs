@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Serilog;
 using System.Reflection;
 using System.Text;
 
@@ -27,15 +26,8 @@ builder.Services.AddSwaggerGen();
 // Configuration
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+    .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true, reloadOnChange: true)
     .Build();
-
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration) // Read Serilog configuration from appsettings.json
-    .CreateLogger();
-
-builder.Services.AddLogging(loggingBuilder =>
-    loggingBuilder.AddSerilog(dispose: true)); // dispose: true to ensure Serilog Logger is disposed properly
 
 builder.Services.AddSingleton(configuration);
 
@@ -190,7 +182,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseCors("AllowOrigin");
 app.UseHttpsRedirection();
 app.UseAuthorization();
