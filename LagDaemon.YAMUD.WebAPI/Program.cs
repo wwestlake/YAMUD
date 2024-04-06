@@ -29,9 +29,6 @@ var configuration = new ConfigurationBuilder()
     .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true, reloadOnChange: true)
     .Build();
 
-var nlog = configuration.GetSection("NLog");
-
-
 
 builder.Services.AddSingleton(configuration);
 
