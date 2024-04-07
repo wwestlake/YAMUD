@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Scripting",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Scripting.Tests", "LagDaemon.YAMUD.Scripting.Tests\LagDaemon.YAMUD.Scripting.Tests.csproj", "{FB2DA157-8BFF-495B-8C09-F5C714059F98}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.TestConsole", "..\LagDaemon.YAMUD.TestConsole\LagDaemon.YAMUD.TestConsole.csproj", "{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB2DA157-8BFF-495B-8C09-F5C714059F98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
