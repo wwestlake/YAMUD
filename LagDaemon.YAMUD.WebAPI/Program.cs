@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver.Core.Clusters.ServerSelectors;
 using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
@@ -123,7 +124,10 @@ builder.Services.AddCors(options => {
     {
         builder.WithOrigins("https://localhost:7202")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .SetIsOriginAllowed((host) => true)
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowCredentials();
     });
 });
 
@@ -178,7 +182,12 @@ builder.Services.AddHttpsRedirection(options =>
     options.HttpsPort = 443; // Set the HTTPS port
 });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
+app.UseRouting();  
+app.UseAuthorization();
+
 
 app.UseMiddleware<RequestInfoMiddleware>();
 
@@ -190,38 +199,13 @@ if (app.Environment.IsDevelopment())
 }
 app.UseCors("AllowOrigin");
 
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path.StartsWithSegments("/chat"))
-    {
-        if (context.WebSockets.IsWebSocketRequest)
-        {
-            var jwtToken = context.Request.Query["token"];
-
-            if (UserAccountService.ValidateToken(jwtToken))
-            {
-                WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                await WebSocketHandler.HandleWebSocket(context, webSocket); // Pass HttpContext to HandleWebSocket
-            }
-            else
-            {
-                context.Response.StatusCode = 401;
-            }
-        }
-        else
-        {
-            context.Response.StatusCode = 400;
-        }
-    }
-    else
-    {
-        await next();
-    }
+app.UseEndpoints(endpoints => {
+    endpoints.MapHub<ChatHub>("/chatHub");
+    endpoints.MapHub<NotificationHub>("/notificationHub");
 });
 
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 app.Logger.LogInformation("Starting Application YAMUD Web API");
 app.Logger.LogWarning("Debug logging message");

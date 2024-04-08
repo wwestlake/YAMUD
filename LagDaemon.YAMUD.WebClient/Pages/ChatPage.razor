@@ -1,0 +1,30 @@
+﻿@page "/chat"
+@using LagDaemon.YAMUD.Model.Communication
+@using LagDaemon.YAMUD.WebClient.Services
+
+@inject IChatService chatService
+
+<h1>Chat</h1>
+
+<div>
+    <input type="text" @bind="message" />
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+@code {
+    private string message;
+
+    private async Task SendMessage()
+    {
+        var roomChatMessage = new RoomChatMessage
+            {
+                To = Guid.NewGuid(), // Replace with the actual recipient ID
+                Message = message,
+                SentAt = DateTime.UtcNow,
+                From = Guid.NewGuid() // Replace with the actual sender ID
+            };
+
+        await chatService.SendRoomChatMessageAsync(roomChatMessage);
+        message = string.Empty;
+    }
+}
