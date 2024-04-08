@@ -7,12 +7,14 @@ using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
+using LagDaemon.YAMUD.WebAPI.Services.ChatService;
 using LagDaemon.YAMUD.WebAPI.Services.Scripting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net.WebSockets;
 using System.Reflection;
 using System.Text;
 using ThothLog.Services;
@@ -187,9 +189,42 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors("AllowOrigin");
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/chat"))
+    {
+        if (context.WebSockets.IsWebSocketRequest)
+        {
+            var jwtToken = context.Request.Query["token"];
+
+            if (UserAccountService.ValidateToken(jwtToken))
+            {
+                WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                await WebSocketHandler.HandleWebSocket(context, webSocket); // Pass HttpContext to HandleWebSocket
+            }
+            else
+            {
+                context.Response.StatusCode = 401;
+            }
+        }
+        else
+        {
+            context.Response.StatusCode = 400;
+        }
+    }
+    else
+    {
+        await next();
+    }
+});
+
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Logger.LogInformation("Starting Application YAMUD Web API");
 app.Logger.LogWarning("Debug logging message");
 app.Run();
+
+

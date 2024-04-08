@@ -343,4 +343,30 @@ public class UserAccountService : IUserAccountService
             return hashedBytes.SequenceEqual(inputBytes);
         }
     }
+
+    public static bool ValidateToken(string jwtToken)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("somekindofsecretkey1234567890!@#$%^&*()-_=+")),
+            ValidateIssuer = true,
+            ValidIssuer = "yamud.lagdaemon.com",
+            ValidateAudience = true,
+            ValidAudience = "localhost",
+            ValidateLifetime = true
+        };
+
+        try
+        {
+            SecurityToken validatedToken;
+            ClaimsPrincipal claimsPrincipal = tokenHandler.ValidateToken(jwtToken, validationParameters, out validatedToken);
+            return true;
+        }
+        catch (SecurityTokenException)
+        {
+            return false;
+        }
+    }
 }
