@@ -22,20 +22,11 @@ To get started with YAMUD, follow these steps:
    git clone https://github.com/your-username/yamud.git
    ```
 
-2. **Install Dependencies:** Install the necessary dependencies using your preferred package manager.
+2. **Set Up the Server:** Set up the YAMUD server by following the instructions in the `Server` directory. This typically involves running a C# WebAPI server.
 
-   ```bash
-   cd yamud
-   npm install
-   ```
+3. **Set Up the Client:** Set up the YAMUD client by following the instructions in the `Client` directory. This typically involves running a Blazor WebAssembly client.
 
-3. **Start the Server:** Start the YAMUD server to begin hosting the game.
-
-   ```bash
-   npm start
-   ```
-
-4. **Connect to the Game:** Open your favorite Telnet client and connect to the server running on `localhost` at port `4000`.
+4. **Connect to the Game:** Once both the server and client are set up and running, open your favorite web browser and navigate to the client URL to connect to the game.
 
 5. **Create Your Character:** Follow the on-screen instructions to create your character and start playing.
 
