@@ -1,0 +1,48 @@
+﻿@using LagDaemon.YAMUD.Model.Communication
+@using LagDaemon.YAMUD.WebClient.Services
+@inject IChatService chatService
+@inject Authority Authority
+
+<div class="chat-container">
+    <div class="chat-messages">
+        @foreach (var msg in messages)
+        {
+            <p>@msg.Message</p>
+        }
+    </div>
+
+    <div class="chat-input">
+        <input type="text" @bind="message" />
+        <button @onclick="SendMessage">Send</button>
+    </div>
+</div>
+
+@code {
+    private string message;
+    private List<RoomChatMessage> messages = new List<RoomChatMessage>();
+
+    protected override void OnInitialized()
+    {
+        chatService.RoomMessageReceived += OnRoomMessageReceived;
+    }
+
+    private void OnRoomMessageReceived(RoomChatMessage message)
+    {
+        messages.Add(message);
+        StateHasChanged(); // Notify Blazor to update the UI
+    }
+
+    private async Task SendMessage()
+    {
+        var roomChatMessage = new RoomChatMessage
+            {
+                To = Guid.NewGuid(), // Replace with the actual recipient ID
+                Message = message,
+                SentAt = DateTime.UtcNow,
+                From = Guid.NewGuid() // Replace with the actual sender ID
+            };
+
+        await chatService.SendRoomChatMessageAsync(roomChatMessage);
+        message = string.Empty;
+    }
+}

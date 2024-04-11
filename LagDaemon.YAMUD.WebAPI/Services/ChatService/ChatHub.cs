@@ -5,10 +5,16 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ChatService
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(ChatMessageBase message)
+        public async Task SendRoomMessage(RoomChatMessage message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.All.SendAsync("ReceiveRoomMessage", message);
         }
+
+        public async Task SendGroupMessage(GroupChatMessage message)
+        {
+            await Clients.All.SendAsync("ReceiveGroupMessage", message);
+        }
+
 
         public override async Task OnConnectedAsync()
         {

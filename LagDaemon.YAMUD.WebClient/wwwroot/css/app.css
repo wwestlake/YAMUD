@@ -142,3 +142,40 @@ code {
 .selected {
     background-color: lightblue;
 }
+
+.chat-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-height: 200px; /* Adjust as needed */
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+.chat-messages {
+    max-height: 200px; /* Adjust as needed */
+    overflow-y: auto; /* Enable vertical scrollbar */
+}
+
+.chat-input {
+    display: flex;
+    margin-top: 10px; /* Add space between messages and input */
+}
+
+    .chat-input input {
+        flex: 1; /* Take up remaining space */
+        margin-right: 10px; /* Add space between input and button */
+    }
+
+.sidebar {
+    flex: 0 0 auto;
+    width: 250px; /* Adjust width as needed */
+    padding: 20px; /* Add padding for spacing */
+}
+
+.container-fluid, .container-lg {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Add any additional styling as needed */

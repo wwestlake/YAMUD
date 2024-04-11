@@ -12,6 +12,7 @@
 @inject IAuthenticationService AuthenticationService
 @inject HttpClient HttpClient
 @inject NavigationManager Navigation
+@inject IChatService ChatService
 
 @if (IsLoading)
 {
@@ -134,6 +135,7 @@
         if (await AuthenticationService.LoginAsync(UserIdOrEmail, Password))
         {
             Navigation.NavigateTo("/");
+            await ChatService.ConnectAsync(AuthenticationService.Authority.AuthToken.token);
         } else {
             // Set error message on login failure
             IsLoginError = true;

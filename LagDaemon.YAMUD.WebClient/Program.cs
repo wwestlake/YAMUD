@@ -13,7 +13,7 @@ builder.Services.AddScoped<IIndexedDbService, IndexedDbService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IScriptingModuleService, ScriptingModuleService>();
-builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddSingleton<IChatService, ChatService>();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
