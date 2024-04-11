@@ -1,7 +1,7 @@
 ﻿using LagDaemon.YAMUD.Model.Communication;
 using Microsoft.AspNetCore.SignalR;
 
-namespace LagDaemon.YAMUD.WebAPI.Services.ChatService
+namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
 {
     public class NotificationHub : Hub
     {

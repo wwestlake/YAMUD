@@ -4,7 +4,7 @@ using FluentEmail.Smtp;
 using FluentResults;
 using LagDaemon.YAMUD.Services;
 
-namespace LagDaemon.YAMUD.WebAPI.Services;
+namespace LagDaemon.YAMUD.WebAPI.Services.EmailServices;
 
 public class EmailService : IEmailService
 {

@@ -7,6 +7,7 @@ using LagDaemon.YAMUD.Model;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Model.Utilities;
 using LagDaemon.YAMUD.WebAPI.Services;
+using LagDaemon.YAMUD.WebAPI.Services.EmailServices;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

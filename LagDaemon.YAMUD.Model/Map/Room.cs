@@ -2,10 +2,15 @@
 
 public class Room
 {
+    public Room()
+    {
+        Id = Guid.NewGuid();
+    }
+
     public Guid Id { get; set; }
-    public Guid Owner { get; set; }
-    public string Name { get; set; }
+    public required Guid Owner { get; set; }
+    public required string Name { get; set; }
     public string Description { get; set; }
-    public RoomAddress Address { get; set; }
-    public Exits Exits { get; set; }
+    public required RoomAddress Address { get; set; }
+    public ICollection<Exit> Exits { get; set; }
 }

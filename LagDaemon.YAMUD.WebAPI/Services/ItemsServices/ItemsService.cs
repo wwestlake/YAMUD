@@ -3,7 +3,7 @@ using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.API.Specs;
 using LagDaemon.YAMUD.Model.Items;
 
-namespace LagDaemon.YAMUD.WebAPI.Services.ItemsService
+namespace LagDaemon.YAMUD.WebAPI.Services.ItemsServices
 {
     public class ItemsService
     {

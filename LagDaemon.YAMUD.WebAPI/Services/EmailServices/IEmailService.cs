@@ -1,7 +1,7 @@
 ﻿using FluentEmail.Core.Models;
 using FluentResults;
 
-namespace LagDaemon.YAMUD.WebAPI.Services;
+namespace LagDaemon.YAMUD.WebAPI.Services.EmailServices;
 
 public interface IEmailService
 {

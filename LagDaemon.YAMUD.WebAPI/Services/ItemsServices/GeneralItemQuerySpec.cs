@@ -2,7 +2,7 @@
 using LagDaemon.YAMUD.Model.Items;
 using System.Linq.Expressions;
 
-namespace LagDaemon.YAMUD.WebAPI.Services.ItemsService;
+namespace LagDaemon.YAMUD.WebAPI.Services.ItemsServices;
 
 public class GeneralItemQuerySpec : IQuerySpec<Item>
 {
