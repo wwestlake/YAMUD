@@ -48,7 +48,7 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
-    public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = "")
+    public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "")
     {
         IQueryable<T> query = _dbSet;
 

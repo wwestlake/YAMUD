@@ -1,4 +1,6 @@
-﻿namespace LagDaemon.YAMUD.Model.Map;
+﻿using LagDaemon.YAMUD.Model.Items;
+
+namespace LagDaemon.YAMUD.Model.Map;
 
 public class Room
 {
@@ -13,4 +15,5 @@ public class Room
     public string Description { get; set; }
     public required RoomAddress Address { get; set; }
     public ICollection<Exit> Exits { get; set; }
+    public ICollection<Item> Items { get; set; }
 }

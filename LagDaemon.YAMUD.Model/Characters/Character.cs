@@ -1,4 +1,5 @@
-﻿using LagDaemon.YAMUD.Model.Map;
+﻿using LagDaemon.YAMUD.Model.Items;
+using LagDaemon.YAMUD.Model.Map;
 using LagDaemon.YAMUD.Model.Utilities;
 
 namespace LagDaemon.YAMUD.Model.Characters;
@@ -21,4 +22,5 @@ public class Character
     public Guid OwnerId { get; set; }
     public RoomAddress Location { get; set; }
     public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();
+    public ICollection<Item> Items { get; set; }
 }

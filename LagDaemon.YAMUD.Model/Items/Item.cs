@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LagDaemon.YAMUD.Model.Items;
 
 
+[Table("Items")]
 public class Item
 {
     [Key]
@@ -25,27 +27,4 @@ public class Item
     public long WearAndTear { get; set; }
     public long Weight { get; set; }
 
-}
-
-public class ItemInstance
-{
-    public Guid Id { get; set; }
-    public Guid ItemId { get; set; }
-} 
-
-public class Inventory
-{
-    [Key]
-    public int Id { get; set; }
-
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; } = "Inventory";
-
-    [MaxLength(500)]
-    public string Description { get; set; } = "Inventory";
-
-    public Guid ParentId { get; set; }
-
-    public ICollection<ItemInstance> Items { get; set; }
 }

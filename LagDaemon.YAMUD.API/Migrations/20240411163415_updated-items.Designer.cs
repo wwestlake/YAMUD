@@ -3,6 +3,7 @@ using System;
 using LagDaemon.YAMUD.API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LagDaemon.YAMUD.API.Migrations
 {
     [DbContext(typeof(YamudDbContext))]
-    partial class YamudDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240411163415_updated-items")]
+    partial class updateditems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,9 +117,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CharacterId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -151,8 +151,6 @@ namespace LagDaemon.YAMUD.API.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
 
                     b.HasIndex("PlayerStateId");
 
@@ -486,10 +484,6 @@ namespace LagDaemon.YAMUD.API.Migrations
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Item", b =>
                 {
-                    b.HasOne("LagDaemon.YAMUD.Model.Characters.Character", null)
-                        .WithMany("Items")
-                        .HasForeignKey("CharacterId");
-
                     b.HasOne("LagDaemon.YAMUD.Model.User.PlayerState", null)
                         .WithMany("Items")
                         .HasForeignKey("PlayerStateId");
@@ -587,8 +581,6 @@ namespace LagDaemon.YAMUD.API.Migrations
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Characters.Character", b =>
                 {
                     b.Navigation("Annotations");
-
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("LagDaemon.YAMUD.Model.Items.Inventory", b =>

@@ -9,6 +9,7 @@ using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
 using LagDaemon.YAMUD.WebAPI.Services.ChatServices;
 using LagDaemon.YAMUD.WebAPI.Services.EmailServices;
+using LagDaemon.YAMUD.WebAPI.Services.RoomServices;
 using LagDaemon.YAMUD.WebAPI.Services.Scripting.ScriptingServices;
 using LagDaemon.YAMUD.WebAPI.Services.ScriptingServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -67,6 +68,7 @@ builder.Services.AddSingleton<IRandomNumberService, RandomNumberService>();
 builder.Services.AddSingleton<INameGenerator, NameGenerator>();
 builder.Services.AddScoped<ICharacterGenerationService, CharacterGenerationService>();
 builder.Services.AddScoped<CharacterService>();
+builder.Services.AddScoped<RoomManagementService>();
 
 builder.Services.AddScoped(serviceProvider => {
     var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
@@ -87,6 +89,14 @@ builder.Services.AddScoped(serviceProvider =>
         var service = serviceProvider.GetRequiredService<ScriptingModuleService>();
         return factory.CreateProxy<IScriptingModuleService>(service);
     });
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+    var service = serviceProvider.GetRequiredService<RoomManagementService>();
+    return factory.CreateProxy<IRoomManagementService>(service);
+});
+
 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
