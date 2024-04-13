@@ -69,24 +69,5 @@ namespace LagDaemon.YAMUD.WebAPI.Controllers
             }
         }
 
-        //[HttpGet("selectRooms")]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public async Task<ActionResult<IEnumerable<Room>>> GetRooms([FromQuery] RoomQueryParameters parameters)
-        //{
-        //    var predicate = parameters.ToExpression();
-
-        //    Result<IEnumerable<Room>> result = await _roomManagementService.GetRooms(predicate, parameters.OrderBy);
-
-        //    if (result.IsSuccess)
-        //    {
-        //        return Ok(result.Value);
-        //    }
-        //    else
-        //    {
-        //        return StatusCode(StatusCodes.Status500InternalServerError, result.Errors);
-        //    }
-        //}
-
     }
 }

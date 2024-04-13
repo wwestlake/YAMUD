@@ -69,6 +69,8 @@ builder.Services.AddSingleton<INameGenerator, NameGenerator>();
 builder.Services.AddScoped<ICharacterGenerationService, CharacterGenerationService>();
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<RoomManagementService>();
+builder.Services.AddScoped<QuestService>();
+
 
 builder.Services.AddScoped(serviceProvider => {
     var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
@@ -97,6 +99,12 @@ builder.Services.AddScoped(serviceProvider =>
     return factory.CreateProxy<IRoomManagementService>(service);
 });
 
+builder.Services.AddScoped(serviceProvider =>
+{
+    var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+    var service = serviceProvider.GetRequiredService<QuestService>();
+    return factory.CreateProxy<IQuestService>(service);
+});
 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -211,7 +219,6 @@ app.UseCors("AllowOrigin");
 
 app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chatHub");
-    endpoints.MapHub<NotificationHub>("/notificationHub");
 });
 
 

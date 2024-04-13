@@ -6,6 +6,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
     {
         public event Action<RoomChatMessage> RoomMessageReceived;
         public event Action<GroupChatMessage> GroupMessageReceived;
+        public event Action<NotificationMessage> NotificationReceived;
 
         private HubConnection _connection;
         public async Task ConnectAsync(string accessToken, string url = "http://localhost:5180/chatHub")
@@ -24,6 +25,11 @@ namespace LagDaemon.YAMUD.WebClient.Services
             _connection.On<GroupChatMessage>("ReceiveGroupMessage", message =>
             {
                 GroupMessageReceived?.Invoke(message);
+            });
+
+            _connection.On<NotificationMessage>("ReceiveNotification", message =>
+            {
+                NotificationReceived?.Invoke(message);
             });
 
             await _connection.StartAsync();

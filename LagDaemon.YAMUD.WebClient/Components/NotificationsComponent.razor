@@ -1,0 +1,34 @@
+﻿@using LagDaemon.YAMUD.Model.Communication
+@using LagDaemon.YAMUD.WebClient.Services
+@inject IChatService chatService
+@inject Authority Authority
+
+<div class="chat-header">
+    Notifications
+</div>
+
+<div class="chat-container">
+    <div class="chat-messages">
+        @foreach (var msg in messages)
+        {
+            <p>@msg.Message</p>
+        }
+    </div>
+</div>
+
+@code {
+    private string message;
+    private List<NotificationMessage> messages = new List<NotificationMessage>();
+
+    protected override void OnInitialized()
+    {
+        chatService.NotificationReceived += OnNotificationMessageReceived;
+    }
+
+    private void OnNotificationMessageReceived(NotificationMessage message)
+    {
+        messages.Add(message);
+        StateHasChanged(); // Notify Blazor to update the UI
+    }
+
+}

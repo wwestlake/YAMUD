@@ -15,6 +15,10 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
             await Clients.All.SendAsync("ReceiveGroupMessage", message);
         }
 
+        public async Task SendNotificationMessage(NotificationMessage message)
+        {
+            await Clients.All.SendAsync("ReceiveNotification", message);
+        }
 
         public override async Task OnConnectedAsync()
         {

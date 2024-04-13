@@ -1,0 +1,33 @@
+﻿@using LagDaemon.YAMUD.WebClient.Model
+<div class="tab-container">
+    <div class="tab-header">
+        @foreach (var tab in Tabs)
+        {
+            <button class="tab-button" @onclick="() => SelectTab(tab)">
+                @tab.Title
+            </button>
+        }
+    </div>
+    <div class="tab-content">
+        @CurrentTab.Content
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<Tab> Tabs { get; set; }
+
+    private Tab CurrentTab { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Set the initial tab
+        CurrentTab = Tabs.FirstOrDefault();
+    }
+
+    private void SelectTab(Tab tab)
+    {
+        CurrentTab = tab;
+    }
+}
+

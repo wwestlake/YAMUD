@@ -23,4 +23,11 @@ public class Character
     public RoomAddress Location { get; set; }
     public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();
     public ICollection<Item> Items { get; set; }
+    public ICollection<Achievement> Achievements { get; set;}
+    public ICollection<Guid> CompletedQuests { get; set; }
+    public ICollection<Quest> ActiveQuests { get; set; }
+    public ICollection<CharacterQuestProgress> QuestProgress { get; set; } = new List<CharacterQuestProgress>();
+
+
+
 }

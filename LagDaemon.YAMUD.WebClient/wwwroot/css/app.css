@@ -146,14 +146,13 @@ code {
 .chat-container {
     border: 1px solid #ccc;
     padding: 10px;
-    max-height: 200px; /* Adjust as needed */
-    overflow-y: auto;
+    height: 600px; /* Adjust as needed */
     border: 1px solid #ccc;
     padding: 5px;
 }
 
 .chat-messages {
-    max-height: 200px; /* Adjust as needed */
+    height: 600px; /* Adjust as needed */
     overflow-y: auto; /* Enable vertical scrollbar */
 }
 
@@ -169,7 +168,7 @@ code {
 
 .sidebar {
     flex: 0 0 auto;
-    width: 250px; /* Adjust width as needed */
+    width: 350px; /* Adjust width as needed */
     padding: 20px; /* Add padding for spacing */
 }
 
@@ -178,4 +177,48 @@ code {
     padding: 20px;
 }
 
-/* Add any additional styling as needed */
+.chat-header {
+    background-color: #333; /* Darker background */
+    color: #fff; /* Light text color */
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: center; /* Centered text */
+    font-size: 20px; /* Larger font size */
+    font-weight: bold; /* Bold font weight */
+}
+
+/* styles.css */
+.tab-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.tab-header {
+    background-color: #f0f0f0;
+    padding: 10px;
+}
+
+.tab-button {
+    background-color: #ddd;
+    color: #333;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+    .tab-button:hover {
+        background-color: #ccc;
+    }
+
+    .tab-button.active {
+        background-color: #ccc;
+    }
+
+.tab-content {
+    padding: 20px;
+    border-top: 1px solid #ccc;
+}

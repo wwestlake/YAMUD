@@ -27,8 +27,17 @@ public class YamudDbContext : DbContext
 
     public DbSet<CodeModule> CodeModules { get; set; }
     public DbSet<Character> Characters { get; set; }
+
+    public DbSet<Achievement> Achievements { get; set; }
+
+    public DbSet<Quest> Quests { get; set; }
+    public DbSet<QuestSection> QuestSections { get; set; }
+    public DbSet<QuestStep> QuestSteps { get; set; }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        optionsBuilder.EnableSensitiveDataLogging();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
