@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LagDaemon.YAMUD.Automation\LagDaemon.YAMUD.Automation.csproj" />
+    <ProjectReference Include="..\YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
+    <ProjectReference Include="..\YAMUD\LagDaemon.YAMUD.WebAPI\LagDaemon.YAMUD.WebAPI.csproj" />
+  </ItemGroup>
+
+</Project>

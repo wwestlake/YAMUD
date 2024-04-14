@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\LagDaemon.YAMUD.Automation\LagDaemon.YAMUD.Automation.csproj" />
     <ProjectReference Include="..\LagDaemon.YAMUD.API\LagDaemon.YAMUD.API.csproj" />
     <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>

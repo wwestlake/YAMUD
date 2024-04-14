@@ -2,6 +2,7 @@ using FluentEmail.Core;
 using LagDaemon.YAMUD.API;
 using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.Automation;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
@@ -201,8 +202,10 @@ builder.Services.AddHttpsRedirection(options =>
 });
 
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<PluginManager>();
 
 var app = builder.Build();
+
 app.UseRouting();  
 app.UseAuthorization();
 
@@ -220,6 +223,10 @@ app.UseCors("AllowOrigin");
 app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chatHub");
 });
+
+var pluginManager = app.Services.GetRequiredService<PluginManager>();
+var pluginsDirectory = configuration["AppSettings:PluginsDirectory"];
+pluginManager.LoadPlugins(pluginsDirectory);
 
 
 app.UseHttpsRedirection();
