@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>
 
 </Project>

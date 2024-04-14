@@ -4,6 +4,7 @@ using LagDaemon.YAMUD.API.Security;
 using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Automation;
 using LagDaemon.YAMUD.Data.Repositories;
+using LagDaemon.YAMUD.Model.Automation;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
@@ -71,7 +72,7 @@ builder.Services.AddScoped<ICharacterGenerationService, CharacterGenerationServi
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<RoomManagementService>();
 builder.Services.AddScoped<QuestService>();
-
+builder.Services.AddScoped<PluginService>();
 
 builder.Services.AddScoped(serviceProvider => {
     var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
@@ -106,6 +107,14 @@ builder.Services.AddScoped(serviceProvider =>
     var service = serviceProvider.GetRequiredService<QuestService>();
     return factory.CreateProxy<IQuestService>(service);
 });
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    var factory = serviceProvider.GetRequiredService<IServiceProxyFactory>();
+    var service = serviceProvider.GetRequiredService<PluginService>();
+    return factory.CreateProxy<IPluginService>(service);
+});
+
 
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

@@ -8,8 +8,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LagDaemon.YAMUD.Automation\LagDaemon.YAMUD.Automation.csproj" />
-    <ProjectReference Include="..\YAMUD\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
-    <ProjectReference Include="..\YAMUD\LagDaemon.YAMUD.WebAPI\LagDaemon.YAMUD.WebAPI.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD.WebAPI\LagDaemon.YAMUD.WebAPI.csproj" />
+    <ProjectReference Include="..\LagDaemon.YAMUD.WebAPI\LagDaemon.YAMUD.WebAPI.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(TargetDir)LagDaemon.YAMUD.ChatterBot.dll&quot; &quot;D:\Projects\YAMUD\Plugins&quot; /Y" />
+    <Exec Command="xcopy &quot;$(TargetDir)LagDaemon.YAMUD.ChatterBot.deps.json&quot; &quot;D:\Projects\YAMUD\Plugins&quot; /Y" />
+    <Exec Command="xcopy &quot;$(TargetDir)LagDaemon.YAMUD.ChatterBot.pdb&quot; &quot;D:\Projects\YAMUD\Plugins&quot; /Y" />
+  </Target>
 
 </Project>

@@ -1,22 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using LagDaemon.YAMUD.Model.Utilities;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LagDaemon.YAMUD.Automation;
 
 public class PluginManager
 {
-    private List<IPlugin> _plugins = new List<IPlugin>();
+    public event PluginStoppedEventHandler PluginStopped;
+
+    private Dictionary<Guid, IPlugin> _plugins = new Dictionary<Guid, IPlugin>();
     private IServiceProvider _serviceProvider;
+    private List<PluginDescription> _pluginDescriptions = new List<PluginDescription>();
 
     public PluginManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
+    public IEnumerable<PluginDescription> GetPlugins()
+    {
+        return _pluginDescriptions;
+    }
+
+    public async Task UnloadPluginAsync(Guid pluginId)
+    {
+        var pluginToRemove = _plugins[pluginId];
+        if (pluginToRemove != null)
+        {
+            var pd = _pluginDescriptions.FirstOrDefault(x =>
+            {
+                ArgumentNullException.ThrowIfNull(x);
+                return x.Id == pluginId;
+            });
+            if (pd != null)
+            {
+                pd.IsActive = false;
+            }
+            pluginToRemove.Stopped -= PluginStoppedHandler;
+            await pluginToRemove.Stop();
+            _plugins.Remove(pluginToRemove.Id);
+        }
+    }
+
+    private void PluginStoppedHandler(object sender, EventArgs e)
+    {
+        // Perform any necessary actions when a plugin stops
+        // For example, you can unload the plugin manager if all plugins have stopped
+        var plugin = sender as IPlugin;
+        if (plugin != null)
+        {
+            plugin.GetDescription.IsActive = false;
+            var pd = _pluginDescriptions.FirstOrDefault(x => x.Id == plugin.Id);
+            if (pd != null) 
+            { 
+                pd.IsActive = false; 
+            }
+        }
+        OnPluginStopped();
+    }
+
+    protected virtual void OnPluginStopped()
+    {
+        PluginStopped?.Invoke(this, EventArgs.Empty);
+    }
 
     public void LoadPlugins(string directory)
     {
@@ -44,8 +89,12 @@ public class PluginManager
                     {
                         throw new Exception($"Failed to create instance of plugin {type.FullName}");
                     }
-                    _plugins.Add(plugin);
+                    _plugins.Add(plugin.Id,  plugin);
+                    plugin.Stopped += PluginStoppedHandler;
                     plugin.Initialize();
+                    plugin.GetDescription.IsActive = true;
+                    plugin.GetDescription.AssemblyPath = file;
+                    _pluginDescriptions.Add(plugin.GetDescription);
                 }
             }
         }
