@@ -212,6 +212,8 @@ builder.Services.AddHttpsRedirection(options =>
 
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<PluginManager>();
+builder.Services.AddSingleton<IronPythonExecutor>(); // Register IronPythonExecutor as singleton
+builder.Services.AddSingleton<IronRubyExecutor>(); // Register IronRubyExecutor as singleton
 
 var app = builder.Build();
 
