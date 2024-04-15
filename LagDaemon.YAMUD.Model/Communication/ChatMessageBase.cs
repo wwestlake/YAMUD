@@ -8,6 +8,11 @@ namespace LagDaemon.YAMUD.Model.Communication
 {
     public abstract class ChatMessageBase
     {
+        public ChatMessageBase()
+        {
+            SentAt = DateTime.Now;
+        }
+
         public Guid To { get; set; }  // Represents the recipient (room, user, or group)
         public string Message { get; set; }
         public DateTime SentAt { get; set; }

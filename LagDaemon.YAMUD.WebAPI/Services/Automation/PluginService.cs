@@ -24,5 +24,11 @@ namespace LagDaemon.YAMUD.Model.Automation
         {
             await _pluginManager.UnloadPluginAsync(pluginId);
         }
+        [Security(UserAccountRoles.Admin)]
+
+        public async Task LoadPluginAsync(Guid pluginId)
+        {
+            _pluginManager.ActivatePlugin(pluginId);
+        }
     }
 }

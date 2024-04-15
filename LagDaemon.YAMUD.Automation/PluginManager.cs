@@ -21,6 +21,18 @@ public class PluginManager
         return _pluginDescriptions;
     }
 
+    public void ActivatePlugin(Guid pluginId)
+    {
+        var pd = _pluginDescriptions.FirstOrDefault(x =>
+        {
+            ArgumentNullException.ThrowIfNull(x);
+            return x.Id == pluginId;
+        });
+        var plugin = LoadPlugin(pd.AssemblyPath);
+        _pluginDescriptions.Remove(pd);
+        _pluginDescriptions.Add(plugin.GetDescription);
+    }
+
     public async Task UnloadPluginAsync(Guid pluginId)
     {
         var pluginToRemove = _plugins[pluginId];
@@ -35,6 +47,7 @@ public class PluginManager
             {
                 pd.IsActive = false;
             }
+
             pluginToRemove.Stopped -= PluginStoppedHandler;
             await pluginToRemove.Stop();
             _plugins.Remove(pluginToRemove.Id);
@@ -63,6 +76,8 @@ public class PluginManager
         PluginStopped?.Invoke(this, EventArgs.Empty);
     }
 
+
+
     public void LoadPlugins(string directory)
     {
         if (! Directory.Exists(directory))
@@ -71,32 +86,39 @@ public class PluginManager
         }
         foreach (var file in Directory.GetFiles(directory, "*.dll"))
         {
-            var assembly = Assembly.LoadFrom(file);
-            var types = assembly.GetExportedTypes();
-            foreach (var type in types)
+            var plugin = LoadPlugin(file);
+            _pluginDescriptions.Add(plugin.GetDescription);
+        }
+    }
+
+    private IPlugin LoadPlugin(string file)
+    {
+        var assembly = Assembly.LoadFrom(file);
+        var types = assembly.GetExportedTypes();
+        foreach (var type in types)
+        {
+            if (typeof(IPlugin).IsAssignableFrom(type))
             {
-                if (typeof(IPlugin).IsAssignableFrom(type))
+                var constructors = type.GetConstructors();
+                var parameters = constructors[0].GetParameters(); // Assume only one constructor for simplicity
+
+                // Resolve dependencies dynamically
+                var dependencies = parameters.Select(param => _serviceProvider.GetService(param.ParameterType)).ToArray();
+
+                // Instantiate plugin with resolved dependencies
+                var plugin = Activator.CreateInstance(type, dependencies) as IPlugin;
+                if (plugin == null)
                 {
-                    var constructors = type.GetConstructors();
-                    var parameters = constructors[0].GetParameters(); // Assume only one constructor for simplicity
-
-                    // Resolve dependencies dynamically
-                    var dependencies = parameters.Select(param => _serviceProvider.GetService(param.ParameterType)).ToArray();
-
-                    // Instantiate plugin with resolved dependencies
-                    var plugin = Activator.CreateInstance(type, dependencies) as IPlugin;
-                    if (plugin == null)
-                    {
-                        throw new Exception($"Failed to create instance of plugin {type.FullName}");
-                    }
-                    _plugins.Add(plugin.Id,  plugin);
-                    plugin.Stopped += PluginStoppedHandler;
-                    plugin.Initialize();
-                    plugin.GetDescription.IsActive = true;
-                    plugin.GetDescription.AssemblyPath = file;
-                    _pluginDescriptions.Add(plugin.GetDescription);
+                    throw new Exception($"Failed to create instance of plugin {type.FullName}");
                 }
+                _plugins.Add(plugin.Id, plugin);
+                plugin.Stopped += PluginStoppedHandler;
+                plugin.Initialize();
+                plugin.GetDescription.IsActive = true;
+                plugin.GetDescription.AssemblyPath = file;
+                return plugin;
             }
         }
+        return null;
     }
 }

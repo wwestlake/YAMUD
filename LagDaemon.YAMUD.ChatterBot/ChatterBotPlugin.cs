@@ -72,7 +72,7 @@ namespace LagDaemon.YAMUD.ChatterBot
             var randomMessage = messages[_random.Next(messages.Length)];
 
             // Send the message via ChatHub
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", new NotificationMessage { Message = randomMessage });
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", new NotificationMessage { Message = randomMessage, FromName = "ChatterBot", Subject = "Just some chatter", Body = "Well, I am a bot, I don't have a body" });
 
             // Restart the timer for the next message
             var minIntervalMinutes = _configuration.GetValue<int>("ChatterBot:MinIntervalMinutes");

@@ -17,18 +17,28 @@ namespace LagDaemon.YAMUD.WebAPI.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IActionResult GetPlugins()
         {
             return Ok(_pluginService.GetPlugins());
         }
 
         [Authorize]
-        [HttpDelete("{pluginId}")]
+        [HttpGet("Stop/{pluginId}")]
         public async Task<IActionResult> UnloadPlugin(Guid pluginId)
         {
             await _pluginService.UnloadPluginAsync(pluginId);
             return Ok();
         }
+
+        [Authorize]
+        [HttpGet("Start/{pluginId}")]
+        public async Task<IActionResult> LoadPlugin(Guid pluginId)
+        {
+            await _pluginService.LoadPluginAsync(pluginId);
+            return Ok();
+        }
+
+
     }
 }

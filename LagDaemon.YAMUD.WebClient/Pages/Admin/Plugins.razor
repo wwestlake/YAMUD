@@ -1,0 +1,94 @@
+﻿@page "/admin/plugins"
+@using LagDaemon.YAMUD.Model.Utilities
+@using LagDaemon.YAMUD.WebClient.Services
+@using System.Linq
+
+<h3>Plugins</h3>
+
+@if (PluginDescriptions == null)
+{
+    <p>Loading...</p>
+}
+else if (!PluginDescriptions.Any())
+{
+    <p>No plugins found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Version</th>
+                <th>Author</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var plugin in PluginDescriptions)
+            {
+                <tr>
+                    <td>@plugin.Name</td>
+                    <td>@plugin.Description</td>
+                    <td>@plugin.Version</td>
+                    <td>@plugin.Author</td>
+                    <td>
+                        @if (plugin.IsActive)
+                        {
+                            <span class="text-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="text-danger">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" @onclick="() => ToggleActivation(plugin.Id, !plugin.IsActive)">
+                            @if (plugin.IsActive)
+                            {
+                                <span>Deactivate</span>
+                            }
+                            else
+                            {
+                                <span>Activate</span>
+                            }
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<PluginDescription> PluginDescriptions;
+
+    [Inject]
+    private IPluginsService PluginsService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PluginDescriptions = await PluginsService.GetPlugins();
+    }
+
+    private async Task ToggleActivation(Guid pluginId, bool activate)
+    {
+        if (activate)
+        {
+            await PluginsService.StartPlugin(pluginId);
+        }
+        else
+        {
+            await PluginsService.StopPlugin(pluginId);
+        }
+        await LoadPlugins();
+    }
+
+    private async Task LoadPlugins()
+    {
+        PluginDescriptions = await PluginsService.GetPlugins();
+        StateHasChanged();
+    }
+}

@@ -35,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Scripting.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.TestConsole", "LagDaemon.YAMUD.TestConsole\LagDaemon.YAMUD.TestConsole.csproj", "{8CAA5BE5-06E5-44AE-84A7-F1B85842E37D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.Automation", "LagDaemon.YAMUD.Automation\LagDaemon.YAMUD.Automation.csproj", "{CACD4C9F-47F5-4070-BE06-5BA4F783E82F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Automation", "LagDaemon.YAMUD.Automation\LagDaemon.YAMUD.Automation.csproj", "{CACD4C9F-47F5-4070-BE06-5BA4F783E82F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.ChatterBot", "LagDaemon.YAMUD.ChatterBot\LagDaemon.YAMUD.ChatterBot.csproj", "{43315624-0608-49F3-8D72-28CAB38C5758}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.ChatterBot", "LagDaemon.YAMUD.ChatterBot\LagDaemon.YAMUD.ChatterBot.csproj", "{43315624-0608-49F3-8D72-28CAB38C5758}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
