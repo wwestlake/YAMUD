@@ -410,6 +410,20 @@
           "lib/net6.0/Microsoft.Scripting.dll": {}
         }
       },
+      "FluentAssertions/6.7.0": {
+        "dependencies": {
+          "System.Configuration.ConfigurationManager": "7.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/FluentAssertions.dll": {
+            "assemblyVersion": "6.7.0.0",
+            "fileVersion": "6.7.0.0"
+          }
+        },
+        "compile": {
+          "lib/net6.0/FluentAssertions.dll": {}
+        }
+      },
       "FluentEmail.Core/3.0.2": {
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.0-preview.2.24128.5"
@@ -466,6 +480,21 @@
         },
         "compile": {
           "lib/netstandard2.1/FluentResults.dll": {}
+        }
+      },
+      "FluentResults.Extensions.FluentAssertions/2.1.1": {
+        "dependencies": {
+          "FluentAssertions": "6.7.0",
+          "FluentResults": "3.15.2"
+        },
+        "runtime": {
+          "lib/netstandard2.1/FluentResults.Extensions.FluentAssertions.dll": {
+            "assemblyVersion": "2.1.1.0",
+            "fileVersion": "2.1.1.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.1/FluentResults.Extensions.FluentAssertions.dll": {}
         }
       },
       "Humanizer/2.14.1": {
@@ -1039,6 +1068,27 @@
           "lib/net6.0/IronPython.SQLite.dll": {},
           "lib/net6.0/IronPython.Wpf.dll": {},
           "lib/net6.0/IronPython.dll": {}
+        }
+      },
+      "IronRuby/1.1.3": {
+        "runtime": {
+          "Lib/IronRuby.Libraries.Yaml.dll": {
+            "assemblyVersion": "1.1.3.0",
+            "fileVersion": "1.1.3.0"
+          },
+          "Lib/IronRuby.Libraries.dll": {
+            "assemblyVersion": "1.1.3.0",
+            "fileVersion": "1.1.3.0"
+          },
+          "Lib/IronRuby.dll": {
+            "assemblyVersion": "1.1.3.0",
+            "fileVersion": "1.1.3.0"
+          }
+        },
+        "compile": {
+          "Lib/IronRuby.Libraries.Yaml.dll": {},
+          "Lib/IronRuby.Libraries.dll": {},
+          "Lib/IronRuby.dll": {}
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.3": {
@@ -3007,6 +3057,10 @@
       },
       "LagDaemon.YAMUD.Automation/1.0.0": {
         "dependencies": {
+          "FluentResults": "3.15.2",
+          "FluentResults.Extensions.FluentAssertions": "2.1.1",
+          "IronPython": "3.4.1",
+          "IronRuby": "1.1.3",
           "LagDaemon.YAMUD.Model": "1.0.0"
         },
         "runtime": {
@@ -4813,6 +4867,13 @@
       "path": "dynamiclanguageruntime/1.3.4",
       "hashPath": "dynamiclanguageruntime.1.3.4.nupkg.sha512"
     },
+    "FluentAssertions/6.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PWbow/R3MnYDP8UW7zh/w80rGb+1NufGoNJeuzouTo2bqpvwNTFxbDwF6XWfFZ5IuquL2225Um+qSyZ8jVsT+w==",
+      "path": "fluentassertions/6.7.0",
+      "hashPath": "fluentassertions.6.7.0.nupkg.sha512"
+    },
     "FluentEmail.Core/3.0.2": {
       "type": "package",
       "serviceable": true,
@@ -4840,6 +4901,13 @@
       "sha512": "sha512-yR3PD1SWKirYNpQ/t9TjJrsp1adazMmozLDPeamvSIljLAIjS0EQyyGvoupWsbZEryqW9SHbKXVL8YaJwURk8w==",
       "path": "fluentresults/3.15.2",
       "hashPath": "fluentresults.3.15.2.nupkg.sha512"
+    },
+    "FluentResults.Extensions.FluentAssertions/2.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kchrqB3hoho1xgk07bNmVPRIRmNMgICFLjpy1wV0nEwD3j4bmXoJszLuwIjqnPuKwIO4litPKNdlMhk1JsFx4g==",
+      "path": "fluentresults.extensions.fluentassertions/2.1.1",
+      "hashPath": "fluentresults.extensions.fluentassertions.2.1.1.nupkg.sha512"
     },
     "Humanizer/2.14.1": {
       "type": "package",
@@ -5197,6 +5265,13 @@
       "sha512": "sha512-2CKriGKn8KAdEHTpV6umPaEA5kq2tod5npH1V07JeEetJO0PqNYLD7ovJcUB4ZfPVPhwdrlGkOeqyJx8EGGJVA==",
       "path": "ironpython/3.4.1",
       "hashPath": "ironpython.3.4.1.nupkg.sha512"
+    },
+    "IronRuby/1.1.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QPpGvBrKDhv9GhkIcTNTYqKTTQ+3VOqyQu2ctjuUfYFWEUTU5UxPBPtNFmsV26ltqyWNyEkNIu/Ky8zP+izYPA==",
+      "path": "ironruby/1.1.3",
+      "hashPath": "ironruby.1.1.3.nupkg.sha512"
     },
     "Microsoft.AspNetCore.Authentication.JwtBearer/8.0.3": {
       "type": "package",
