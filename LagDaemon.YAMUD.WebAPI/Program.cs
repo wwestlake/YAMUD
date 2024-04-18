@@ -5,6 +5,7 @@ using LagDaemon.YAMUD.API.Services;
 using LagDaemon.YAMUD.Automation;
 using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model.Automation;
+using LagDaemon.YAMUD.Model.Scripting;
 using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
@@ -129,6 +130,9 @@ builder.Services.AddScoped<UserAccountMask>();
 
 
 builder.Services.AddSingleton<EmailConfigurationService>();
+builder.Services.AddSingleton<CommandParser>();
+
+
 builder.Services.AddSingleton(provider =>
 {
     var emailConfigurationService = provider.GetRequiredService<EmailConfigurationService>();

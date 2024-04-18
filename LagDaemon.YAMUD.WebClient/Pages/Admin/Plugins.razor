@@ -45,7 +45,10 @@ else
                         }
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary" @onclick="() => ToggleActivation(plugin.Id, !plugin.IsActive)">
+                        
+                        @if (plugin.IsActive) { btnClass = "btn-danger"; } else { btnClass = "btn-primary"; }
+
+                        <button class="btn btn-sm @btnClass" @onclick="() => ToggleActivation(plugin.Id, !plugin.IsActive)">
                             @if (plugin.IsActive)
                             {
                                 <span>Deactivate</span>
@@ -64,6 +67,7 @@ else
 
 @code {
     private IEnumerable<PluginDescription> PluginDescriptions;
+    private string btnClass;
 
     [Inject]
     private IPluginsService PluginsService { get; set; }

@@ -1,16 +1,32 @@
-﻿using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
+﻿
+using LagDaemon.YAMUD.Model.Scripting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
+IConfiguration configuration = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
 
-var engine = Python.CreateEngine();
+var apiUri = new Uri(configuration["ApiUrl"]);
 
-// Execute Python code
-var scope = engine.CreateScope();
-engine.Execute("x = 5", scope);
-engine.Execute("result = x**2", scope);
+// Set up DI container
+var builder = new ServiceCollection();
+builder
+    .AddSingleton(configuration)
+    .AddSingleton<CommandParser>();
 
-// Retrieve the result from Python
-dynamic result = scope.GetVariable("result");
+builder
+    .AddHttpClient("MudHub", client => {
+         client.BaseAddress = new Uri(configuration["ApiUrl"]);
+     });
 
-// Print the result
-Console.WriteLine($"The square of 5 is {result}");
+builder.BuildServiceProvider();
+
+var serviceProvider = builder.BuildServiceProvider();
+
+// Start your application logic
+var app = new Application(serviceProvider);
+
+app.Run();
+

@@ -192,6 +192,7 @@ code {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
+    height: 700px;
 }
 
 .tab-header {
@@ -219,6 +220,7 @@ code {
     }
 
 .tab-content {
+
     padding: 20px;
     border-top: 1px solid #ccc;
 }

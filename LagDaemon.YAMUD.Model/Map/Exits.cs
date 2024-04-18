@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using LagDaemon.YAMUD.Model.GameCommands;
+using System.ComponentModel.DataAnnotations;
 
 namespace LagDaemon.YAMUD.Model.Map;
 

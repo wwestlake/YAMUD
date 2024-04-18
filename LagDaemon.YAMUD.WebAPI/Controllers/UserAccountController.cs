@@ -207,7 +207,7 @@ public class UserAccountController : ControllerBase
 
         }).OnFailure(x =>
         {
-            result = Ok(x);
+            result = BadRequest(x);
         });
 
         return result;
