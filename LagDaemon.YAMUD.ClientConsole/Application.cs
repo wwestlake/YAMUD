@@ -25,7 +25,7 @@ internal class Application
     public Application(ServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _context = new GameContext() { CurrentUser = new LagDaemon.YAMUD.Model.User.UserAccount() };
+        _context = new GameContext() { CurrentUser = new LagDaemon.YAMUD.Model.User.UserAccount(), Actor = new LagDaemon.YAMUD.Model.Characters.Character() };
         _mudHubClient = _serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("MudHub");
         _accountManager = new AccountManager(_mudHubClient);
         _topMenu = new Menu("Select> ", new List<Menu.MenuItem>() { 
@@ -90,7 +90,7 @@ internal class Application
             var input = _consoleHander.GetInput("yamud> ");
 
             // Parse and process the input
-            var commands = CommandParser.ParseCommandLine(input);
+            var commands = commandParser.ParseCommandLine(input);
             foreach (var command in commands)
             {
                 if (command.Type == CommandToken.Exit)

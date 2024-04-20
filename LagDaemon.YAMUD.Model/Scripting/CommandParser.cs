@@ -2,9 +2,9 @@
 
 namespace LagDaemon.YAMUD.Model.Scripting
 {
-    public static class CommandParser
+    public class CommandParser
     {
-        public static IEnumerable<Command> ParseCommandLine(string commandLine)
+        public IEnumerable<Command> ParseCommandLine(string commandLine)
         {
             if (string.IsNullOrWhiteSpace(commandLine))
             {
@@ -17,12 +17,12 @@ namespace LagDaemon.YAMUD.Model.Scripting
             return new List<Command> { Parse(commandLine) };
         }
 
-        public static IEnumerable<Command> ParseMuliple(IEnumerable<string> commands)
+        public IEnumerable<Command> ParseMuliple(IEnumerable<string> commands)
         {
             return commands.Select(x => Parse(x));
         }
 
-        public static Command Parse(string input)
+        public Command Parse(string input)
         {
             // Define keywords for each command type
             Dictionary<string, CommandToken> keywords = new Dictionary<string, CommandToken>
@@ -99,7 +99,7 @@ namespace LagDaemon.YAMUD.Model.Scripting
             return MakeType(commandType, parameters);
         }
 
-        private static Command MakeType(CommandToken commandType, List<string> parameters)
+        private Command MakeType(CommandToken commandType, List<string> parameters)
         {
             switch (commandType)
             {
@@ -166,5 +166,4 @@ namespace LagDaemon.YAMUD.Model.Scripting
             }
         }
     }
-
 }
