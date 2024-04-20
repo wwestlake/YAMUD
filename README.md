@@ -15,6 +15,8 @@ YAMUD is a text-based multiplayer role-playing game inspired by classic MUDs (Mu
 ## Getting Started
 
 To get started with YAMUD, follow these steps:
+1. Install Postgresql or another appropriate database, or a cloud based inwstance.  The system uses Entity Framework so you will need to put the details in appsettings to connect.
+2. Install MongoDB (This is for ThothLog that performs logging for the system)
 
 1. **Clone the Repository:** Clone this repository to your local machine.
 
@@ -22,13 +24,15 @@ To get started with YAMUD, follow these steps:
    git clone https://github.com/your-username/yamud.git
    ```
 
-2. **Set Up the Server:** Set up the YAMUD server by following the instructions in the `Server` directory. This typically involves running a C# WebAPI server.
+1. **Set Up the Server:** Set up the YAMUD server by following the instructions in the `Server` directory. This typically involves running a C# WebAPI server.
 
-3. **Set Up the Client:** Set up the YAMUD client by following the instructions in the `Client` directory. This typically involves running a Blazor WebAssembly client.
+1. **Set Up the Client:** Set up the YAMUD client by following the instructions in the `Client` directory. This typically involves running a Blazor WebAssembly client.
 
-4. **Connect to the Game:** Once both the server and client are set up and running, open your favorite web browser and navigate to the client URL to connect to the game.
+1. **Connect to the Game:** Once both the server and client are set up and running, open your favorite web browser and navigate to the client URL to connect to the game.
 
-5. **Create Your Character:** Follow the on-screen instructions to create your character and start playing.
+1. **Create Your Character:** Follow the on-screen instructions to create your character and start playing.
+
+## Note: You will need to run the appropriate scripts or perform a database-update in order to create the schema
 
 ## Contributing
 
