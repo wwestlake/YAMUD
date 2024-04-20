@@ -1,11 +1,10 @@
 ﻿using LagDaemon.YAMUD.Model.GameCommands;
-using LagDaemon.YAMUD.Model.Map;
 
 namespace LagDaemon.YAMUD.Model.Scripting
 {
-    public class CommandParser
+    public static class CommandParser
     {
-        public IEnumerable<Command> ParseCommandLine(string commandLine)
+        public static IEnumerable<Command> ParseCommandLine(string commandLine)
         {
             if (string.IsNullOrWhiteSpace(commandLine))
             {
@@ -18,12 +17,12 @@ namespace LagDaemon.YAMUD.Model.Scripting
             return new List<Command> { Parse(commandLine) };
         }
 
-        public IEnumerable<Command> ParseMuliple(IEnumerable<string> commands)
+        public static IEnumerable<Command> ParseMuliple(IEnumerable<string> commands)
         {
             return commands.Select(x => Parse(x));
         }
 
-        public Command Parse(string input)
+        public static Command Parse(string input)
         {
             // Define keywords for each command type
             Dictionary<string, CommandToken> keywords = new Dictionary<string, CommandToken>
@@ -100,23 +99,70 @@ namespace LagDaemon.YAMUD.Model.Scripting
             return MakeType(commandType, parameters);
         }
 
-        private Command MakeType(CommandToken commandType, List<string> parameters)
+        private static Command MakeType(CommandToken commandType, List<string> parameters)
         {
             switch (commandType)
             {
                 case CommandToken.Go:
-                    Direction direction;
-                    if (Enum.TryParse(parameters[0], true, out direction))
-                    {
-                        return new GoCommand { Type = CommandToken.Go, Parameters = parameters, Direction = direction };
-                    }
-                    else
-                    {
-                        return new Command { Type = CommandToken.ERROR, Parameters = new List<string> { $"Unable to parse direction '{parameters[0]}'"  } };
-                    }
-
-                default:
-                    return new Command { Type = commandType, Parameters = parameters };
+                    return new GoCommand { Parameters = parameters };
+                case CommandToken.Look:
+                    return new LookCommand { Parameters = parameters };
+                case CommandToken.Examine:
+                    return new ExamineCommand { Parameters = parameters };
+                case CommandToken.Take:
+                    return new TakeCommand { Parameters = parameters };
+                case CommandToken.Drop:
+                    return new DropCommand { Parameters = parameters };
+                case CommandToken.Inventory:
+                case CommandToken.Inv:
+                    return new InventoryCommand { Parameters = parameters };
+                case CommandToken.Use:
+                    return new UseCommand { Parameters = parameters };
+                case CommandToken.Give:
+                    return new GiveCommand { Parameters = parameters };
+                case CommandToken.Equip:
+                    return new EquipCommand { Parameters = parameters };
+                case CommandToken.Unequip:
+                    return new UnequipCommand { Parameters = parameters };
+                case CommandToken.Say:
+                    return new SayCommand { Parameters = parameters };
+                case CommandToken.Tell:
+                    return new TellCommand { Parameters = parameters };
+                case CommandToken.Emote:
+                    return new EmoteCommand { Parameters = parameters };
+                case CommandToken.Whisper:
+                    return new WhisperCommand { Parameters = parameters };
+                case CommandToken.Shout:
+                    return new ShoutCommand { Parameters = parameters };
+                case CommandToken.Reply:
+                    return new ReplyCommand { Parameters = parameters };
+                case CommandToken.TalkTo:
+                    return new TalkToCommand { Parameters = parameters };
+                case CommandToken.Attack:
+                    return new AttackCommand { Parameters = parameters };
+                case CommandToken.Score:
+                    return new ScoreCommand { Parameters = parameters };
+                case CommandToken.Help:
+                    return new HelpCommand { Parameters = parameters };
+                case CommandToken.Who:
+                    return new WhoCommand { Parameters = parameters };
+                case CommandToken.Where:
+                    return new WhereCommand { Parameters = parameters };
+                case CommandToken.Time:
+                    return new TimeCommand { Parameters = parameters };
+                case CommandToken.Kick:
+                    return new KickCommand { Parameters = parameters };
+                case CommandToken.Ban:
+                    return new BanCommand { Parameters = parameters };
+                case CommandToken.Mute:
+                    return new MuteCommand { Parameters = parameters };
+                case CommandToken.Set:
+                    return new SetCommand { Parameters = parameters };
+                case CommandToken.Jail:
+                    return new JailCommand { Parameters = parameters };
+                case CommandToken.Alias:
+                    return new AliasCommand { Parameters = parameters };
+                default: return new Command { Parameters = parameters };
             }
         }
     }

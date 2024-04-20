@@ -13,7 +13,7 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ScriptingServices
 
         public void ExecuteCommand(string command)
         {
-            var commands = _commandParser.ParseCommandLine(command);
+            var commands = CommandParser.ParseCommandLine(command);
             foreach (var cmd in commands)
             {
                 // Execute the command

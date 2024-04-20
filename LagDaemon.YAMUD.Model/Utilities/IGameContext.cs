@@ -12,19 +12,9 @@ public interface IGameContext
     bool BooleanResult { get; set; }
 
     Character Actor { get; set; }
-    Character Target { get; set; }
+    Character? Target { get; set; }
 
-    Item InvolvedItem { get; set; }
+    Item? InvolvedItem { get; set; }
 
     ActionType ActionType { get; set; }
-}
-
-public enum ActionType
-{
-    Attack,
-    Defend,
-    UseItem,
-    GiveItem,
-    TakeItem,
-
 }

@@ -90,7 +90,7 @@ internal class Application
             var input = _consoleHander.GetInput("yamud> ");
 
             // Parse and process the input
-            var commands = commandParser.ParseCommandLine(input);
+            var commands = CommandParser.ParseCommandLine(input);
             foreach (var command in commands)
             {
                 if (command.Type == CommandToken.Exit)
