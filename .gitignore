@@ -402,3 +402,4 @@ FodyWeavers.xsd
 Plugins/*
 Plugins/LagDaemon.YAMUD.ChatterBot.dll
 /Plugins
+models/*
