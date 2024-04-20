@@ -16,4 +16,9 @@
     <ProjectReference Include="..\LagDaemon.YAMUD.Model\LagDaemon.YAMUD.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Crafting\" />
+    <Folder Include="Rules\" />
+  </ItemGroup>
+
 </Project>

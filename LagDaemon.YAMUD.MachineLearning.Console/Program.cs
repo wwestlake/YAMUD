@@ -13,5 +13,4 @@ var sampleData = new MLModel1.ModelInput()
 //Load model and predict output
 var result = MLModel1.Predict(sampleData);
 
-Console.WriteLine(result.  .Prediction[0] == 1 ? "Positive sentiment" : "Negative sentiment")
 
