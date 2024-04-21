@@ -192,11 +192,10 @@ code {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
-    height: 700px;
 }
 
 .tab-header {
-    background-color: #f0f0f0;
+    background-color: #26b050;
     padding: 10px;
 }
 
@@ -223,4 +222,5 @@ code {
 
     padding: 20px;
     border-top: 1px solid #ccc;
+
 }

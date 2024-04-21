@@ -11,6 +11,7 @@ using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
 using LagDaemon.YAMUD.WebAPI.Services.ChatServices;
+using LagDaemon.YAMUD.WebAPI.Services.CommandServices;
 using LagDaemon.YAMUD.WebAPI.Services.EmailServices;
 using LagDaemon.YAMUD.WebAPI.Services.RoomServices;
 using LagDaemon.YAMUD.WebAPI.Services.Scripting.ScriptingServices;

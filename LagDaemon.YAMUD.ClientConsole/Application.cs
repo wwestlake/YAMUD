@@ -1,8 +1,10 @@
 ﻿using LagDaemon.YAMUD.ClientConsole.ConsoleIO;
+using LagDaemon.YAMUD.ClientConsole.Services;
 using LagDaemon.YAMUD.ClientConsole.UserAccount;
 using LagDaemon.YAMUD.Model.GameCommands;
 using LagDaemon.YAMUD.Model.Scripting;
 using LagDaemon.YAMUD.Model.Utilities;
+using Microsoft.Extensions.Configuration;
 
 internal class Application
 {
@@ -11,16 +13,35 @@ internal class Application
     private HttpClient _mudHubClient;
     private AccountManager _accountManager;
     private CommandParser _commandParser;
+    private CommandService _commandService;
+    private IConfiguration _configuration;
     private ConsoleInputHandler _consoleHander = new ConsoleInputHandler();
     private bool _authenticated = false;
     private string _token = string.Empty;
     private Menu _topMenu;
 
-    public Application(IHttpClientFactory clientFactory, AccountManager accountManager, CommandParser commandParser)
+    public Application(
+        IHttpClientFactory clientFactory, 
+        AccountManager accountManager, 
+        CommandParser commandParser, 
+        CommandService commandService,
+        IConfiguration configuration)
     {
         _mudHubClient = clientFactory.CreateClient("MudHub");
         _accountManager = accountManager;
         _commandParser = commandParser;
+        _commandService = commandService;
+        _configuration = configuration;
+
+        _commandService.CommandReceived += (command) =>
+        {
+            Console.WriteLine($"Received command: {command.Type}");
+            foreach (var parameter in command.Parameters)
+            {
+                Console.WriteLine($"Parameter: {parameter}");
+            }
+        };
+
         _context = new GameContext() { CurrentUser = new LagDaemon.YAMUD.Model.User.UserAccount(), Actor = new LagDaemon.YAMUD.Model.Characters.Character() };
         _topMenu = new Menu("Select> ", new List<Menu.MenuItem>() { 
             new Menu.MenuItem() { 
@@ -70,14 +91,26 @@ internal class Application
     {
         Console.WriteLine("REPL loop started.");
 
-        while (_topMenu.Display()) { /* Just repeats */ }
+        if (_configuration.GetSection("autologin").Exists() )
+        {
+            var userId = _configuration["autologin:userId"];
+            var password = _configuration["autologin:password"];
+
+            _authenticated = _accountManager.AuthenticateUser(userId, password).Result;
+        }
+        if (!_authenticated)
+        {
+            while (_topMenu.Display()) { /* Just repeats */ }
+        } else
+        {
+            await RunRepl();
+        }
 
     }
 
     private async Task RunRepl()
     {
         _isRunning = _authenticated;
-
         while (_authenticated)
         {
             var input = _consoleHander.GetInput("yamud> ");
@@ -111,7 +144,8 @@ internal class Application
         {
             Console.WriteLine($"Parameter: {parameter}");
         }
-        Console.WriteLine($"Execute: {command.Execute(_context)}");
+        Console.WriteLine("Sending Command to server:");
+        _commandService.SendCommand(command).Wait();
     }
 
 }
