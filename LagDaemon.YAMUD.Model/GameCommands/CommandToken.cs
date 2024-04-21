@@ -69,6 +69,7 @@ namespace LagDaemon.YAMUD.Model.GameCommands
         Spawn,
         Teleport,
         ERROR,
-        Exit
+        Exit,
+        Message
     }
 }

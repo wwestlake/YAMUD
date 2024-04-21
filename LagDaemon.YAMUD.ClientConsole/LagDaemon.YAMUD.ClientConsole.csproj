@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="IronPython" Version="3.4.1" />
     <PackageReference Include="LagDaemon.ReadLine" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="8.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />

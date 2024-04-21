@@ -23,9 +23,5 @@ namespace LagDaemon.YAMUD.Model.GameCommands
             }
         }
 
-        public override string Execute(IGameContext context)
-        {
-            return "Go Command Executed";
-        }
     }
 }

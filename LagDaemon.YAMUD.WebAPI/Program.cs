@@ -237,6 +237,7 @@ app.UseCors("AllowOrigin");
 
 app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chatHub");
+    endpoints.MapHub<CommandHub>("/commandHub");
 });
 
 var pluginManager = app.Services.GetRequiredService<PluginManager>();

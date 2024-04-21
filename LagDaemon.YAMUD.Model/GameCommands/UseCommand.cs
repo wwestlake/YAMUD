@@ -8,9 +8,5 @@ namespace LagDaemon.YAMUD.Model.GameCommands
         {
             return true;
         }
-        public override string Execute(IGameContext context)
-        {
-            return "Command Executed";
-        }
-    }
+     }
 }

@@ -17,4 +17,6 @@ public interface IGameContext
     Item? InvolvedItem { get; set; }
 
     ActionType ActionType { get; set; }
+
+    IEnumerable<string> Errors { get; set; }
 }

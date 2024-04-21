@@ -1,4 +1,5 @@
 ﻿
+using LagDaemon.YAMUD.ClientConsole.UserAccount;
 using LagDaemon.YAMUD.Model.Scripting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,9 @@ var apiUri = new Uri(configuration["ApiUrl"]);
 var builder = new ServiceCollection();
 builder
     .AddSingleton(configuration)
-    .AddSingleton<CommandParser>();
+    .AddSingleton<CommandParser>()
+    .AddSingleton<AccountManager>()
+    .AddSingleton<Application>();
 
 builder
     .AddHttpClient("MudHub", client => {
@@ -26,7 +29,7 @@ builder.BuildServiceProvider();
 var serviceProvider = builder.BuildServiceProvider();
 
 // Start your application logic
-var app = new Application(serviceProvider);
+var app = serviceProvider.GetRequiredService<Application>();
 
 app.Run();
 

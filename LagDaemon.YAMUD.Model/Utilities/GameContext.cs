@@ -14,5 +14,6 @@ namespace LagDaemon.YAMUD.Model.Utilities
         public Item? InvolvedItem { get; set; }
         public ActionType ActionType { get; set; }
         public IEnumerable<Room> Map { get; set; } = new List<Room>();
+        public IEnumerable<string> Errors { get; set; } = new List<string>();
     }
 }

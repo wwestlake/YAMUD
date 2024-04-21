@@ -2,32 +2,26 @@
 using LagDaemon.YAMUD.ClientConsole.UserAccount;
 using LagDaemon.YAMUD.Model.GameCommands;
 using LagDaemon.YAMUD.Model.Scripting;
-using LagDaemon.YAMUD.Model.User;
 using LagDaemon.YAMUD.Model.Utilities;
-using Microsoft.Extensions.DependencyInjection;
-using Mono.Unix.Native;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text.Json;
 
 internal class Application
 {
-    private ServiceProvider _serviceProvider;
     private bool _isRunning = true;
     GameContext _context;
     private HttpClient _mudHubClient;
     private AccountManager _accountManager;
+    private CommandParser _commandParser;
     private ConsoleInputHandler _consoleHander = new ConsoleInputHandler();
     private bool _authenticated = false;
     private string _token = string.Empty;
     private Menu _topMenu;
 
-    public Application(ServiceProvider serviceProvider)
+    public Application(IHttpClientFactory clientFactory, AccountManager accountManager, CommandParser commandParser)
     {
-        _serviceProvider = serviceProvider;
+        _mudHubClient = clientFactory.CreateClient("MudHub");
+        _accountManager = accountManager;
+        _commandParser = commandParser;
         _context = new GameContext() { CurrentUser = new LagDaemon.YAMUD.Model.User.UserAccount(), Actor = new LagDaemon.YAMUD.Model.Characters.Character() };
-        _mudHubClient = _serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("MudHub");
-        _accountManager = new AccountManager(_mudHubClient);
         _topMenu = new Menu("Select> ", new List<Menu.MenuItem>() { 
             new Menu.MenuItem() { 
                 Entry = "Login to existing account", 
@@ -82,7 +76,6 @@ internal class Application
 
     private async Task RunRepl()
     {
-        var commandParser = _serviceProvider.GetService<CommandParser>();
         _isRunning = _authenticated;
 
         while (_authenticated)
@@ -90,9 +83,14 @@ internal class Application
             var input = _consoleHander.GetInput("yamud> ");
 
             // Parse and process the input
-            var commands = commandParser.ParseCommandLine(input);
+            var commands = _commandParser.ParseCommandLine(input);
             foreach (var command in commands)
             {
+                if (! command.Validate(_context))
+                {
+                    Console.WriteLine("Invalid command");
+                    continue;
+                }
                 if (command.Type == CommandToken.Exit)
                 {
                     Console.WriteLine("Exiting application...");

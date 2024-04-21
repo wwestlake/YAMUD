@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace LagDaemon.YAMUD.ClientConsole.UserAccount
 {
-    internal class AccountManager
+    public class AccountManager
     {
         private HttpClient _mudHubClient;
         private ConsoleInputHandler _consoleHander = new ConsoleInputHandler();
@@ -13,9 +13,9 @@ namespace LagDaemon.YAMUD.ClientConsole.UserAccount
         
         public string? Token { get; set; }
 
-        public AccountManager(HttpClient client)
+        public AccountManager(IHttpClientFactory clientFactory)
         {
-            _mudHubClient = client;
+            _mudHubClient = clientFactory.CreateClient("MudHub");
         }
 
         public async Task<bool> CreateAccount()

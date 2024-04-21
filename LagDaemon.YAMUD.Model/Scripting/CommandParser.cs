@@ -76,7 +76,8 @@ namespace LagDaemon.YAMUD.Model.Scripting
             { "debug", CommandToken.Debug },
             { "spawn", CommandToken.Spawn },
             { "teleport", CommandToken.Teleport },
-            { "exit", CommandToken.Exit }
+            { "exit", CommandToken.Exit },
+            { "msg", CommandToken.Message }
         };
 
             // Split the input string by spaces
@@ -162,6 +163,8 @@ namespace LagDaemon.YAMUD.Model.Scripting
                     return new JailCommand { Parameters = parameters };
                 case CommandToken.Alias:
                     return new AliasCommand { Parameters = parameters };
+                case CommandToken.Message:
+                    return new MessageCommand { Parameters = parameters };
                 default: return new Command { Parameters = parameters };
             }
         }
