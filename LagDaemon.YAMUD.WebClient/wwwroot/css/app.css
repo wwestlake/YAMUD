@@ -146,13 +146,13 @@ code {
 .chat-container {
     border: 1px solid #ccc;
     padding: 10px;
-    height: 600px; /* Adjust as needed */
+    height: 500px; /* Adjust as needed */
     border: 1px solid #ccc;
     padding: 5px;
 }
 
 .chat-messages {
-    height: 600px; /* Adjust as needed */
+    height: 500px; /* Adjust as needed */
     overflow-y: auto; /* Enable vertical scrollbar */
 }
 
@@ -192,6 +192,7 @@ code {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
+    height: 700px;
 }
 
 .tab-header {

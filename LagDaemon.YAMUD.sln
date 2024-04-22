@@ -47,7 +47,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MachineLeanring", "MachineL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.MachineLearning", "LagDaemon.YAMUD.MachineLeanring\LagDaemon.YAMUD.MachineLearning.csproj", "{44245A12-F256-4E42-9B3B-992AC59793E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.MachineLearning.Console", "LagDaemon.YAMUD.MachineLearning.Console\LagDaemon.YAMUD.MachineLearning.Console.csproj", "{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.MachineLearning.Console", "LagDaemon.YAMUD.MachineLearning.Console\LagDaemon.YAMUD.MachineLearning.Console.csproj", "{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LagDaemon.YAMUD.Desltop", "LagDaemon.YAMUD.Desltop\LagDaemon.YAMUD.Desltop.csproj", "{F3C43F32-2F6B-4054-949A-50741BBDB958}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LagDaemon.YAMUD.PublicWeb", "LagDaemon.YAMUD.PublicWeb\LagDaemon.YAMUD.PublicWeb.csproj", "{A69D4869-2E52-45F2-A902-01E37E629824}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -127,6 +131,14 @@ Global
 		{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3C43F32-2F6B-4054-949A-50741BBDB958}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3C43F32-2F6B-4054-949A-50741BBDB958}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3C43F32-2F6B-4054-949A-50741BBDB958}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3C43F32-2F6B-4054-949A-50741BBDB958}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69D4869-2E52-45F2-A902-01E37E629824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69D4869-2E52-45F2-A902-01E37E629824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69D4869-2E52-45F2-A902-01E37E629824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69D4869-2E52-45F2-A902-01E37E629824}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,6 +161,8 @@ Global
 		{43315624-0608-49F3-8D72-28CAB38C5758} = {4F8D3C54-7D05-4AAB-8816-39284224A080}
 		{44245A12-F256-4E42-9B3B-992AC59793E3} = {66EC8690-8BEF-4897-9100-5C992890146E}
 		{3C6E3FB6-56DB-4B37-89AE-D97E4AC7CA65} = {66EC8690-8BEF-4897-9100-5C992890146E}
+		{F3C43F32-2F6B-4054-949A-50741BBDB958} = {B2287062-1389-462A-9E03-B47F1D72356D}
+		{A69D4869-2E52-45F2-A902-01E37E629824} = {B2287062-1389-462A-9E03-B47F1D72356D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2886B022-AA6A-4BB8-A01F-690948CDC7D4}

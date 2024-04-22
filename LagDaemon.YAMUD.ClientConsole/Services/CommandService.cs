@@ -58,8 +58,6 @@ namespace LagDaemon.YAMUD.ClientConsole.Services
                 CommandReceived?.Invoke(command);
             });
 
-
-
             await _connection.StartAsync();
 
             return string.Empty;
@@ -74,7 +72,13 @@ namespace LagDaemon.YAMUD.ClientConsole.Services
 
             if (_connection.State == HubConnectionState.Connected)
             {
-                await _connection.SendAsync("SendCommand", command);
+                try
+                {
+                    await _connection.SendAsync("SendCommand", command);
+                } catch (Exception ex)
+                {
+                    Console.WriteLine($"Error sending command: {ex.Message}");
+                }
             }
         }
 
