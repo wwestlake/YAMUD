@@ -61,6 +61,9 @@ public class YamudDbContext : DbContext
             .HasMany(c => c.Annotations) // Character can have many annotations
             .WithOne() // Annotation can belong to one character
             .HasForeignKey(a => a.AnnotatedEntityId); // Foreign key for Character
-
+        modelBuilder.Entity<PlayerState>()
+            .OwnsOne(u => u.CurrentLocation);
+        modelBuilder.Entity<Room>()
+            .OwnsOne(u => u.Address);
     }
 }

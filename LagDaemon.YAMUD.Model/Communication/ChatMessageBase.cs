@@ -13,6 +13,7 @@ namespace LagDaemon.YAMUD.Model.Communication
             SentAt = DateTime.Now;
         }
 
+        public string DisplayName { get; set; }
         public Guid To { get; set; }  // Represents the recipient (room, user, or group)
         public string Message { get; set; }
         public DateTime SentAt { get; set; }

@@ -108,20 +108,21 @@ code {
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
-    color: #333;
+    font-size: 16px;
+    color: #EEE;
     text-align: justify;
 }
 
     .description h1 {
         font-size: 24px;
         font-weight: bold;
-        color: #0066cc;
+        color: #EEEEEE;
         margin-bottom: 20px;
     }
 
     .description p {
-        font-size: 16px;
-        line-height: 1.6;
+        font-size: 22px;
+        line-height: 1.2;
         margin-bottom: 15px;
     }
 
@@ -149,11 +150,14 @@ code {
     height: 500px; /* Adjust as needed */
     border: 1px solid #ccc;
     padding: 5px;
+    background: #000;
 }
 
 .chat-messages {
     height: 500px; /* Adjust as needed */
     overflow-y: auto; /* Enable vertical scrollbar */
+    color: #EEEEEE;
+    background: #000;
 }
 
 .chat-input {
@@ -224,4 +228,17 @@ code {
     padding: 20px;
     border-top: 1px solid #ccc;
 
+}
+
+.light-text {
+    color: #666;
+}
+
+.body-background {
+    background-image: url('../images/DungeonMain.webp');
+    background-size: cover; /* Cover the entire page */
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh; /* Full height */
+    width: 100vw; /* Full width */
 }

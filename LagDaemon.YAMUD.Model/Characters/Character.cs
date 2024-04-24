@@ -20,7 +20,6 @@ public class Character
     public int Luck { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid OwnerId { get; set; }
-    public RoomAddress Location { get; set; }
     public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();
     public ICollection<Item> Items { get; set; }
     public ICollection<Achievement> Achievements { get; set;}

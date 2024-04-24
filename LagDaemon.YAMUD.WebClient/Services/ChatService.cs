@@ -9,12 +9,19 @@ namespace LagDaemon.YAMUD.WebClient.Services
         public event Action<NotificationMessage> NotificationReceived;
 
         private HubConnection _connection;
+        private string _accessToken;
+        private string _url;
+
         public async Task ConnectAsync(string accessToken, string url = "http://localhost:5180/chatHub")
         {
+            _accessToken = accessToken;
+            _url = url;
             _connection = new HubConnectionBuilder()
-                
                 .WithUrl(url, options => { 
-                    options.AccessTokenProvider = () => Task.FromResult(accessToken);
+                    options.AccessTokenProvider = () => {
+                        Console.WriteLine($"Returning access token: {accessToken}");
+                        return Task.FromResult(accessToken); 
+                    };
                 }).Build();
 
             _connection.On<RoomChatMessage>("ReceiveRoomMessage", message =>
@@ -37,6 +44,11 @@ namespace LagDaemon.YAMUD.WebClient.Services
 
         public async Task SendRoomChatMessageAsync(RoomChatMessage message)
         {
+            if (_connection.State == HubConnectionState.Disconnected)
+            {
+                await ConnectAsync(_accessToken, _url);
+            }
+
             if (_connection.State == HubConnectionState.Connected)
             {
                 await _connection.SendAsync("SendRoomMessage", message);
@@ -45,6 +57,10 @@ namespace LagDaemon.YAMUD.WebClient.Services
 
         public async Task SendGroupChatMessageAsync(GroupChatMessage message)
         {
+            if (_connection.State == HubConnectionState.Disconnected)
+            {
+                await ConnectAsync(_accessToken, _url);
+            }
             if (_connection.State == HubConnectionState.Connected)
             {
                 await _connection.SendAsync("SendGroupMessage", message);

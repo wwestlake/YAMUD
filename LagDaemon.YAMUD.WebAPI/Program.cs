@@ -7,6 +7,7 @@ using LagDaemon.YAMUD.Data.Repositories;
 using LagDaemon.YAMUD.Model.Automation;
 using LagDaemon.YAMUD.Model.Scripting;
 using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.Model.Utilities;
 using LagDaemon.YAMUD.Services;
 using LagDaemon.YAMUD.WebAPI.Services;
 using LagDaemon.YAMUD.WebAPI.Services.CharacterServices;
@@ -18,6 +19,7 @@ using LagDaemon.YAMUD.WebAPI.Services.Scripting.ScriptingServices;
 using LagDaemon.YAMUD.WebAPI.Services.ScriptingServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -214,11 +216,19 @@ builder.Services.AddHttpsRedirection(options =>
 {
     options.HttpsPort = 443; // Set the HTTPS port
 });
+builder.Services.AddScoped<TokenValidationFilter>();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddHubOptions<ChatHub>(options =>
+{
+    options.AddFilter<TokenValidationFilter>();
+});
+
+
+
 builder.Services.AddSingleton<PluginManager>();
 builder.Services.AddSingleton<IronPythonExecutor>(); // Register IronPythonExecutor as singleton
 builder.Services.AddSingleton<IronRubyExecutor>(); // Register IronRubyExecutor as singleton
+builder.Services.AddSingleton<IDataCacheService, DataCacheService>();
 
 var app = builder.Build();
 
@@ -244,6 +254,7 @@ app.UseEndpoints(endpoints => {
 var pluginManager = app.Services.GetRequiredService<PluginManager>();
 var pluginsDirectory = configuration["AppSettings:PluginsDirectory"];
 pluginManager.LoadPlugins(pluginsDirectory);
+
 
 
 app.UseHttpsRedirection();

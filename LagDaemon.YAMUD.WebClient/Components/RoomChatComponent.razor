@@ -2,6 +2,7 @@
 @using LagDaemon.YAMUD.WebClient.Services
 @inject IChatService chatService
 @inject Authority Authority
+@inject ILocalStorageService LocalStorageService
 
 <div class="chat-header">
     Room Chat Channel
@@ -11,7 +12,7 @@
     <div class="chat-messages">
         @foreach (var msg in messages)
         {
-            <p>@msg.Message</p>
+            <span><b>[@msg.DisplayName]</b>&nbsp; @msg.Message</span><br />
         }
     </div>
 
@@ -46,6 +47,8 @@
                 From = Guid.NewGuid() // Replace with the actual sender ID
             };
 
+        var token = await LocalStorageService.GetObjectAsync<string>("authToken");
+        await chatService.ConnectAsync(token.Item);
         await chatService.SendRoomChatMessageAsync(roomChatMessage);
         message = string.Empty;
     }

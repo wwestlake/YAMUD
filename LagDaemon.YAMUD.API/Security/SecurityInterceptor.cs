@@ -38,6 +38,10 @@ public class SecurityInterceptor : ISecurityInterceptor
     // Example method to simulate user role check
     private bool IsCurrentUserAuthorized(UserAccountRoles[] roleNames)
     {
+        //if (_requestContext.Roles == null || !_requestContext.Roles.Any())
+        //{
+        //    return false;
+        //}
         // RULE: A Users role must be <= a role specified in the roles from  the method
         // Found > Owner > Admin > Modeator > PLayer
 

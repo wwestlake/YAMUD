@@ -36,6 +36,13 @@ public class RoomManagementService : IRoomManagementService
 
         });
         _userId = _user.ID;
+
+        if (GetRooms(x => true).Result.Value.Count() == 0)
+        {
+            CreateRoom(0, 0, 0, "The Lobby", "A marble hall of large proportions", new List<Exit>()).Wait();
+        }
+
+
     }
 
     [Security(UserAccountRoles.Admin)]

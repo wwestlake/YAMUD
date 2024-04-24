@@ -1,18 +1,64 @@
-﻿using LagDaemon.YAMUD.Model.Communication;
+﻿using LagDaemon.YAMUD.API;
+using LagDaemon.YAMUD.API.Services;
+using LagDaemon.YAMUD.Model.Communication;
+using LagDaemon.YAMUD.Model.Map;
+using LagDaemon.YAMUD.Model.User;
+using LagDaemon.YAMUD.Model.Utilities;
 using Microsoft.AspNetCore.SignalR;
+using MongoDB.Driver.Core.Connections;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
 {
     public class ChatHub : Hub
     {
+        private readonly IDataCacheService _dataCache;
+        private readonly IRequestContext _requestContext;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<Room> _roomRepo;
+        private readonly IRepository<UserAccount> _userRepo;
+
+
+        public ChatHub(IDataCacheService dataCache, IRequestContext requestContext, IUnitOfWork unitOfWork)
+        {
+            _dataCache = dataCache;
+            _requestContext = requestContext;
+            _unitOfWork = unitOfWork;
+            _roomRepo = unitOfWork.GetRepository<Room>();
+            _userRepo = unitOfWork.GetRepository<UserAccount>();
+        }
+
+        private (string, UserAccount, Room) FindRoom()
+        {
+            string email = GetUserFromToken().Id;
+            UserAccount user = _userRepo.Get().FirstOrDefault(x => x.EmailAddress == email);
+            var x = user.PlayerState.CurrentLocation.X;
+            var y = user.PlayerState.CurrentLocation.Y;
+            var level = user.PlayerState.CurrentLocation.Level;
+
+            Room room = _roomRepo.Get().FirstOrDefault(
+                r => r.Address.X == x && r.Address.Y == y && r.Address.Level == level
+            );
+            return (email, user, room);
+        }
+
         public async Task SendRoomMessage(RoomChatMessage message)
         {
-            await Clients.All.SendAsync("ReceiveRoomMessage", message);
+            var (email, user, room) = FindRoom();
+            message.DisplayName = user.DisplayName;
+            message.From = user.ID;
+            message.To = room.Id;
+
+            if (room != null)
+            {
+                await Clients.Client(Context.ConnectionId).SendAsync("ReceiveRoomMessage", message);
+                await Clients.Groups(room.Name).SendAsync("ReceiveGroupMessage", message);
+            }
         }
 
         public async Task SendGroupMessage(GroupChatMessage message)
         {
-            await Clients.All.SendAsync("ReceiveGroupMessage", message);
+            await Clients.Groups(message.Group).SendAsync("ReceiveGroupMessage", message);
         }
 
         public async Task SendNotificationMessage(NotificationMessage message)
@@ -22,11 +68,60 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
 
         public override async Task OnConnectedAsync()
         {
+            var connectionId = Context.ConnectionId;
+            var (_, _, room) = FindRoom();
+            if (room == null)
+            {
+                throw new ApplicationException("Room cannot be null here");
+            }
+
+
+            // TODO: need to maintain a list of groups for each user
+            //foreach (var group in Groups)
+            //{
+            //    await Groups.RemoveFromGroupAsync(connectionId, group);
+            //}
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, room.Name);
+
             // Send a welcome message to the connected client
-            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveNotification", "Welcome to the chat!");
+            await Clients.Group(room.Name).SendAsync("ReceiveGroupMessage", new NotificationMessage
+            {
+                Message = $"Welcome to {room.Name}!"
+            });
 
             // Call the base method to ensure proper hub initialization
             await base.OnConnectedAsync();
         }
+
+        private UserInfo GetUserFromToken()
+        {
+            var token = Context.GetHttpContext().Request.Query["access_token"].FirstOrDefault();
+
+            if (token != null)
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+                // Extract user information from the token
+                var userIdString = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Sub).Value;
+
+                var userName = jwtToken.Claims.First(claim => claim.Type == JwtRegisteredClaimNames.Jti).Value;
+
+                return new UserInfo { Id = userIdString, Name = userName };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+    }
+
+
+    public class UserInfo
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }
