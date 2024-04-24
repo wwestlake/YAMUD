@@ -1,3 +1,5 @@
+![alt text](https://github.com/wwestlake/YAMUD/blob/main/images/YAMUD_MainScreen.GIF)
+
 # Yet Another Multi-User Dungeon (YAMUD)
 
 YAMUD is a text-based multiplayer role-playing game inspired by classic MUDs (Multi-User Dungeons). It provides a virtual world where players can explore, interact with objects and NPCs (Non-Player Characters), engage in combat, and embark on quests together.
