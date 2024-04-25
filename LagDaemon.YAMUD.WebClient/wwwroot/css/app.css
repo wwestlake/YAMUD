@@ -166,6 +166,37 @@ code {
     overflow-y: auto;
 }
 
+.notification-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 500px; /* Adjust as needed */
+    border: 1px solid #ccc;
+    padding: 5px;
+    background: #000;
+    overflow-y: auto;
+}
+
+.notification-messages {
+    color: #EEEEEE;
+    background: #000;
+    height: 500px; /* Adjust as needed */
+}
+
+.card {
+    width: 18rem;
+    background-color: #333; /* Darker background for each card */
+    color: #fff; /* Ensures text is white for readability */
+    margin-bottom: 10px; /* Adds space between cards */
+}
+
+.card-body {
+    padding: 15px; /* Adjust padding inside the card */
+}
+
+.card-link {
+    color: #4CAF50; /* Example color for links */
+}
+
 .chat-input {
     display: flex;
     margin-top: 10px; /* Add space between messages and input */
@@ -178,7 +209,7 @@ code {
 
 .sidebar {
     flex: 0 0 auto;
-    width: 350px; /* Adjust width as needed */
+    width: 410px; /* Adjust width as needed */
     padding: 20px; /* Add padding for spacing */
 }
 

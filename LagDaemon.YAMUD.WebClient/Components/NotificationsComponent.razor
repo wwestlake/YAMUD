@@ -7,18 +7,28 @@
     Notifications
 </div>
 
-<div class="chat-container">
-    <div class="chat-messages">
-        @foreach (var msg in messages)
+<div class="notification-container">
+    <div class="notification-messages">
+        @foreach (var msg in InMemoryStorageService.GetNotificationMessages())
         {
-            <div class="card bg-black" style="width: 18rem;">
+            <div class="card" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title">@msg.Subject</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">@msg.Message</h6>
+                    <h5 class="card-title @GetClassFromUrgency(msg)">@msg.Subject</h5>
+                    <h6 class="card-subtitle mb-2 text-primary">@msg.Message</h6>
 
                     <p class="card-text">@msg.Body</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+                    @if (msg.Link != null) {
+                        <a href="@msg.Link" class="card-link">
+                            @if (msg.LinkDescription != null)
+                            {
+                                @msg.LinkDescription
+                            }
+                            else
+                            {
+                                <span>Card link</span>
+                            }
+                        </a>
+                    }
                 </div>
             </div>
         }
@@ -27,7 +37,6 @@
 
 @code {
     private string message;
-    private List<NotificationMessage> messages = new List<NotificationMessage>();
 
     protected override void OnInitialized()
     {
@@ -36,8 +45,22 @@
 
     private void OnNotificationMessageReceived(NotificationMessage message)
     {
-        messages.Add(message);
         StateHasChanged(); // Notify Blazor to update the UI
+    }
+
+    private string GetClassFromUrgency(NotificationMessage msg)
+    {
+        switch (msg.Urgency)
+        {
+            case Urgency.High:
+                return "text-danger";
+            case Urgency.Medium:
+                return "text-warning";
+            case Urgency.Low:
+                return "text-info";
+            default:
+                return "text-light";
+        }
     }
 
 }

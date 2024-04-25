@@ -6,6 +6,7 @@ namespace LagDaemon.YAMUD.WebClient.Services
     public static class InMemoryStorageService
     {
         private const string RoomChatMessageKey = "RoomChatMessages";
+        private const string NotificationKey = "NotificationMessages";
         private static ConcurrentDictionary<string, dynamic> _storage = new ConcurrentDictionary<string, dynamic>();
 
         public static void Store<T>(string key, T value) 
@@ -54,5 +55,29 @@ namespace LagDaemon.YAMUD.WebClient.Services
             if (result == default) return new ConcurrentBag<RoomChatMessage>();
             return result;
         }
+
+        public static void AddNotification(NotificationMessage message)
+        {
+            if (!_storage.ContainsKey(NotificationKey))
+            {
+                var list = new ConcurrentBag<NotificationMessage>();
+                list.Add(message);
+                Store(NotificationKey, list);
+            }
+            else
+            {
+                var list = GetT<ConcurrentBag<NotificationMessage>>(NotificationKey);
+                list.Add(message);
+                Store(NotificationKey, list);
+            }
+        }
+
+        public static IEnumerable<NotificationMessage> GetNotificationMessages()
+        {
+            var result = GetT<ConcurrentBag<NotificationMessage>>(NotificationKey);
+            if (result == default) return new ConcurrentBag<NotificationMessage>();
+            return result;
+        }
+
     }
 }

@@ -97,6 +97,15 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
                 Message = $"Welcome to {room.Name}!"
             });
 
+            await Clients.Client(connectionId).SendAsync("ReceiveNotification", new NotificationMessage
+            {
+                Subject = "Welcome!",
+                Message = $"You have joined {room.Name}",
+                Link = "/chat",
+                LinkDescription = "Go to the chat page and see who's there!",
+                Urgency = Urgency.Medium
+            });
+
             // Call the base method to ensure proper hub initialization
             await base.OnConnectedAsync();
         }

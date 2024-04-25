@@ -24,7 +24,6 @@
 
 @code {
     private string message;
-    private List<RoomChatMessage> messages = new List<RoomChatMessage>();
 
     protected override void OnInitialized()
     {
@@ -44,6 +43,7 @@
             await SendMessage();
         }
     }
+
 
     private async Task SendMessage()
     {

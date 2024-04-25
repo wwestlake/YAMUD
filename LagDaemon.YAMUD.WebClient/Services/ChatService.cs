@@ -55,9 +55,15 @@ namespace LagDaemon.YAMUD.WebClient.Services
             if (firstConnection)
             {
                 RoomMessageReceived += ChatService_RoomMessageReceived;
+                NotificationReceived += ChatService_NotificationReceived;
                 firstConnection = false;
             }
             await _connection.StartAsync();
+        }
+
+        private void ChatService_NotificationReceived(NotificationMessage message)
+        {
+            InMemoryStorageService.AddNotification(message);
         }
 
         private void ChatService_RoomMessageReceived(RoomChatMessage msg)
