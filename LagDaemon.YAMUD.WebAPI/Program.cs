@@ -157,7 +157,7 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowOrigin", builder =>
     {
-        builder.WithOrigins("https://localhost:7202")
+        builder.WithOrigins("https://localhost:7202", "https://localhost:7214")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .SetIsOriginAllowed((host) => true)
@@ -214,7 +214,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.HttpsPort = 443; // Set the HTTPS port
+    options.HttpsPort = 7214; // Set the HTTPS port
 });
 builder.Services.AddScoped<TokenValidationFilter>();
 

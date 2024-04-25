@@ -1,7 +1,26 @@
 ﻿@page "/player"
+@using LagDaemon.YAMUD.WebClient.Components
+@using LagDaemon.YAMUD.WebClient.Model
 
-<h3>PlayerPage</h3>
+
+<TabbedViewComponent Tabs="@tabs" />
 
 @code {
+    private List<Tab> tabs;
+
+    public PlayerPage()
+    {
+        tabs = new();
+    }
+
+    protected override void OnInitialized()
+    {
+        tabs.AddRange(
+            new List<Tab>() {
+                new Tab { Title = "Character", Content = @<CharacterCreator /> },
+                new Tab { Title = "Chat", Content = @<RoomChatComponent /> },
+        });
+    }
+
 
 }

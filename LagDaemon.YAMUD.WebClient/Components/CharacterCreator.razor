@@ -1,0 +1,109 @@
+﻿@page "/character-generator"
+@using LagDaemon.YAMUD.Model.Characters
+
+<div class="character-sheet">
+    <h2>Create Your Character</h2>
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input id="name" class="form-control" @bind="newCharacter.Name" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" class="form-control" @bind="newCharacter.Description"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="characterClass">Character Class:</label>
+        <select id="characterClass" class="form-control" @bind="newCharacter.CharacterClass">
+            @foreach (var characterClass in Enum.GetValues(typeof(CharacterClass)))
+            {
+                <option value="@characterClass">@characterClass</option>
+            }
+        </select>
+    </div>
+
+    <div class="stats-table">
+        @foreach (var stat in new Dictionary<string, int>
+        {
+        { "Strength", newCharacter.Strength },
+        { "Dexterity", newCharacter.Dexterity },
+        { "Intelligence", newCharacter.Intelligence },
+        { "Luck", newCharacter.Luck }
+        })
+        {
+            <div class="stat-row d-flex align-items-center justify-content-between">
+                <a class="icon-link col text-center" @onclick="() => DecreaseStat(stat.Key)">
+                    <i class="bi bi-dash-circle large-icon"></i>
+                </a>
+                <span class="col text-center">@stat.Key: @stat.Value</span>
+                <a class="icon-link col text-center" @onclick="() => IncreaseStat(stat.Key)">
+                    <i class="bi bi-plus-circle large-icon"></i>
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="extra-points">
+        <span>Extra Points: @bonusPoints</span>
+    </div>
+
+    <button class="btn btn-success" @onclick="SaveCharacter">Save Character</button>
+    <button class="btn btn-info" @onclick="GenerateRandomStats">Re-roll Stats</button>
+</div>
+
+
+
+
+@code {
+    private Character newCharacter = new Character();
+    private Random random = new Random();
+    private int bonusPoints;
+
+    protected override void OnInitialized()
+    {
+        GenerateRandomStats();
+    }
+
+    private void GenerateRandomStats()
+    {
+        newCharacter.Strength = random.Next(10, 21);
+        newCharacter.Dexterity = random.Next(10, 21);
+        newCharacter.Intelligence = random.Next(10, 21);
+        newCharacter.Luck = random.Next(10, 21);
+        bonusPoints = random.Next(5, 16); // Random extra points to allocate
+    }
+
+    private void IncreaseStat(string propertyName)
+    {
+        if (bonusPoints > 0)
+        {
+            var property = newCharacter.GetType().GetProperty(propertyName);
+            if (property != null && property.PropertyType == typeof(int))
+            {
+                int currentValue = (int)property.GetValue(newCharacter);
+                property.SetValue(newCharacter, currentValue + 1);
+                bonusPoints--;
+            }
+        }
+    }
+
+    private void DecreaseStat(string propertyName)
+    {
+        var property = newCharacter.GetType().GetProperty(propertyName);
+        if (property != null && property.PropertyType == typeof(int))
+        {
+            int currentValue = (int)property.GetValue(newCharacter);
+            if (currentValue > 10) // Ensure stat does not go below initial range
+            {
+                property.SetValue(newCharacter, currentValue - 1);
+                bonusPoints++;
+            }
+        }
+    }
+
+    private void SaveCharacter()
+    {
+        // Implement character saving logic here
+    }
+}

@@ -9,7 +9,9 @@
 @inject ILocalStorageService LocalStorageService
 @inject IAuthenticationService AuthenticationService
 @inject HttpClient HttpClient
-@inject IChatService ChatService
+@inject ChatService ChatService
+@inject CommandService CommandService
+
 
 <CascadingAuthenticationState>
     <div class="body-background page">
@@ -56,6 +58,7 @@
             {
                 AuthenticationService.Authorize(token.Item);
                 await ChatService.ConnectAsync(token.Item);
+                await CommandService.ConnectAsync(token.Item);
             }
         }
         catch (Exception ex)

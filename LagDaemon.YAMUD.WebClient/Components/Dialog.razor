@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+<div class="dialog-overlay">
+    <div class="dialog">
+        <div class="dialog-header">
+            @HeaderText
+        </div>
+        <div class="dialog-content">
+            @ChildContent
+        </div>
+        <div class="dialog-footer">
+            @foreach (var action in Actions)
+            {
+                <button @onclick="action.Action">@action.Text</button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string HeaderText { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public List<DialogAction> Actions { get; set; } = new List<DialogAction>();
+
+    public class DialogAction
+    {
+        public string Text { get; set; }
+        public EventCallback Action { get; set; }
+    }
+}

@@ -3,6 +3,24 @@ using LagDaemon.YAMUD.Model.Map;
 using LagDaemon.YAMUD.Model.Utilities;
 
 namespace LagDaemon.YAMUD.Model.Characters;
+
+public enum CharacterClass
+{
+    Peasant,
+    Farmer,
+    Warrior,
+    Mage,
+    Thief,
+    Paladin,
+    Ranger,
+    Bard,
+    Cleric,
+    Druid,
+    Monk,
+    Barbarian,
+    Sorcerer
+}
+
 public class Character
 {
     public Guid Id { get; set; }
@@ -18,6 +36,7 @@ public class Character
     public int Dexterity { get; set; }
     public int Intelligence { get; set; }
     public int Luck { get; set; }
+    public CharacterClass CharacterClass { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid OwnerId { get; set; }
     public ICollection<Annotation> Annotations { get; set; } = new List<Annotation>();

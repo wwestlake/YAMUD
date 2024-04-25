@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -111,6 +111,7 @@ code {
     font-size: 16px;
     color: #EEE;
     text-align: justify;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
     .description h1 {
@@ -226,10 +227,20 @@ code {
     text-align: center; /* Centered text */
     font-size: 20px; /* Larger font size */
     font-weight: bold; /* Bold font weight */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* styles.css */
-.tab-container {
+.icon-container {
+    display: flex;
+    align-items: center; /* Centers items vertically within the container */
+    justify-content: flex-end; /* Aligns items to the right */
+    gap: 10px; /* Space between icons */
+    width: auto; /* Adjust width as necessary or keep it auto */
+}
+
+/tab-container {
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
@@ -261,10 +272,8 @@ code {
     }
 
 .tab-content {
-
     padding: 20px;
     border-top: 1px solid #ccc;
-
 }
 
 .light-text {
@@ -278,4 +287,118 @@ code {
     background-repeat: no-repeat;
     height: 100vh; /* Full height */
     width: 100vw; /* Full width */
+}
+
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialog {
+    width: 50%;
+    border-radius: 10px;
+    background-color: #FFF;
+    overflow: hidden;
+}
+
+.dialog-header {
+    padding: 10px;
+    background-color: #333;
+    color: #FFF;
+    text-align: center;
+}
+
+.dialog-content {
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #EEE;
+}
+
+.dialog-footer {
+    padding: 10px;
+    background-color: #333;
+    text-align: right;
+}
+
+.parent-container {
+    position: relative;
+}
+
+.menu-container {
+    position: relative; /* Establishes a new positioning context for the menu */
+}
+
+/* Style the context menu */
+.context-menu {
+    position: absolute;
+    right: 0; /* Align to the right of its parent container */
+    top: 100%; /* Start just below the button */
+    z-index: 1000;
+    background-color: #333;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    min-width: 150px;
+    border-radius: 5px;
+}
+
+.context-menu-item {
+    padding: 8px 16px;
+    text-align: left;
+    background: none; /* Transparent background on individual items */
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff; /* Light text color for readability */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+    .context-menu-item:hover {
+        background-color: #1b6ec2; /* Highlight color on hover */
+        color: #fff; /* Ensure text color remains white on hover for contrast */
+    }
+
+.character-sheet {
+    font-family: 'Arial', sans-serif;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #EEE;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.stats-table td {
+    padding: 8px;
+}
+
+button {
+    margin-left: 10px;
+}
+
+.icon-link {
+    display: inline-block; /* Makes the link behave like a button */
+    color: inherit; /* Inherits the text color from parent */
+    text-decoration: none; /* Removes underline */
+}
+
+    .icon-link:hover, .icon-link:focus {
+        color: #0056b3; /* Change color on hover/focus for visual feedback */
+        text-decoration: none; /* Ensures no underline appears on hover */
+    }
+
+
+.stat-row .col {
+    padding: 0.5rem; /* Adds padding inside each column */
+}
+
+.large-icon {
+    font-size: 2em; /* Doubles the size of the icon */
 }

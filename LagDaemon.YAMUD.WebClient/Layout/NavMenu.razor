@@ -39,7 +39,7 @@
             </li>
             <AuthorizeView Roles="Admin, Owner, Founder">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" @onclick="ToggleRoomManagementDropdown" aria-expanded="@isRoomManagementDropdownOpen">
+                    <a class="nav-link dropdown-toggle" @onclick="ToggleRoomManagementDropdown" aria-expanded="@isRoomManagementDropdownOpen">
                         Admin
                     </a>
                     <div class="@dropdownClass">

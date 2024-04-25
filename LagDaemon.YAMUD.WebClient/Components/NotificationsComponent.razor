@@ -1,6 +1,6 @@
 ﻿@using LagDaemon.YAMUD.Model.Communication
 @using LagDaemon.YAMUD.WebClient.Services
-@inject IChatService chatService
+@inject ChatService ChatService
 @inject Authority Authority
 
 <div class="chat-header">
@@ -40,7 +40,7 @@
 
     protected override void OnInitialized()
     {
-        chatService.NotificationReceived += OnNotificationMessageReceived;
+        ChatService.NotificationReceived += OnNotificationMessageReceived;
     }
 
     private void OnNotificationMessageReceived(NotificationMessage message)

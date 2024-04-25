@@ -1,13 +1,25 @@
 ﻿@using LagDaemon.YAMUD.Model.Communication
 @using LagDaemon.YAMUD.WebClient.Services
-@inject IChatService chatService
+@using LagDaemon.YAMUD.Model.Scripting
+@inject ChatService ChatService
 @inject Authority Authority
 @inject ILocalStorageService LocalStorageService
+@inject CommandParser CommandParser
+@inject CommandService CommandService
 
-<div class="chat-header">
+<div class="chat-header parent-container">
     Room Chat Channel
+    <div class="icon-container">
+        <a @onclick="OpenSettingsDialog" class="icon-link" title="Settings">
+            <i class="bi bi-gear-fill"></i>
+        </a>
+        <a @onclick="ToggleMenu" class="icon-link">
+            <i class="bi bi-three-dots-vertical"></i>
+        </a>
+    </div>
+    
 </div>
-
+<ContextMenu IsVisible="@isMenuVisible" MenuItems="menuItems" />
 <div class="chat-container">
     <div class="chat-messages">
         @foreach (var msg in InMemoryStorageService.GetRoomChatMessages())
@@ -18,45 +30,139 @@
 
     <div class="chat-input">
         <input type="text" @bind-value="message" @bind-value:event="oninput" @onkeydown="HandleKeyPress" />
-        <button @onclick="SendMessage">Send</button>
+        <button @onclick="Send">Send</button>
     </div>
 </div>
 
+@if (showSettingsDialog)
+{
+    <Dialog HeaderText="Chat Settings" Actions="settingsDialogActions">
+        <p>Configure your chat settings here:</p>
+        <!-- Add form or settings content here -->
+    </Dialog>
+}
+
+
+
+
 @code {
     private string message;
+    private bool showSettingsDialog = false;
+    private List<Dialog.DialogAction> settingsDialogActions;
+    private bool isMenuVisible = false;
+    private List<ContextMenu.MenuItem> menuItems;
 
     protected override void OnInitialized()
     {
-        chatService.RoomMessageReceived += OnRoomMessageReceived;
+        settingsDialogActions = new List<Dialog.DialogAction>
+        {
+            new Dialog.DialogAction { Text = "Save", Action = EventCallback.Factory.Create(this, () => SaveSettings()) },
+            new Dialog.DialogAction { Text = "Cancel", Action = EventCallback.Factory.Create(this, () => CloseSettingsDialog()) }
+        };
+
+        menuItems = new List<ContextMenu.MenuItem>
+    {
+        new ContextMenu.MenuItem { Text = "Action 1", OnSelect = EventCallback.Factory.Create(this, Action1) },
+        new ContextMenu.MenuItem { Text = "Action 2", OnSelect = EventCallback.Factory.Create(this, Action2) },
+        new ContextMenu.MenuItem { Text = "Action 3", OnSelect = EventCallback.Factory.Create(this, Action3) },
+    };
+
+        ChatService.RoomMessageReceived += OnRoomMessageReceived;
     }
+
+    private void Action1() { }
+    private void Action2() { }
+    private void Action3() { }
 
     private void OnRoomMessageReceived(RoomChatMessage message)
     {
-        //messages.Add(message);
-        StateHasChanged(); // Notify Blazor to update the UI
+        if (message.From == Authority.Cache.ID)
+        {
+            message.DisplayName = "You";
+        }
+        StateHasChanged(); 
     }
 
     private async Task HandleKeyPress(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
         {
-            await SendMessage();
+            await Send();
+        }
+    }
+
+    private async Task Send()
+    {
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+        var msg = message.Trim();
+        if (string.IsNullOrEmpty(msg))
+        {
+            return;
+        }
+        if (msg.StartsWith("@"))
+        {
+            await SendCommand(msg.Substring(1, msg.Length - 1).Trim());
+        }
+        else
+        {
+            await SendMessage(msg);
         }
     }
 
 
-    private async Task SendMessage()
+    private async Task SendMessage(string msg)
     {
         var roomChatMessage = new RoomChatMessage
             {
                 To = Guid.NewGuid(), // Replace with the actual recipient ID
-                Message = message,
+                Message = msg,
                 SentAt = DateTime.UtcNow,
                 From = Guid.NewGuid() // Replace with the actual sender ID
             };
 
         var token = await LocalStorageService.GetObjectAsync<string>("authToken");
-        await chatService.SendRoomChatMessageAsync(roomChatMessage);
+        await ChatService.SendRoomChatMessageAsync(roomChatMessage);
         message = string.Empty;
     }
+
+    private async Task SendCommand(string msg)
+    {
+        var command = CommandParser.ParseCommandLine(msg);
+        await CommandService.SendCommandAsync(command);
+        message = string.Empty;
+        InMemoryStorageService.AddChatMessage(new RoomChatMessage()
+        {
+            DisplayName = "Local",
+            Message = $"Command Sent: {msg}",    
+        });
+        StateHasChanged(); // Notify Blazor to update the UI
+    }
+
+    private void OpenSettingsDialog()
+    {
+        showSettingsDialog = true;
+    }
+
+    private Task CloseSettingsDialog()
+    {
+        showSettingsDialog = false;
+        return Task.CompletedTask;
+    }
+
+    private Task SaveSettings()
+    {
+        // Implement saving logic
+        showSettingsDialog = false;
+        Console.WriteLine("Settings Saved!");
+        return Task.CompletedTask;
+    }
+
+    private void ToggleMenu()
+    {
+        isMenuVisible = !isMenuVisible;
+    }
+
 }

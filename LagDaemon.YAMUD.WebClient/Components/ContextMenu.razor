@@ -1,0 +1,25 @@
+﻿@if (IsVisible)
+{
+    <div class="menu-container">
+        <div class="context-menu" style="@($"{MenuStyle}")">
+            @foreach (var item in MenuItems)
+            {
+                <button class="context-menu-item" @onclick="() => item.OnSelect.InvokeAsync()">
+                    @item.Text
+                </button>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public List<MenuItem> MenuItems { get; set; }
+    [Parameter] public string MenuStyle { get; set; } = "position: absolute; top: 100%; right: 0;";
+
+    public class MenuItem
+    {
+        public string Text { get; set; }
+        public EventCallback OnSelect { get; set; }
+    }
+}
