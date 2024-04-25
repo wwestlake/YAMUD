@@ -10,14 +10,14 @@
 
 <div class="chat-container">
     <div class="chat-messages">
-        @foreach (var msg in messages)
+        @foreach (var msg in InMemoryStorageService.GetRoomChatMessages())
         {
             <span><b>[@msg.DisplayName]</b>&nbsp; @msg.Message</span><br />
         }
     </div>
 
     <div class="chat-input">
-        <input type="text" @bind="message" />
+        <input type="text" @bind-value="message" @bind-value:event="oninput" @onkeydown="HandleKeyPress" />
         <button @onclick="SendMessage">Send</button>
     </div>
 </div>
@@ -33,8 +33,16 @@
 
     private void OnRoomMessageReceived(RoomChatMessage message)
     {
-        messages.Add(message);
+        //messages.Add(message);
         StateHasChanged(); // Notify Blazor to update the UI
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
     }
 
     private async Task SendMessage()
@@ -48,7 +56,6 @@
             };
 
         var token = await LocalStorageService.GetObjectAsync<string>("authToken");
-        await chatService.ConnectAsync(token.Item);
         await chatService.SendRoomChatMessageAsync(roomChatMessage);
         message = string.Empty;
     }

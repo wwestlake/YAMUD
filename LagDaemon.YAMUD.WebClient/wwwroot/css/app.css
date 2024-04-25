@@ -151,13 +151,19 @@ code {
     border: 1px solid #ccc;
     padding: 5px;
     background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: auto;
 }
 
 .chat-messages {
+    color: #EEEEEE;
+    display: flex;
     height: 500px; /* Adjust as needed */
     overflow-y: auto; /* Enable vertical scrollbar */
-    color: #EEEEEE;
-    background: #000;
+    flex-direction: column-reverse;
+    overflow-y: auto;
 }
 
 .chat-input {

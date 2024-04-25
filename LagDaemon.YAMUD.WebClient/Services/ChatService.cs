@@ -11,9 +11,16 @@ namespace LagDaemon.YAMUD.WebClient.Services
         private HubConnection _connection;
         private string _accessToken;
         private string _url;
+        private bool firstConnection = true;
+
+        public ChatService()
+        {
+            Console.WriteLine("ChatService instance created");
+        }
 
         public async Task ConnectAsync(string accessToken, string url = "http://localhost:5180/chatHub")
         {
+            Console.WriteLine("Connecting to chat service...");
             _accessToken = accessToken;
             _url = url;
             _connection = new HubConnectionBuilder()
@@ -23,6 +30,12 @@ namespace LagDaemon.YAMUD.WebClient.Services
                         return Task.FromResult(accessToken); 
                     };
                 }).Build();
+
+            _connection.Closed += async (error) =>
+            {
+                await Task.Delay(new Random().Next(0, 5) * 1000);
+                await ConnectAsync(_accessToken, _url);
+            };
 
             _connection.On<RoomChatMessage>("ReceiveRoomMessage", message =>
             {
@@ -39,32 +52,28 @@ namespace LagDaemon.YAMUD.WebClient.Services
                 NotificationReceived?.Invoke(message);
             });
 
+            if (firstConnection)
+            {
+                RoomMessageReceived += ChatService_RoomMessageReceived;
+                firstConnection = false;
+            }
             await _connection.StartAsync();
+        }
+
+        private void ChatService_RoomMessageReceived(RoomChatMessage msg)
+        {
+            InMemoryStorageService.AddChatMessage(msg);
         }
 
         public async Task SendRoomChatMessageAsync(RoomChatMessage message)
         {
-            if (_connection.State == HubConnectionState.Disconnected)
-            {
-                await ConnectAsync(_accessToken, _url);
-            }
-
-            if (_connection.State == HubConnectionState.Connected)
-            {
-                await _connection.SendAsync("SendRoomMessage", message);
-            }
+            
+            await _connection.SendAsync("SendRoomMessage", message);
         }
 
         public async Task SendGroupChatMessageAsync(GroupChatMessage message)
         {
-            if (_connection.State == HubConnectionState.Disconnected)
-            {
-                await ConnectAsync(_accessToken, _url);
-            }
-            if (_connection.State == HubConnectionState.Connected)
-            {
-                await _connection.SendAsync("SendGroupMessage", message);
-            }
+            await _connection.SendAsync("SendGroupMessage", message);
         }
 
     }

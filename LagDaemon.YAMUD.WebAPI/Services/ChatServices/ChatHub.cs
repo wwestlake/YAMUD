@@ -75,24 +75,44 @@ namespace LagDaemon.YAMUD.WebAPI.Services.ChatServices
                 throw new ApplicationException("Room cannot be null here");
             }
 
+            if (room == null)
+            {
+                throw new ApplicationException("Room cannot be null here");
+            }
 
-            // TODO: need to maintain a list of groups for each user
-            //foreach (var group in Groups)
-            //{
-            //    await Groups.RemoveFromGroupAsync(connectionId, group);
-            //}
+            if (ConnectionMapping<string>.GetConnections(room.Name).Contains(connectionId))
+            {
+                await base.OnConnectedAsync();
+                return;
+            }
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, room.Name);
+            await JoinGroup(room.Name);
 
             // Send a welcome message to the connected client
-            await Clients.Group(room.Name).SendAsync("ReceiveGroupMessage", new NotificationMessage
+            await Clients.Group(room.Name).SendAsync("ReceiveRoomMessage", new RoomChatMessage
             {
+                DisplayName = "System",
+                From = Guid.Empty,
+                To = room.Id,
                 Message = $"Welcome to {room.Name}!"
             });
 
             // Call the base method to ensure proper hub initialization
             await base.OnConnectedAsync();
         }
+
+        public async Task JoinGroup(string groupName)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+            ConnectionMapping<string>.Add(groupName, Context.ConnectionId);
+        }
+
+        public async Task LeaveGroup(string groupName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+            ConnectionMapping<string>.Remove(groupName, Context.ConnectionId);
+        }
+
 
         private UserInfo GetUserFromToken()
         {
